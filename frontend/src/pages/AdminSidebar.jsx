@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom'
 
 const AdminSidebar = () => {
   return (
-        <aside className="w-64 bg-white dark:bg-gray-800 shadow-md p-4 space-y-4">
+        <aside className="w-64 bg-white  min-h-screen dark:bg-gray-800 shadow-md p-4 space-y-4">
     <h2 className="text-xl font-bold text-gray-800 dark:text-white mb-6">Admin Dashboard</h2>
     <nav className="flex flex-col gap-3">
       <Link

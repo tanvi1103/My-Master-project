@@ -116,7 +116,7 @@ const App = () => {
         <Route path="/search" element={<GraduateSearch />} />
         <Route path="/admin/login" element={<AdminLogin />} />
         <Route
-          path="/admin/dashboard"
+          path="/admin"
           element={
             <AdminLayout>
               <AdminDashboard />

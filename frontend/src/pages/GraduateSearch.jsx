@@ -26,78 +26,83 @@ const GraduateSearch = () => {
     }
     console.log('Searching with:', formData);
   };
-
   return (
-    <div className="p-6 max-w-4xl mx-auto">
-      <h2 className="text-3xl font-semibold text-center mb-6">Search Graduate</h2>
-      <form
-        onSubmit={handleSearch}
-        className="flex flex-col gap-4 bg-gray-100 dark:bg-gray-800 p-6 rounded-lg shadow"
-      >
-        <input
-          type="text"
-          name="firstName"
-          placeholder="First Name"
-          value={formData.firstName}
-          onChange={handleChange}
-          className="p-2 rounded border dark:bg-gray-700"
-        />
-        <input
-          type="text"
-          name="middleName"
-          placeholder="Middle Name"
-          value={formData.middleName}
-          onChange={handleChange}
-          className="p-2 rounded border dark:bg-gray-700"
-        />
-        <input
-          type="text"
-          name="lastName"
-          placeholder="Last Name"
-          value={formData.lastName}
-          onChange={handleChange}
-          className="p-2 rounded border dark:bg-gray-700"
-        />
-        <input
-          type="number"
-          name="cgpa"
-          placeholder="CGPA (1.75 - 4.00)"
-          value={formData.cgpa}
-          onChange={handleChange}
-          step="0.01"
-          className="p-2 rounded border dark:bg-gray-700"
-        />
-        <select
-          name="gender"
-          value={formData.gender}
-          onChange={handleChange}
-          className="p-2 rounded border dark:bg-gray-700"
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 px-4 py-12">
+      <div className="w-full max-w-5xl  bg-white dark:bg-gray-800 rounded-xl shadow-lg p-8">
+        <h2 className="text-2xl md:text-3xl font-bold text-center text-gray-900 dark:text-white mb-6">
+          Search Graduate
+        </h2>
+        <form
+          onSubmit={handleSearch}
+          className="flex flex-col gap-4"
         >
-          <option value="">Select Gender</option>
-          <option value="Male">Male</option>
-          <option value="Female">Female</option>
-          <option value="Other">Other</option>
-        </select>
-        <select
-          name="department"
-          value={formData.department}
-          onChange={handleChange}
-          className="p-2 rounded border dark:bg-gray-700"
-        >
-          <option value="">Select Department</option>
-          {departments.map((dept, index) => (
-            <option key={index} value={dept}>{dept}</option>
-          ))}
-        </select>
-        <div className="md:col-span-2 flex justify-center mt-4">
-          <button
-            type="submit"
-            className="px-6 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-          >
-            Search
-          </button>
-        </div>
-      </form>
+          <input
+            type="text"
+            name="firstName"
+            placeholder="First Name"
+            value={formData.firstName}
+            onChange={handleChange}
+            className="p-3 rounded border border-gray-300 dark:border-gray-600 dark:bg-gray-700 text-gray-900 dark:text-white"
+          />
+          <input
+            type="text"
+            name="middleName"
+            placeholder="Middle Name"
+            value={formData.middleName}
+            onChange={handleChange}
+            className="p-3 rounded border border-gray-300 dark:border-gray-600 dark:bg-gray-700 text-gray-900 dark:text-white"
+          />
+          <input
+            type="text"
+            name="lastName"
+            placeholder="Last Name"
+            value={formData.lastName}
+            onChange={handleChange}
+            className="p-3 rounded border border-gray-300 dark:border-gray-600 dark:bg-gray-700 text-gray-900 dark:text-white"
+          />
+          <input
+            type="number"
+            name="cgpa"
+            placeholder="CGPA (1.75 - 4.00)"
+            value={formData.cgpa}
+            onChange={handleChange}
+            step="0.01"
+            className="p-3 rounded border border-gray-300 dark:border-gray-600 dark:bg-gray-700 text-gray-900 dark:text-white"
+          />
+          <div className="flex flex-col md:flex-row gap-4">
+            <select
+              name="gender"
+              value={formData.gender}
+              onChange={handleChange}
+              className="w-full p-3 rounded border border-gray-300 dark:border-gray-600 dark:bg-gray-700 text-gray-900 dark:text-white"
+            >
+              <option value="">Select Gender</option>
+              <option value="Male">Male</option>
+              <option value="Female">Female</option>
+              <option value="Other">Other</option>
+            </select>
+            <select
+              name="department"
+              value={formData.department}
+              onChange={handleChange}
+              className="w-full p-3 rounded border border-gray-300 dark:border-gray-600 dark:bg-gray-700 text-gray-900 dark:text-white"
+            >
+              <option value="">Select Department</option>
+              {departments.map((dept, index) => (
+                <option key={index} value={dept}>{dept}</option>
+              ))}
+            </select>
+          </div>
+          <div className="flex justify-center mt-4 ">
+            <button
+              type="submit"
+              className="w-full  px-6 py-3 bg-blue-600 text-white rounded hover:bg-blue-700 transition cursor-pointer"
+            >
+              Search
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
   );
 };

@@ -5,7 +5,7 @@ import AdminSidebar from './AdminSidebar';
 
 const AdminDashboard = () => {
   return (
-    <div className="flex min-h-screen bg-gray-100 dark:bg-gray-900">
+    <div className="flex rounded-xl  bg-gray-50 dark:bg-gray-900">
       {/* Sidebar */}
       {/* <AdminSidebar /> */}
    
