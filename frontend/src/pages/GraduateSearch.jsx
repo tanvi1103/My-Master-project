@@ -28,13 +28,13 @@ const GraduateSearch = () => {
   };
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 px-4 py-12">
-      <div className="w-full max-w-5xl  bg-white dark:bg-gray-800 rounded-xl shadow-lg p-8">
+      <div className="w-full max-w-7xl  bg-white dark:bg-gray-800 rounded-xl shadow-lg p-8">
         <h2 className="text-2xl md:text-3xl font-bold text-center text-gray-900 dark:text-white mb-6">
           Search Graduate
         </h2>
         <form
           onSubmit={handleSearch}
-          className="flex flex-col gap-4"
+          className="flex flex-col gap-4 "
         >
           <input
             type="text"
@@ -79,7 +79,6 @@ const GraduateSearch = () => {
               <option value="">Select Gender</option>
               <option value="Male">Male</option>
               <option value="Female">Female</option>
-              <option value="Other">Other</option>
             </select>
             <select
               name="department"
