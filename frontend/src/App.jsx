@@ -57,6 +57,7 @@ import ViewUpdateGraduates from "./pages/ViewUpdateGraduates";
 import ThemeProvider from "./components/ThemeProvider";
 import AdminSidebar from "./pages/AdminSidebar";
 import AdminLayout from "./components/AdminLayout";
+import CertificateDetail from './components/CertificateDetail';
 
 const App = () => {
   return (
@@ -64,6 +65,7 @@ const App = () => {
       <Routes>
         <Route path="/" element={<LandingPage />} />
         <Route path="/search" element={<GraduateSearch />} />
+        <Route path="/certificate/:id" element={<CertificateDetail />} />
         <Route path="/admin/login" element={<AdminLogin />} />
         <Route
           path="/admin"

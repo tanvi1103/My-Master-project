@@ -1,7 +1,7 @@
 const PDFDocument = require('pdfkit');
 const Certificate = require('../models/Certificate');
 
-exports.getCertificateById = async (req, res) => {
+exports.getCertificateByName = async (req, res) => {
    try {
       const { firstName, middleName, lastName, cgpa, department, endDate } = req.query; // <-- use req.query
 
@@ -28,6 +28,22 @@ exports.getCertificateById = async (req, res) => {
 
     } catch (error) {
       console.error("Error fetching certificate:", error);
+      res.status(500).json({ message: 'Server error' });
+    }
+};
+exports.getCertificateById = async (req, res) => {
+   try {
+      const certificate = await Certificate.findOne({ certificateID: req.params.id });
+  
+      if (!certificate) {
+        console.log("No certificate found");  // Debugging: Log if no certificate is found
+        return res.status(404).json({ message: 'Certificate not found' });
+      }
+  
+      console.log("Certificate data:", certificate);  // Debugging: Log the found certificate data
+      res.json(certificate);  // Return JSON here
+    } catch (error) {
+      console.error("Server error:", error);  // Debugging: Log the server error details
       res.status(500).json({ message: 'Server error' });
     }
 };

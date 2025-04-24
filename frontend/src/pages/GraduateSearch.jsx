@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 const departments = [
   "Mechanical engineering",
   "Civil Engineering",
@@ -45,6 +46,7 @@ const departments = [
 ];
 
 const GraduateSearch = () => {
+  const navigate = useNavigate();
   const [certificate, setCertificate] = useState(null);
 const [error, setError] = useState("");
   const [formData, setFormData] = useState({
@@ -79,6 +81,11 @@ const [error, setError] = useState("");
       setCertificate(data);
     } catch (err) {
       setError(err.response?.data?.message || "Something went wrong");
+    }
+  };
+  const handleOpen = () => {
+    if (certificate) {
+      Navigate(`/certificate/${certificate.certificateID}`);
     }
   };
   return (
@@ -168,10 +175,18 @@ const [error, setError] = useState("");
         </form>
         {error && <p className="text-red-600 mt-4">{error}</p>}
       {certificate && (
-        <div className="mt-6 bg-green-100 p-4 rounded">
-          <h3 className="font-bold">Certificate Found</h3>
-          <pre>{JSON.stringify(certificate, null, 2)}</pre>
-        </div>
+      <div className="certificate-card">
+      <h3>Certificate Details</h3>
+      <p>
+        <strong>ID:</strong> {certificate.certificateID}
+      </p>
+      <p>
+        <strong>Name:</strong> {certificate.firstName}
+      </p>
+      <button onClick={handleOpen} className="open-button">
+        Open
+      </button>
+    </div>
       )}
       </div>
     </div>

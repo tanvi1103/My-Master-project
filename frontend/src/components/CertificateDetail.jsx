@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { FaCertificate, FaSignature, FaCalendarAlt, FaRegStar } from 'react-icons/fa';
 import { QRCodeCanvas } from 'qrcode.react'; // Use QRCodeCanvas
 // import './CertificateDetail.css'; // Import CSS for certificate styling
-
+import './CertificateDetail.css'; // Import CSS for certificate styling
 const url = 'http://localhost:5000'; // Base URL for API requests
 const CertificateDetail = () => {
   const { id } = useParams();
@@ -16,7 +16,7 @@ const CertificateDetail = () => {
   useEffect(() => {
     const fetchCertificate = async () => {
       try {
-        const response = await fetch(`http://localhost:5000/api/certificates/${id}`);
+        const response = await fetch(`http://localhost:5000/api/certificates/${id}}`);
         const data = await response.json();
         setCertificateData(data);
         setLoading(false);
@@ -57,7 +57,7 @@ const CertificateDetail = () => {
 
         <div className="certificate-content">
           <p className="certificate-intro">This certifies that</p>
-          <h2>{certificateData.studentName}</h2>
+          <h2>{certificateData.firstName}</h2>
           <p>has successfully completed the</p>
           <h3>{certificateData.internshipDomain}</h3>
           <p className="certificate-duration">
