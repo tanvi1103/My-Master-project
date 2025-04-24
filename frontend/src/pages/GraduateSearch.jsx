@@ -29,12 +29,12 @@ const GraduateSearch = () => {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 px-4 py-12">
       <div className="w-full max-w-7xl  bg-white dark:bg-gray-800 rounded-xl shadow-lg p-8">
-        <h2 className="text-2xl md:text-3xl font-bold text-center text-gray-900 dark:text-white mb-6">
+        <h2 className="text-2xl md:text-4xl font-bold text-center text-gray-900 dark:text-white mb-6">
           Search Graduate
         </h2>
         <form
           onSubmit={handleSearch}
-          className="flex flex-col gap-4 "
+          className="flex flex-col gap-8 w-full max-w-4xl mx-auto py-4 px-6 bg-white dark:bg-gray-800 rounded-lg shadow-md text-2xl"
         >
           <input
             type="text"
