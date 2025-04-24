@@ -3,15 +3,18 @@ const Certificate = require('../models/Certificate');
 
 exports.getCertificateById = async (req, res) => {
    try {
-      const { studentName, internshipDomain } = req.body;
+      const { firstName, middleName, lastName, cgpa, department } = req.body;
   
-      if (!studentName || !internshipDomain) {
-        return res.status(400).json({ message: 'studentName and internshipDomain are required' });
+      if (!firstName || !middleName || !lastName || !cgpa || !department) {
+        return res.status(400).json({ message: 'all fields are required' });
       }
   
       const certificate = await Certificate.findOne({ 
-        studentName: studentName, 
-        internshipDomain: internshipDomain 
+         firstName: firstName, 
+        middleName: middleName ,
+        lastName: lastName,
+        cgpa: cgpa,
+        department: department 
       });
   
       if (!certificate) {
@@ -73,7 +76,7 @@ exports.generateCertificatePDF = async (req, res) => {
 
     doc.fontSize(18)
        .fillColor('#4a90e2')
-       .text(certificate.internshipDomain, { align: 'center' })
+       .text(certificate.middleName, { align: 'center' })
        .moveDown(0.5);
 
     doc.fontSize(14)

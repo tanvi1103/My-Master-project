@@ -1,5 +1,6 @@
 const bcrypt = require("bcrypt");
 const Admin = require("../models/Admin");
+const Certificate = require("../models/Certificate");
 const dotenv = require("dotenv");
 const mongoose  = require("mongoose");
 dotenv.config();
@@ -21,6 +22,15 @@ const createAdmin = async () => {
     } else {
       console.log("Admin already exists.");
     }
+    // ////this one for testing purposes only
+    // const certificate = await Certificate.deleteMany({});
+    // if (certificate.deletedCount > 0) {
+    //   console.log("All certificates deleted.");
+    // } else {
+    //   console.log("No certificates to delete.");
+    // }
+
+
     process.exit(0); // 0 = success
   } catch (error) {
     console.error("Error creating admin:", error.message);

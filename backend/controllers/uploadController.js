@@ -22,10 +22,14 @@ const uploadExcelFile = async (req, res, next) => {
         },
         columnToKey: {
           A: 'certificateID',
-          B: 'studentName',
-          C: 'internshipDomain',
-          D: 'startDate',
-          E: 'endDate'
+          B: 'firstName',
+          C: 'middleName',
+          D: 'lastName',
+          E: 'college',
+          F: 'department',
+          G: 'cgpa',
+          H: 'startDate',
+          I: 'endDate',
         }
       }]
     });

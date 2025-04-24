@@ -1,27 +1,45 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
 const CertificateSchema = new mongoose.Schema({
-  certificateID: { 
-    type: String, 
-    required: true, 
-    unique: true 
+  certificateID: {
+    type: String,
+    required: true,
+    unique: true,
   },
-  studentName: {
-     type: String, 
-     required: true
-     },
-  internshipDomain: { 
-    type: String, 
-    required: true 
+  firstName: {
+    type: String,
+    required: true,
   },
-  startDate: { 
-    type: Date, 
-    required: true
-   },
-  endDate: { 
-    type: Date, 
-    required: true 
+  middleName: {
+    type: String,
+    required: true,
+  },
+  lastName: {
+    type: String,
+    required: true,
+  },
+  college: {
+    type: String,
+    required: true,
+  },
+  department: {
+    type: String,
+    required: true,
+  },
+  cgpa: {
+    type: Number,
+    required: true,
+    min: 1.75, // optional: minimum value constraint
+    max: 4, // optional: maximum value constraint (assuming 4.0 scale)
+  },
+  startDate: {
+    type: Date,
+    required: true,
+  },
+  endDate: {
+    type: Date,
+    required: true,
   },
 });
 
-module.exports = mongoose.model('Certificate', CertificateSchema);
+module.exports = mongoose.model("Certificate", CertificateSchema);
