@@ -2,20 +2,30 @@ const PDFDocument = require('pdfkit');
 const Certificate = require('../models/Certificate');
 
 exports.getCertificateById = async (req, res) => {
-  try {
-    const certificate = await Certificate.findOne({ certificateID: req.params.id });
-
-    if (!certificate) {
-      console.log("No certificate found");  // Debugging: Log if no certificate is found
-      return res.status(404).json({ message: 'Certificate not found' });
+   try {
+      const { studentName, internshipDomain } = req.body;
+  
+      if (!studentName || !internshipDomain) {
+        return res.status(400).json({ message: 'studentName and internshipDomain are required' });
+      }
+  
+      const certificate = await Certificate.findOne({ 
+        studentName: studentName, 
+        internshipDomain: internshipDomain 
+      });
+  
+      if (!certificate) {
+        console.log("No certificate found for the given student and domain");
+        return res.status(404).json({ message: 'Certificate not found' });
+      }
+  
+      console.log("Certificate found:", certificate);
+      res.json(certificate);
+  
+    } catch (error) {
+      console.error("Error fetching certificate:", error);
+      res.status(500).json({ message: 'Server error' });
     }
-
-    console.log("Certificate data:", certificate);  // Debugging: Log the found certificate data
-    res.json(certificate);  // Return JSON here
-  } catch (error) {
-    console.error("Server error:", error);  // Debugging: Log the server error details
-    res.status(500).json({ message: 'Server error' });
-  }
 };
 
 // Generate PDF certificate
