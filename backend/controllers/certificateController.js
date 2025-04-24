@@ -3,29 +3,29 @@ const Certificate = require('../models/Certificate');
 
 exports.getCertificateById = async (req, res) => {
    try {
-      const { firstName, middleName, lastName, cgpa, department, endDate } = req.body;
-  
+      const { firstName, middleName, lastName, cgpa, department, endDate } = req.query; // <-- use req.query
+
       if (!firstName || !middleName || !lastName || !cgpa || !department || !endDate) {
         return res.status(400).json({ message: 'all fields are required' });
       }
-  
+
       const certificate = await Certificate.findOne({ 
          firstName: firstName, 
-        middleName: middleName ,
-        lastName: lastName,
-        cgpa: cgpa,
-        department: department,
+         middleName: middleName,
+         lastName: lastName,
+         cgpa: cgpa,
+         department: department,
          endDate: endDate
       });
-  
+
       if (!certificate) {
         console.log("No certificate found for the given student and domain");
         return res.status(404).json({ message: 'Certificate not found' });
       }
-  
+
       console.log("Certificate found:", certificate);
       res.json(certificate);
-  
+
     } catch (error) {
       console.error("Error fetching certificate:", error);
       res.status(500).json({ message: 'Server error' });

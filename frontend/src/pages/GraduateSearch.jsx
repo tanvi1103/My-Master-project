@@ -1,30 +1,85 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
+import axios from "axios";
+const departments = [
+  "Mechanical engineering",
+  "Civil Engineering",
+  "Electrical and Computer Engineering",
+  "Computer Science",
+  "Biology",
+  "Chemistry",
+  "Mathematics",
+  "Physics",
+  "Sport Science",
+  "Geology",
+  "Statistics",
+  "Animal Science",
+  "Agricultural Economics",
+  "Natural Resources Management",
+  "Soil Resource and Watershed Management",
+  "Horticulture ",
+  "General Forestry",
+  "Veterinary Medicine  ",
+  "Coffee science and Technology",
+ " Accounting and Finance",
+"Banking and Finance",
+"Economics",
+"Marketing Management ",
+"Management",
+"Public Administration Management",
+"Hotel and Tourism Management",
+"Public Health Department",
+"Pharmacy Department",
+"Nursing Department",
+"Midwifery Department",
+"English Language and Literature Department",
+"Geography and Environmental Studies Department",
+"History and Heritage Management Department",
+"Special Needs and Inclusive Education Department",
+"Sociology Department",
+"Psychology Department",
+"Law Department",
+"Curriculum and Instruction Department",
+"Social Anthropology Department",
+"Political Science and International Relations Department",
 
-const departments = Array.from({ length: 42 }, (_, i) => `Department ${i + 1}`);
+];
 
 const GraduateSearch = () => {
+  const [certificate, setCertificate] = useState(null);
+const [error, setError] = useState("");
   const [formData, setFormData] = useState({
-    firstName: '',
-    middleName: '',
-    lastName: '',
-    cgpa: '',
-    gender: '',
-    department: '',
+    firstName: "",
+    middleName: "",
+    lastName: "",
+    cgpa: "",
+    department: "",
+    gender: "",
+    endDate: "",
   });
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
+    setFormData((prev) => ({
+      ...prev,
+      [e.target.name]: e.target.value,
+    }));
   };
 
-  const handleSearch = (e) => {
+  const handleSearch = async (e) => {
     e.preventDefault();
-    const cgpaFloat = parseFloat(formData.cgpa);
-    if (cgpaFloat < 1.75 || cgpaFloat > 4.0) {
-      alert('CGPA must be between 1.75 and 4.00');
-      return;
+    setError("");
+    setCertificate(null);
+    console.log("Searching with:", formData);
+    try {
+      const { data } = await axios.get(
+        "http://localhost:5000/api/certificates/name",
+        { params: formData }
+      );
+      
+      console.log(data)
+      setCertificate(data);
+    } catch (err) {
+      setError(err.response?.data?.message || "Something went wrong");
     }
-    console.log('Searching with:', formData);
   };
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 px-4 py-12">
@@ -88,9 +143,19 @@ const GraduateSearch = () => {
             >
               <option value="">Select Department</option>
               {departments.map((dept, index) => (
-                <option key={index} value={dept}>{dept}</option>
+                <option key={index} value={dept}>
+                  {dept}
+                </option>
               ))}
             </select>
+            <input
+          type="text"
+          name="endDate"
+          value={formData.endDate}
+          onChange={handleChange}
+          className="w-full p-2 border rounded"
+          required
+        />
           </div>
           <div className="flex justify-center mt-4 ">
             <button
@@ -101,6 +166,13 @@ const GraduateSearch = () => {
             </button>
           </div>
         </form>
+        {error && <p className="text-red-600 mt-4">{error}</p>}
+      {certificate && (
+        <div className="mt-6 bg-green-100 p-4 rounded">
+          <h3 className="font-bold">Certificate Found</h3>
+          <pre>{JSON.stringify(certificate, null, 2)}</pre>
+        </div>
+      )}
       </div>
     </div>
   );

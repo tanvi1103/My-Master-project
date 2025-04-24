@@ -13,6 +13,7 @@
     "data": "node data/admin.data.js"
   },
   "dependencies": {
+    "axios": "^1.9.0",
     "bcrypt": "^5.1.1",
     "convert-excel-to-json": "^1.7.0",
     "cookie-parser": "^1.4.7",
