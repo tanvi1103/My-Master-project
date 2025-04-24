@@ -30,6 +30,7 @@ const uploadExcelFile = async (req, res, next) => {
           G: 'cgpa',
           H: 'startDate',
           I: 'endDate',
+          J:'gender',
         }
       }]
     });

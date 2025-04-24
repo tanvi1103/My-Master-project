@@ -3,9 +3,9 @@ const Certificate = require('../models/Certificate');
 
 exports.getCertificateById = async (req, res) => {
    try {
-      const { firstName, middleName, lastName, cgpa, department } = req.body;
+      const { firstName, middleName, lastName, cgpa, department, endDate } = req.body;
   
-      if (!firstName || !middleName || !lastName || !cgpa || !department) {
+      if (!firstName || !middleName || !lastName || !cgpa || !department || !endDate) {
         return res.status(400).json({ message: 'all fields are required' });
       }
   
@@ -14,7 +14,8 @@ exports.getCertificateById = async (req, res) => {
         middleName: middleName ,
         lastName: lastName,
         cgpa: cgpa,
-        department: department 
+        department: department,
+         endDate: endDate
       });
   
       if (!certificate) {

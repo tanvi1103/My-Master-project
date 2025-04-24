@@ -23,12 +23,12 @@ const createAdmin = async () => {
       console.log("Admin already exists.");
     }
     // ////this one for testing purposes only
-    // const certificate = await Certificate.deleteMany({});
-    // if (certificate.deletedCount > 0) {
-    //   console.log("All certificates deleted.");
-    // } else {
-    //   console.log("No certificates to delete.");
-    // }
+    const certificate = await Certificate.deleteMany({});
+    if (certificate.deletedCount > 0) {
+      console.log("All certificates deleted.");
+    } else {
+      console.log("No certificates to delete.");
+    }
 
 
     process.exit(0); // 0 = success

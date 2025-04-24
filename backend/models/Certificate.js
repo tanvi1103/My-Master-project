@@ -32,10 +32,17 @@ const CertificateSchema = new mongoose.Schema({
     min: 1.75, // optional: minimum value constraint
     max: 4, // optional: maximum value constraint (assuming 4.0 scale)
   },
+  gender: {
+    type: String,
+    required: true,
+    enum: ['Male', 'Female']
+  },
+  
   startDate: {
     type: Date,
     required: true,
   },
+
   endDate: {
     type: Date,
     required: true,
