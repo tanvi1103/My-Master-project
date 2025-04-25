@@ -1,6 +1,6 @@
 const PDFDocument = require('pdfkit');
 const Certificate = require('../models/Certificate');
-
+const QRCode = require('qrcode');
 exports.getCertificateByName = async (req, res) => {
    try {
       const { firstName, middleName, lastName, cgpa, department, endDate } = req.query; // <-- use req.query
@@ -49,6 +49,8 @@ exports.getCertificateById = async (req, res) => {
 };
 
 // Generate PDF certificate
+
+
 exports.generateCertificatePDF = async (req, res) => {
   try {
     const certificate = await Certificate.findOne({ certificateID: req.params.id });
@@ -66,65 +68,73 @@ exports.generateCertificatePDF = async (req, res) => {
 
     // Draw background rectangle
     doc.rect(0, 0, doc.page.width, doc.page.height)
-    .fill('#f9f9f9')
-    .stroke('#4a90e2')
-    .lineWidth(8);
- 
+      .fill('#f9f9f9')
+      .stroke('#4a90e2')
+      .lineWidth(8);
+
     // Certificate Header
     doc.fontSize(20)
-       .fillColor('#4a90e2')
-       .text('Certificate of Achievement', { align: 'center', underline: true })
-       .moveDown(0.5);
+      .fillColor('#4a90e2')
+      .text('Certificate of Achievement', { align: 'center', underline: true })
+      .moveDown(0.5);
 
     // Main Content
     doc.fontSize(14)
-       .fillColor('#333')
-       .text('This certifies that', { align: 'center' })
-       .moveDown(0.5);
+      .fillColor('#333')
+      .text('This certifies that', { align: 'center' })
+      .moveDown(0.5);
 
     doc.fontSize(24)
-       .fillColor('#4a90e2')
-       .text(fullName, { align: 'center' })
-       .moveDown(0.5);
+      .fillColor('#4a90e2')
+      .text(fullName, { align: 'center' })
+      .moveDown(0.5);
 
     doc.fontSize(14)
-       .fillColor('#333')
-       .text('has successfully completed the', { align: 'center' })
-       .moveDown(0.5);
+      .fillColor('#333')
+      .text('has successfully completed the', { align: 'center' })
+      .moveDown(0.5);
 
     doc.fontSize(18)
-       .fillColor('#4a90e2')
-       .text(department, { align: 'center' })
-       .moveDown(0.5);
+      .fillColor('#4a90e2')
+      .text(department, { align: 'center' })
+      .moveDown(0.5);
 
     doc.fontSize(14)
-       .fillColor('#333')
-       .text(`Duration: ${new Date(certificate.startDate).toLocaleDateString()} - ${new Date(certificate.endDate).toLocaleDateString()}`, { align: 'center' })
-       .moveDown(1);
+      .fillColor('#333')
+      .text(`Duration: ${new Date(certificate.startDate).toLocaleDateString()} - ${new Date(certificate.endDate).toLocaleDateString()}`, { align: 'center' })
+      .moveDown(1);
 
     doc.fontSize(12)
-       .fillColor('#666')
-       .text('We commend your dedication and exceptional performance throughout the course. This certificate is a testament to your hard work and commitment.', { align: 'center' })
-       .moveDown(1);
+      .fillColor('#666')
+      .text('We commend your dedication and exceptional performance throughout the course. This certificate is a testament to your hard work and commitment.', { align: 'center' })
+      .moveDown(1);
 
     // Signature and Date Section
     doc.fontSize(12)
-       .fillColor('#333')
-       .text('Signature:', { align: 'center' })
-       .moveDown(0.5)
-       .text('CertiSys', { align: 'center' }) // Placeholder for signature
-       .moveDown(1);
+      .fillColor('#333')
+      .text('Signature:', { align: 'center' })
+      .moveDown(0.5)
+      .text('CertiSys', { align: 'center' }) // Placeholder for signature
+      .moveDown(1);
 
     doc.text('Date of Issue:', { align: 'center' })
-       .text(new Date().toLocaleDateString(), { align: 'center' })
-       .moveDown(1);
+      .text(new Date().toLocaleDateString(), { align: 'center' })
+      .moveDown(1);
 
     // Footer
     doc.fontSize(10)
-       .fillColor('#777')
-       .text('Certified by CertiSys', { align: 'center' })
-       .moveDown(1);
-   
+      .fillColor('#777')
+      .text('Certified by CertiSys', { align: 'center' })
+      .moveDown(1);
+
+    // --- QR Code Section ---
+    // The QR code can link to a verification page, e.g., https://yourdomain.com/certificate/:id
+    const qrUrl = `https://http://localhost:5173/certificate/${certificate.certificateID}`;
+    const qrDataUrl = await QRCode.toDataURL(qrUrl);
+
+    // Place QR code at bottom right
+    doc.image(qrDataUrl, doc.page.width - 120, doc.page.height - 120, { width: 100, height: 100 });
+
     // Finalize PDF file
     doc.end();
   } catch (error) {
