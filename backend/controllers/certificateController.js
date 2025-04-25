@@ -128,8 +128,8 @@ exports.generateCertificatePDF = async (req, res) => {
       .moveDown(1);
 
     // --- QR Code Section ---
-    // The QR code can link to a verification page, e.g., https://yourdomain.com/certificate/:id
-    const qrUrl = `https://http://localhost:5173/certificate/${certificate.certificateID}`;
+
+    const qrUrl = `http://localhost:5173/certificate/${certificate.certificateID}`;
     const qrDataUrl = await QRCode.toDataURL(qrUrl);
 
     // Place QR code at bottom right
