@@ -85,7 +85,7 @@ const [error, setError] = useState("");
   };
   const handleOpen = () => {
     if (certificate) {
-      Navigate(`/certificate/${certificate.certificateID}`);
+      navigate(`/certificate/${certificate.certificateID}`);
     }
   };
   return (

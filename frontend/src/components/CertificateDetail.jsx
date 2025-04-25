@@ -16,7 +16,7 @@ const CertificateDetail = () => {
   useEffect(() => {
     const fetchCertificate = async () => {
       try {
-        const response = await fetch(`http://localhost:5000/api/certificates/${id}}`);
+        const response = await fetch(`http://localhost:5000/api/certificates/${id}`);
         const data = await response.json();
         setCertificateData(data);
         setLoading(false);
@@ -57,9 +57,9 @@ const CertificateDetail = () => {
 
         <div className="certificate-content">
           <p className="certificate-intro">This certifies that</p>
-          <h2>{certificateData.firstName}</h2>
+          <h2>{certificateData.firstName} {certificateData.middleName} {certificateData.lastName}</h2>
           <p>has successfully completed the</p>
-          <h3>{certificateData.internshipDomain}</h3>
+          <h3>B.Sc in {certificateData.department}</h3>
           <p className="certificate-duration">
             <FaCalendarAlt className="calendar-icon" />
             {` From ${new Date(certificateData.startDate).toLocaleDateString()} to ${new Date(certificateData.endDate).toLocaleDateString()}`}
