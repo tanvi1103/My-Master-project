@@ -56,9 +56,10 @@ exports.generateCertificatePDF = async (req, res) => {
     if (!certificate) {
       return res.status(404).send('Certificate not found');
     }
-
+    const fullName = `${certificate.firstName} ${certificate.middleName} ${certificate.lastName}`;
+    const department = `B.Sc in ${certificate.department}`;
     const doc = new PDFDocument({ size: 'A4', layout: 'landscape' });
-    res.setHeader('Content-Disposition', `attachment; filename="${certificate.studentName}_certificate.pdf"`);
+    res.setHeader('Content-Disposition', `attachment; filename="${certificate.firstName}_certificate.pdf"`);
     res.setHeader('Content-Type', 'application/pdf');
     
     doc.pipe(res);
@@ -83,7 +84,7 @@ exports.generateCertificatePDF = async (req, res) => {
 
     doc.fontSize(24)
        .fillColor('#4a90e2')
-       .text(certificate.studentName, { align: 'center' })
+       .text(fullName, { align: 'center' })
        .moveDown(0.5);
 
     doc.fontSize(14)
@@ -93,7 +94,7 @@ exports.generateCertificatePDF = async (req, res) => {
 
     doc.fontSize(18)
        .fillColor('#4a90e2')
-       .text(certificate.middleName, { align: 'center' })
+       .text(department, { align: 'center' })
        .moveDown(0.5);
 
     doc.fontSize(14)
