@@ -3,19 +3,20 @@ const Certificate = require('../models/Certificate');
 const QRCode = require('qrcode');
 exports.getCertificateByName = async (req, res) => {
    try {
-      const { firstName, middleName, lastName, cgpa, department, endDate } = req.query; // <-- use req.query
+      const { firstName, middleName, lastName, cgpa, department, endDate, gender } = req.body; // <-- use req.query
 
-      if (!firstName || !middleName || !lastName || !cgpa || !department || !endDate) {
+      if (!firstName || !middleName || !lastName || !cgpa || !department || !endDate || !gender) {
         return res.status(400).json({ message: 'all fields are required' });
       }
-
+      const endYear = parseInt(endDate, 10);
       const certificate = await Certificate.findOne({ 
          firstName: firstName, 
          middleName: middleName,
          lastName: lastName,
          cgpa: cgpa,
          department: department,
-         endDate: endDate
+         gender:gender,
+         $expr: { $eq: [ { $year: "$endDate" }, endYear ] }
       });
 
       if (!certificate) {
