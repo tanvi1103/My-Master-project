@@ -49,6 +49,7 @@ exports.getCertificateById = async (req, res) => {
     }
 };
 
+
 // Generate PDF certificate
 
 
