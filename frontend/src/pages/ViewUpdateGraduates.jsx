@@ -1,3 +1,4 @@
+import axios from 'axios';
 import React, { useState, useEffect } from 'react';
 
 const ViewUpdateGraduates = () => {
@@ -5,8 +6,8 @@ const ViewUpdateGraduates = () => {
 
   useEffect(() => {
     const fetchGraduates = async () => {
-      const response = await fetch('/api/graduates');
-      const data = await response.json();
+      const response = await axios.get("http://localhost:5000/api/admin/certificates");
+      const data = await response.data;
       setGraduates(data);
     };
     fetchGraduates();
@@ -22,6 +23,7 @@ const ViewUpdateGraduates = () => {
       <table className="min-w-full table-auto bg-gray-100 dark:bg-gray-800 p-4 rounded-lg">
         <thead>
           <tr>
+            <th className="p-2 text-left">ID</th>
             <th className="p-2 text-left">First Name</th>
             <th className="p-2 text-left">Middle Name</th>
             <th className="p-2 text-left">Last Name</th>
@@ -30,12 +32,15 @@ const ViewUpdateGraduates = () => {
             <th className="p-2 text-left">Department</th>
             <th className="p-2 text-left">College</th>
             <th className="p-2 text-left">Program</th>
+            <th className="p-2 text-left">Status</th>
+            <th className="p-2 text-left">Gr. year</th>
             <th className="p-2 text-left">Actions</th>
           </tr>
         </thead>
         <tbody>
           {graduates.map((g) => (
-            <tr key={g.id} className="border-t border-gray-300 dark:border-gray-700">
+            <tr key={g.certificateID} className="border-t border-gray-300 dark:border-gray-700">
+              <td className="p-2">{g.certificateID}</td>
               <td className="p-2">{g.firstName}</td>
               <td className="p-2">{g.middleName}</td>
               <td className="p-2">{g.lastName}</td>
@@ -44,12 +49,20 @@ const ViewUpdateGraduates = () => {
               <td className="p-2">{g.department}</td>
               <td className="p-2">{g.college}</td>
               <td className="p-2">{g.program}</td>
-              <td className="p-2">
+              <td className="p-2">{g.status}</td>
+              <td className="p-2">{new Date(g.endDate).getFullYear()}</td>
+              <td className="p-2 flex space-x-2">
                 <button
                   onClick={() => handleUpdate(g.id)}
-                  className="px-4 py-2 bg-yellow-500 text-white rounded hover:bg-yellow-600"
+                  className="px-4 py-2 bg-yellow-500 text-white rounded hover:bg-yellow-600 cursor-pointer"
                 >
                   Update
+                </button>
+                <button
+                  onClick={() => handleUpdate(g.id)}
+                  className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 cursor-pointer"
+                >
+                  delete
                 </button>
               </td>
             </tr>
