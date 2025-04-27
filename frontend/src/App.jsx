@@ -55,9 +55,9 @@ import AdminLogin from "./pages/AdminLogin";
 import AdminDashboard from "./pages/AdminDashboard";
 import AddGraduate from "./pages/AddGraduate";
 import ViewUpdateGraduates from "./pages/ViewUpdateGraduates";
-import ThemeProvider from "./components/ThemeProvider";
+import ThemeProvider from "./pages/ThemeProvider";
 import AdminSidebar from "./pages/AdminSidebar";
-import AdminLayout from "./components/AdminLayout";
+import AdminLayout from "./pages/AdminLayout";
 import CertificateDetail from './components/CertificateDetail';
 
 const App = () => {
@@ -68,6 +68,7 @@ const App = () => {
         <Route path="/search" element={<GraduateSearch />} />
         <Route path="/certificate/:id" element={<CertificateDetail />} />
         <Route path="/admin/login" element={<AdminLogin />} />
+       {/* admin routes */}
         <Route
           path="/admin"
           element={

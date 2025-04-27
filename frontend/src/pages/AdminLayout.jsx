@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
-import AdminSidebar from "../pages/AdminSidebar";
-import ThemeToogler from "../pages/ThemeToogler";
+import AdminSidebar from "./AdminSidebar";
+import ThemeToogler from "./ThemeToogler";
 import { Menu } from "lucide-react";
 
 const AdminLayout = ({ children }) => {

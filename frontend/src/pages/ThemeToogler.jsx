@@ -1,5 +1,5 @@
 import React from 'react'
-import { useTheme } from '../components/ThemeProvider';
+import { useTheme } from './ThemeProvider';
 import { Sun, Moon, Monitor } from 'lucide-react'
 const ThemeToogler = () => {
   const { theme, setTheme } = useTheme();
