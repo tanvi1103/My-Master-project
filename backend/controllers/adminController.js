@@ -86,8 +86,13 @@ const uploadFile = (req, res) => {
         for (const record of data) {
           const student = new Student({
             certificateID: record.certificateID,
-            studentName: record.studentName,
-            internshipDomain: record.internshipDomain,
+            firstName: record.firstName,
+            middleName: record.middleName,
+            lastName: record.lastName,
+            department: record.department,
+            gender: record.gender,
+            cgpa: record.cgpa,
+            college: record.college,
             startDate: record.startDate,
             endDate: record.endDate,
           });
