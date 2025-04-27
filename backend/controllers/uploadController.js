@@ -31,6 +31,9 @@ const uploadExcelFile = async (req, res, next) => {
           H: 'startDate',
           I: 'endDate',
           J:'gender',
+          K: 'program',
+          L: 'status'
+
         }
       }]
     });
