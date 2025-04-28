@@ -141,13 +141,38 @@ const getSingleCertificate = async (req, res) => {
 
 const updateSingleCertificate = async (req, res) => {
   try {
-    const { certificateID, studentName, internshipDomain, startDate, endDate } =
-      req.body;
-    const certificate = await Certificate.findByIdAndUpdate(
-      req.params.id,
-      { certificateID, studentName, internshipDomain, startDate, endDate },
+    const {
+      certificateID,
+      firstName,
+      middleName,
+      lastName,
+      college,
+      department,
+      gender,
+      gstatus,
+      program,
+      startDate,
+      endDate,
+    } = req.body;
+
+    const certificate = await Certificate.findOneAndUpdate(
+      { certificateID: req.params.certificateID }, // filter by certificateID
+      {
+        certificateID,
+        firstName,
+        middleName,
+        lastName,
+        college,
+        department,
+        gender,
+        gstatus,
+        program,
+        startDate,
+        endDate,
+      },
       { new: true }
     );
+
     if (!certificate) {
       return res.status(404).json({ message: "Certificate not found" });
     }

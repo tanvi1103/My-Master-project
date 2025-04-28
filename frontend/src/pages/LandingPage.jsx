@@ -17,7 +17,7 @@ const LandingPage = () => {
           Search Graduate
         </Link>
         <Link
-          to="/admin"
+          to="/admin/login"
           className="px-6 py-3 bg-gray-800 text-white rounded-lg shadow hover:bg-gray-900 transition"
         >
           Admin Login

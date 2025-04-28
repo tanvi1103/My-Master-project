@@ -32,7 +32,7 @@ const uploadExcelFile = async (req, res, next) => {
           I: 'endDate',
           J:'gender',
           K: 'program',
-          L: 'status'
+          L: 'gstatus'
 
         }
       }]

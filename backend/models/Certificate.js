@@ -30,7 +30,7 @@ const CertificateSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  status: {
+  gstatus: {
     type: String,
     required: true,
   },

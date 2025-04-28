@@ -49,7 +49,7 @@ const ViewUpdateGraduates = () => {
               <td className="p-2">{g.department}</td>
               <td className="p-2">{g.college}</td>
               <td className="p-2">{g.program}</td>
-              <td className="p-2">{g.status}</td>
+              <td className="p-2">{g.gstatus}</td>
               <td className="p-2">{new Date(g.endDate).getFullYear()}</td>
               <td className="p-2 flex space-x-2">
                 <button
