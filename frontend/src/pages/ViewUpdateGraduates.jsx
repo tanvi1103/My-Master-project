@@ -1,4 +1,6 @@
 import axios from 'axios';
+import Swal from 'sweetalert2'; // 👈 import at the top
+
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -24,9 +26,53 @@ const ViewUpdateGraduates = () => {
     navigate(`/admin/edit-graduate/${certificateID}`);
   };
 
-  const handleDelete = (certificateID) => {
-    navigate(`/admin/delete-graduate/${certificateID}`);
+
+  const handleDelete = async (certificateID) => {
+    const token = localStorage.getItem('adminToken');
+  
+    const result = await Swal.fire({
+      title: 'Are you sure?',
+      text: "You won't be able to revert this!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#3085d6',
+      confirmButtonText: 'Yes, delete it!',
+      background: '#1f2937', // dark mode background
+      color: '#fff', // text color
+    });
+  
+    if (result.isConfirmed) {
+      try {
+        await axios.delete(`http://localhost:5000/api/admin/certificates/${certificateID}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+  
+        Swal.fire({
+          title: 'Deleted!',
+          text: 'The graduate has been deleted.',
+          icon: 'success',
+          timer: 1500,
+          showConfirmButton: false,
+          background: '#1f2937',
+          color: '#fff',
+        });
+  
+        // After delete: refresh the graduates list
+        setGraduates(prev => prev.filter(g => g.certificateID !== certificateID));
+      } catch (error) {
+        console.error('Error deleting graduate:', error);
+        Swal.fire({
+          title: 'Error!',
+          text: 'Failed to delete the graduate.',
+          icon: 'error',
+          background: '#1f2937',
+          color: '#fff',
+        });
+      }
+    }
   };
+  
 
   return (
     <div className="p-6 max-w-4xl mx-auto text-gray-900 dark:text-white">

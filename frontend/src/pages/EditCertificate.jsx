@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { toast } from 'react-hot-toast'; // Added for Toast
+import Swal from 'sweetalert2';
 
 const EditGraduate = () => {
   const { certificateID } = useParams();
@@ -50,7 +51,12 @@ const EditGraduate = () => {
       formData,
       { headers: { Authorization: `Bearer ${token}` }
     });
-    toast.success('Graduate updated successfully! 🎉');
+    Swal.fire({
+      icon: 'success',
+      title: 'Graduate updated successfully!',
+      showConfirmButton: false,
+      timer: 1500
+    });
     setTimeout(() => navigate('/admin/view-graduates'), 1500);
   };
 
