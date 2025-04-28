@@ -20,6 +20,18 @@ app.use(cookieParser());
 app.get("/", (req, res) => {
   res.send("Backend is running...");
 });
+const helmet = require('helmet');
+app.use(helmet());
+
+const rateLimit = require('express-rate-limit');
+
+// Apply rate limiting middleware to all requests
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100, // max 100 requests per 15 minutes
+});
+app.use(limiter);
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use("/api/admin", adminroutes);
@@ -29,4 +41,9 @@ const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   connectDB();
   console.log(`Server running on port http://localhost:${PORT}`);
+});
+// At the bottom
+app.use((err, req, res, next) => {
+  console.error(err.stack); // only log in server
+  res.status(500).json({ message: 'Something went wrong' });
 });
