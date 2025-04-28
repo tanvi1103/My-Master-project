@@ -2,10 +2,14 @@ import React, { useState, useEffect, useRef } from "react";
 import AdminSidebar from "./AdminSidebar";
 import ThemeToogler from "./ThemeToogler";
 import { Menu } from "lucide-react";
+import axios from "axios";
+import Swal from "sweetalert2";
+import { useNavigate } from "react-router-dom";
 
 const AdminLayout = ({ children }) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const sidebarRef = useRef();
+  const navigate = useNavigate(); // Initialize useNavigate for navigation
 
   // Close sidebar when clicking outside
   useEffect(() => {
@@ -24,6 +28,20 @@ const AdminLayout = ({ children }) => {
     };
   }, [sidebarOpen]);
 
+  // Logout function
+
+  const handleAdminLogout = async () =>{
+    try{
+      await axios.get('http://localhost:5000/api/admin/logout')
+      navigate('/admin/login')
+      Swal.fire('Success', '🎉 Admin Logout Successful!', 'success');
+    }
+    catch(error){
+      console.error('Admin logout failed:', error);
+      Swal.fire('Error', '❌ Admin Logout Failed', 'error');
+
+  }
+}
   // ...existing code...
   return (
     <div className="min-h-screen bg-gary-100 dark:bg-gray-900 flex flex-col md:flex-row">
@@ -49,7 +67,12 @@ const AdminLayout = ({ children }) => {
           >
             Settings
           </a>
+          <button onClick={handleAdminLogout} className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded transition duration-300 ease-in-out">
+  Logout
+</button>
         </div>
+
+
         <ThemeToogler />
       </nav>
       {/* Mobile toggle button and theme toggle - fixed under navbar */}

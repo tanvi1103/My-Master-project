@@ -6,24 +6,30 @@ import axios from "axios";
 import Swal from "sweetalert2";
 
 const AdminLogin = () => {
-  const [adminCredentials, setAdminCredentials] = useState({ email: '', password: '' });
+  const [adminCredentials, setAdminCredentials] = useState({
+    email: "",
+    password: "",
+  });
   const navigate = useNavigate(); // Initialized useNavigate to redirect after login
 
   const handleAdminLogin = async (e) => {
-      e.preventDefault();
-      try {
-          const response = await axios.post('http://localhost:5000/api/admin/login', adminCredentials); // Admin login API call
-          console.log('Admin logged in:', response.data);
-          
-          // Store token in localStorage for admin authorization
-          localStorage.setItem('adminToken', response.data.token);
+    e.preventDefault();
+    try {
+      const response = await axios.post(
+        "http://localhost:5000/api/admin/login",
+        adminCredentials
+      ); // Admin login API call
+      console.log("Admin logged in:", response.data);
 
-          Swal.fire('Success', '🎉 Admin Login Successful!', 'success');
-          navigate('/admin'); // Redirect to Admin Dashboard upon successful login
-      } catch (error) {
-          console.error('Admin login failed:', error);
-          Swal.fire('Error', '❌ Admin Login Failed', 'error');
-      }
+      // Store token in localStorage for admin authorization
+      localStorage.setItem("adminToken", response.data.token);
+
+      Swal.fire("Success", "🎉 Admin Login Successful!", "success");
+      navigate("/admin"); // Redirect to Admin Dashboard upon successful login
+    } catch (error) {
+      console.error("Admin login failed:", error);
+      Swal.fire("Error", "❌ Admin Login Failed", "error");
+    }
   };
 
   const handleInputChange = (e) => {
@@ -36,24 +42,24 @@ const AdminLogin = () => {
       <div className="w-full max-w-md bg-white dark:bg-gray-800 p-6 rounded-lg shadow">
         <h2 className="text-2xl font-bold mb-6 text-center">Admin Login</h2>
         <form className="space-y-4" onSubmit={handleAdminLogin}>
-        <input
-  type="email"
-  name="email"
-  placeholder="Email"
-  value={adminCredentials.email}
-  onChange={handleInputChange}
-  required
-  className="w-full p-2 rounded border dark:bg-gray-700"
-/>
-<input
-  type="password"
-  name="password"
-  placeholder="Password"
-  value={adminCredentials.password}
-  onChange={handleInputChange}
-  required
-  className="w-full p-2 rounded border dark:bg-gray-700"
-/>
+          <input
+            type="email"
+            name="email"
+            placeholder="Email"
+            value={adminCredentials.email}
+            onChange={handleInputChange}
+            required
+            className="w-full p-2 rounded border dark:bg-gray-700"
+          />
+          <input
+            type="password"
+            name="password"
+            placeholder="Password"
+            value={adminCredentials.password}
+            onChange={handleInputChange}
+            required
+            className="w-full p-2 rounded border dark:bg-gray-700"
+          />
           <button
             type="submit"
             className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700"
