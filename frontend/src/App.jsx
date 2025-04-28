@@ -49,6 +49,7 @@
 import React from "react";
 
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { Toaster } from "react-hot-toast";
 import LandingPage from "./pages/LandingPage";
 import GraduateSearch from "./pages/GraduateSearch";
 import AdminLogin from "./pages/AdminLogin";
@@ -59,10 +60,13 @@ import ThemeProvider from "./pages/ThemeProvider";
 import AdminSidebar from "./pages/AdminSidebar";
 import AdminLayout from "./pages/AdminLayout";
 import CertificateDetail from './components/CertificateDetail';
+import EditGraduate from './pages/EditCertificate';
+
 
 const App = () => {
   return (
     <ThemeProvider>
+      <Toaster position="top-center" reverseOrder={false} />
       <Routes>
         <Route path="/" element={<LandingPage />} />
         <Route path="/search" element={<GraduateSearch />} />
@@ -92,6 +96,15 @@ const App = () => {
           element={
             <AdminLayout>
               <ViewUpdateGraduates />
+            </AdminLayout>
+          }
+        />
+
+        <Route
+          path="/admin/edit-graduate/:certificateID"
+          element={
+            <AdminLayout>
+              <EditGraduate />
             </AdminLayout>
           }
         />

@@ -1,6 +1,8 @@
 import axios from 'axios';
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import { motion } from 'framer-motion';
+import { toast } from 'react-hot-toast'; // Added for Toast
 
 const EditGraduate = () => {
   const { certificateID } = useParams();
@@ -18,6 +20,7 @@ const EditGraduate = () => {
     startDate: '',
     endDate: '',
   });
+
   const token = localStorage.getItem('adminToken');
 
   useEffect(() => {
@@ -26,7 +29,12 @@ const EditGraduate = () => {
         headers: { Authorization: `Bearer ${token}` },
       });
       const data = await res.data;
-      setFormData(data);
+
+      setFormData({
+        ...data,
+        startDate: data.startDate ? data.startDate.slice(0, 10) : '',
+        endDate: data.endDate ? data.endDate.slice(0, 10) : '',
+      });
     };
     fetchGraduate();
   }, [certificateID, token]);
@@ -38,145 +46,129 @@ const EditGraduate = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     await axios.put(
-      `http://localhost:5000/api/admin/certificates/${certificateID}`,
+      `http://localhost:5000/api/admin/certificates/${certificateID}/edit`,
       formData,
-      { headers: { Authorization: `Bearer ${token}` } }
-    );
-    navigate('/admin/graduates'); // navigate back to the graduates list after update
+      { headers: { Authorization: `Bearer ${token}` }
+    });
+    toast.success('Graduate updated successfully! 🎉');
+    setTimeout(() => navigate('/admin/view-graduates'), 1500);
   };
 
+  // Floating Input
+  const renderInput = (name, type = 'text') => (
+    <div className="relative w-full" key={name}>
+      <input
+        type={type}
+        id={name}
+        name={name}
+        value={formData[name]}
+        onChange={handleChange}
+        placeholder=" "
+        className="peer w-full pt-5 pb-2 px-3 rounded-lg border border-gray-400 dark:border-gray-600 bg-transparent text-gray-900 dark:text-white focus:border-blue-500 focus:ring-0 focus:outline-none dark:bg-gray-800"
+        required
+      />
+      <label
+        htmlFor={name}
+        className="absolute left-3 -top-3.5 bg-white dark:bg-gray-800 px-1 text-sm text-gray-500 dark:text-gray-400 transition-all peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 peer-focus:-top-3.5 peer-focus:text-sm peer-focus:text-blue-600 dark:peer-focus:text-blue-400"
+      >
+        {name.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())}
+      </label>
+    </div>
+  );
+
+  // Floating Select
+  const renderSelect = (name, options) => (
+    <div className="relative w-full">
+      <select
+        id={name}
+        name={name}
+        value={formData[name]}
+        onChange={handleChange}
+        className="peer w-full pt-5 pb-2 px-3 rounded-lg border border-gray-400 dark:border-gray-600 bg-transparent text-gray-900 dark:text-white focus:border-blue-500 focus:ring-0 focus:outline-none dark:bg-gray-800 appearance-none"
+        required
+      >
+        <option value="" disabled hidden></option>
+        {options.map(option => (
+          <option key={option} value={option}>{option}</option>
+        ))}
+      </select>
+      <label
+        htmlFor={name}
+        className="absolute left-3 -top-3.5 bg-white dark:bg-gray-800 px-1 text-sm text-gray-500 dark:text-gray-400 transition-all peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 peer-focus:-top-3.5 peer-focus:text-sm peer-focus:text-blue-600 dark:peer-focus:text-blue-400"
+      >
+        {name.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())}
+      </label>
+    </div>
+  );
+
+  // Check if any field is empty
+  const isFormInvalid = Object.values(formData).some(
+    value => typeof value === "string" ? value.trim() === "" : value === "" || value == null
+  );
+
   return (
-    <div className="p-6 max-w-4xl mx-auto text-gray-900 dark:text-white">
-      <h2 className="text-2xl font-bold mb-6">Edit Graduate</h2>
-      <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <input
-          type="text"
-          name="certificateID"
-          value={formData.certificateID}
-          onChange={handleChange}
-          placeholder="Certificate ID"
-          className="p-2 rounded bg-gray-100 dark:bg-gray-800"
-          required
-        />
-        <input
-          type="text"
-          name="firstName"
-          value={formData.firstName}
-          onChange={handleChange}
-          placeholder="First Name"
-          className="p-2 rounded bg-gray-100 dark:bg-gray-800"
-          required
-        />
-        <input
-          type="text"
-          name="middleName"
-          value={formData.middleName}
-          onChange={handleChange}
-          placeholder="Middle Name"
-          className="p-2 rounded bg-gray-100 dark:bg-gray-800"
-          required
-        />
-        <input
-          type="text"
-          name="lastName"
-          value={formData.lastName}
-          onChange={handleChange}
-          placeholder="Last Name"
-          className="p-2 rounded bg-gray-100 dark:bg-gray-800"
-          required
-        />
-        {/* College Select */}
-        <select
-          name="college"
-          value={formData.college}
-          onChange={handleChange}
-          className="p-2 rounded bg-gray-100 dark:bg-gray-800"
-          required
-        >
-          <option value="">Select College</option>
-          <option value="Engineering">Engineering</option>
-          <option value="Business">Business</option>
-          <option value="Health Science">Health Science</option>
-          {/* Add more colleges as needed */}
-        </select>
-        {/* Department Select */}
-        <select
-          name="department"
-          value={formData.department}
-          onChange={handleChange}
-          className="p-2 rounded bg-gray-100 dark:bg-gray-800"
-          required
-        >
-          <option value="">Select Department</option>
-          <option value="Computer Science">Computer Science</option>
-          <option value="Mechanical Engineering">Mechanical Engineering</option>
-          <option value="Accounting">Accounting</option>
-          {/* Add more departments */}
-        </select>
-        {/* Gender Select */}
-        <select
-          name="gender"
-          value={formData.gender}
-          onChange={handleChange}
-          className="p-2 rounded bg-gray-100 dark:bg-gray-800"
-          required
-        >
-          <option value="">Select Gender</option>
-          <option value="Male">Male</option>
-          <option value="Female">Female</option>
-        </select>
-        {/* Status Select */}
-        <select
-          name="gstatus"
-          value={formData.gstatus}
-          onChange={handleChange}
-          className="p-2 rounded bg-gray-100 dark:bg-gray-800"
-          required
-        >
-          <option value="">Select Status</option>
-          <option value="Graduated">Graduated</option>
-          <option value="Pending">Pending</option>
-          <option value="Suspended">Suspended</option>
-        </select>
-        {/* Program Select */}
-        <select
-          name="program"
-          value={formData.program}
-          onChange={handleChange}
-          className="p-2 rounded bg-gray-100 dark:bg-gray-800"
-          required
-        >
-          <option value="">Select Program</option>
-          <option value="BSc">BSc</option>
-          <option value="MSc">MSc</option>
-          <option value="PhD">PhD</option>
-        </select>
-        {/* Start and End Date */}
-        <input
-          type="date"
-          name="startDate"
-          value={formData.startDate ? formData.startDate.substring(0, 10) : ''}
-          onChange={handleChange}
-          placeholder="Start Date"
-          className="p-2 rounded bg-gray-100 dark:bg-gray-800"
-          required
-        />
-        <input
-          type="date"
-          name="endDate"
-          value={formData.endDate ? formData.endDate.substring(0, 10) : ''}
-          onChange={handleChange}
-          placeholder="End Date"
-          className="p-2 rounded bg-gray-100 dark:bg-gray-800"
-          required
-        />
-        <button
-          type="submit"
-          className="col-span-1 md:col-span-2 mt-4 bg-blue-600 text-white py-2 rounded hover:bg-blue-700"
-        >
-          Update Graduate
-        </button>
-      </form>
+    <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-gray-900 p-4">
+      <motion.div
+        initial={{ opacity: 0, scale: 0.9 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.5 }}
+        className="w-full max-w-4xl bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-8"
+      >
+        <h2 className="text-3xl font-bold mb-8 text-center text-gray-800 dark:text-white">
+          Edit Graduate
+        </h2>
+
+        <form onSubmit={handleSubmit} className="flex flex-col gap-6">
+
+          {/* Certificate ID */}
+          {renderInput('certificateID')}
+
+          {/* Names */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {['firstName', 'middleName', 'lastName'].map(name => renderInput(name))}
+          </div>
+
+          {/* Selects */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {renderSelect('college', ['Engineering', 'Business', 'Health Science'])}
+            {renderSelect('department', ['Computer Science', 'Mechanical Engineering', 'Accounting'])}
+            {renderSelect('gender', ['Male', 'Female'])}
+            {renderSelect('gstatus', ['Graduated', 'Pending', 'Suspended'])}
+            {renderSelect('program', ['BSc', 'MSc', 'PhD'])}
+          </div>
+
+          {/* Dates */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {renderInput('startDate', 'date')}
+            {renderInput('endDate', 'date')}
+          </div>
+
+          {/* Submit Button */}
+          <motion.button
+            whileHover={!isFormInvalid ? { scale: 1.05 } : {}}
+            whileTap={!isFormInvalid ? { scale: 0.95 } : {}}
+            type="submit"
+            disabled={isFormInvalid}
+            className={`mt-8 ${
+              isFormInvalid ? 'bg-gray-500 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700'
+            } text-white font-semibold py-3 rounded-lg shadow-md transition duration-300`}
+          >
+            Update Graduate
+          </motion.button>
+
+          {/* Back Button */}
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            type="button"
+            onClick={() => navigate(-1)}
+            className="mt-4 bg-gray-300 hover:bg-gray-400 text-gray-800 font-semibold py-2 rounded-lg transition duration-300"
+          >
+            Back
+          </motion.button>
+
+        </form>
+      </motion.div>
     </div>
   );
 };
