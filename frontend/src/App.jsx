@@ -61,7 +61,9 @@ import AdminSidebar from "./pages/AdminSidebar";
 import AdminLayout from "./pages/AdminLayout";
 import CertificateDetail from './components/CertificateDetail';
 import EditGraduate from './pages/EditCertificate';
+import axios from 'axios';
 
+axios.defaults.withCredentials = true;
 
 const App = () => {
   return (
