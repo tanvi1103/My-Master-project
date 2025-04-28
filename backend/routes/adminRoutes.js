@@ -1,4 +1,5 @@
 const express = require("express");
+const authenticateToken = require("../middleware/authMiddleware");
 const {
   loginAdmin,
   getAllCertificates,
@@ -12,9 +13,9 @@ const router = express.Router();
 
 router.post("/login", loginAdmin);
 router.post("/addStudents", addStudentCredentials); 
-router.get("/certificates", getAllCertificates);
+router.get("/certificates", authenticateToken, getAllCertificates);
 router.get("/certificates/:certificateID", getSingleCertificate);
-router.delete("/certificates/:id/delete", deleteSingleCertificate);
-router.put("/certificates/:id/edit", updateSingleCertificate);
+router.delete("/certificates/:id", authenticateToken, deleteSingleCertificate);
+router.put("/certificates/:certificateID/edit", authenticateToken, updateSingleCertificate);
 
 module.exports = router;
