@@ -1,20 +1,31 @@
 import axios from 'axios';
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const ViewUpdateGraduates = () => {
   const [graduates, setGraduates] = useState([]);
+  const token = localStorage.getItem("adminToken");
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchGraduates = async () => {
-      const response = await axios.get("http://localhost:5000/api/admin/certificates");
+      const response = await axios.get("http://localhost:5000/api/admin/certificates", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       const data = await response.data;
       setGraduates(data);
     };
     fetchGraduates();
   }, []);
 
-  const handleUpdate = (id) => {
-    console.log('Updating graduate with id:', id);
+  const handleUpdate = (certificateID) => {
+    navigate(`/admin/edit-graduate/${certificateID}`);
+  };
+
+  const handleDelete = (certificateID) => {
+    navigate(`/admin/delete-graduate/${certificateID}`);
   };
 
   return (
@@ -53,16 +64,16 @@ const ViewUpdateGraduates = () => {
               <td className="p-2">{new Date(g.endDate).getFullYear()}</td>
               <td className="p-2 flex space-x-2">
                 <button
-                  onClick={() => handleUpdate(g.id)}
+                  onClick={() => handleUpdate(g.certificateID)}
                   className="px-4 py-2 bg-yellow-500 text-white rounded hover:bg-yellow-600 cursor-pointer"
                 >
-                  Update
+                  Edit
                 </button>
                 <button
-                  onClick={() => handleUpdate(g.id)}
+                  onClick={() => handleDelete(g.certificateID)}
                   className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 cursor-pointer"
                 >
-                  delete
+                  Delete
                 </button>
               </td>
             </tr>
