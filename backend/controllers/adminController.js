@@ -185,11 +185,11 @@ const updateSingleCertificate = async (req, res) => {
 // delete single student certificate
 const deleteSingleCertificate = async (req, res) => {
   try {
-    const certificate = await Certificate.findByIdAndDelete(req.params.certificateID);
-    if (!certificate) {
+    const result = await Certificate.findOneAndDelete({ certificateID: req.params.certificateID });
+    if (!result) {
       return res.status(404).json({ message: "Certificate not found" });
     }
-    res.status(200).json({ message: "Certificate deleted successfully" });
+    res.status(200).json({ message: "Deleted successfully" });
   } catch (error) {
     res.status(500).json({ message: "Server error" });
   }

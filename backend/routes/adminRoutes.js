@@ -15,7 +15,7 @@ router.post("/login", loginAdmin);
 router.post("/addStudents", addStudentCredentials); 
 router.get("/certificates", authenticateToken, getAllCertificates);
 router.get("/certificates/:certificateID", getSingleCertificate);
-router.delete("/certificates/:id", authenticateToken, deleteSingleCertificate);
+router.delete("/certificates/:certificateID", authenticateToken, deleteSingleCertificate);
 router.put("/certificates/:certificateID/edit", authenticateToken, updateSingleCertificate);
 
 module.exports = router;
