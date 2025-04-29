@@ -9,9 +9,9 @@ import { useNavigate } from "react-router-dom";
 const AdminLayout = ({ children }) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const sidebarRef = useRef();
-  const navigate = useNavigate(); // Initialize useNavigate for navigation
+  const navigate = useNavigate();
 
-  // Close sidebar when clicking outside
+  // Click outside to close sidebar (mobile)
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (sidebarRef.current && !sidebarRef.current.contains(event.target)) {
@@ -23,85 +23,56 @@ const AdminLayout = ({ children }) => {
     } else {
       document.removeEventListener("mousedown", handleClickOutside);
     }
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [sidebarOpen]);
 
-  // Logout function
-
-  const handleAdminLogout = async () =>{
-    try{
-      await axios.get('http://localhost:5000/api/admin/logout')
-      navigate('/admin/login')
-      Swal.fire('Success', '🎉 Admin Logout Successful!', 'success');
+  // Logout
+  const handleAdminLogout = async () => {
+    try {
+      await axios.get("http://localhost:5000/api/admin/logout", { withCredentials: true });
+      Swal.fire("Success", "🎉 Admin Logout Successful!", "success");
+      navigate("/admin/login");
+    } catch (error) {
+      Swal.fire("Error", "❌ Admin Logout Failed", "error");
     }
-    catch(error){
-      console.error('Admin logout failed:', error);
-      Swal.fire('Error', '❌ Admin Logout Failed', 'error');
+  };
 
-  }
-}
-  // ...existing code...
   return (
-    <div className="min-h-screen bg-gary-100 dark:bg-gray-900 flex flex-col md:flex-row">
-      {/* Navbar - fixed at the top */}
-      <nav className="fixed top-0 left-0 w-full z-30 flex items-center justify-between px-6 py-4 bg-white dark:bg-gray-900 border-b shadow-sm">
+    <div className="min-h-screen bg-gray-100 dark:bg-gray-900 flex flex-col md:flex-row">
+      {/* Navbar */}
+      <nav className="fixed top-0 left-0 w-full z-30 flex items-center justify-between px-4 py-3 bg-white dark:bg-gray-800 shadow-md">
         <div className="flex items-center gap-4">
-          <span className="font-bold text-xl">Admin Panel</span>
-          <a
-            href="/admin/dashboard"
-            className="text-gray-700 dark:text-gray-200 hover:underline px-2"
-          >
-            Dashboard
-          </a>
-          <a
-            href="/admin/users"
-            className="text-gray-700 dark:text-gray-200 hover:underline px-2"
-          >
-            Users
-          </a>
-          <a
-            href="/admin/settings"
-            className="text-gray-700 dark:text-gray-200 hover:underline px-2"
-          >
-            Settings
-          </a>
-          <button onClick={handleAdminLogout} className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded transition duration-300 ease-in-out">
-  Logout
-</button>
-        </div>
-
-
-        <ThemeToogler />
-      </nav>
-      {/* Mobile toggle button and theme toggle - fixed under navbar */}
-      <div className="md:hidden fixed top-16 left-0 w-full z-20 flex justify-between items-center px-4 py-2 border-b bg-white dark:bg-gray-900">
-        <div className="flex items-center gap-2">
           <button
-            className="text-gray-800 dark:text-gray-100 p-2 rounded hover:bg-gray-200 dark:hover:bg-gray-700"
             onClick={() => setSidebarOpen(!sidebarOpen)}
+            className="md:hidden text-gray-800 dark:text-white"
           >
-            <Menu className="h-6 w-6" />
+            <Menu size={24} />
           </button>
-          <span className="font-bold text-lg">Admin Panel</span>
+          <span className="font-bold text-lg text-gray-900 dark:text-white">BUGCVS</span>
         </div>
-        <ThemeToogler />
-      </div>
+        <div className="flex items-center gap-4">
+          <ThemeToogler />
+          <button
+            onClick={handleAdminLogout}
+            className="bg-red-500 hover:bg-red-600 text-white py-1 px-3 rounded"
+          >
+            Logout
+          </button>
+        </div>
+      </nav>
+
       {/* Sidebar */}
       <div
         ref={sidebarRef}
-        className={`fixed md:relative z-20 top-0 left-0 min-h-screen w-64 bg-white dark:bg-gray-900 shadow-md transform transition-transform duration-300 ease-in-out
-        ${
-          sidebarOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"
-        }`}
-        style={{ marginTop: "84px" }} // Adjust for navbar height
+        className={`fixed top-16 md:top-0 left-0 z-20 h-full w-64 bg-white dark:bg-gray-800 shadow-lg transition-transform duration-300 ease-in-out 
+        ${sidebarOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"}`}
       >
         <AdminSidebar />
       </div>
+
       {/* Main content */}
-      <main className="flex-1 ml-0  p-4 " style={{ marginTop: "64px" }}>
-        {children}
+      <main className="flex-1 p-4 mt-20  max-w-6xl mx-auto">{children}
+
       </main>
     </div>
   );

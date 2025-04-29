@@ -1,34 +1,33 @@
-import React from 'react'
-import { FaCloudUploadAlt, FaGraduationCap, FaPlus } from 'react-icons/fa'
-import { Link } from 'react-router-dom'
+import React from "react";
+import { FaCloudUploadAlt, FaGraduationCap, FaPlus } from "react-icons/fa";
+import { Link } from "react-router-dom";
 
 const AdminSidebar = () => {
   return (
-        <aside className="w-64 bg-white  min-h-screen dark:bg-gray-800 shadow-md p-4 space-y-4">
-    <h2 className="text-xl font-bold text-gray-800 dark:text-white mb-6">Admin Dashboard</h2>
-    <nav className="flex flex-col gap-3">
-      <Link
-        to="/admin/view-graduates"
-        className="flex items-center gap-2 p-2 rounded hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-800 dark:text-white"
-      >
-        <FaGraduationCap /> View & Update Graduates
-      </Link>
-      <Link
-        to="/admin/add-graduate"
-        className="flex items-center gap-2 p-2 rounded hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-800 dark:text-white"
-      >
-        <FaPlus /> Add Graduate (Single)
-      </Link>
-      <Link
-        to="/admin/upload-excel"
-        className="flex items-center gap-2 p-2 rounded hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-800 dark:text-white"
-      >
-        <FaCloudUploadAlt /> Upload Excel (.xlsx)
-      </Link>
-    </nav>
-  </aside>
+    <aside className="w-full md:w-64 p-6 space-y-6">
+      <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Dashboard</h2>
+      <nav className="flex flex-col gap-4">
+        <Link
+          to="/admin/view-graduates"
+          className="flex items-center gap-3 px-3 py-2 rounded hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-800 dark:text-white transition"
+        >
+          <FaGraduationCap /> View & Update Graduates
+        </Link>
+        <Link
+          to="/admin/add-graduate"
+          className="flex items-center gap-3 px-3 py-2 rounded hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-800 dark:text-white transition"
+        >
+          <FaPlus /> Add Graduate (Single)
+        </Link>
+        <Link
+          to="/admin/upload-excel"
+          className="flex items-center gap-3 px-3 py-2 rounded hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-800 dark:text-white transition"
+        >
+          <FaCloudUploadAlt /> Upload Excel (.xlsx)
+        </Link>
+      </nav>
+    </aside>
+  );
+};
 
-  )
-}
-
-export default AdminSidebar
+export default AdminSidebar;
