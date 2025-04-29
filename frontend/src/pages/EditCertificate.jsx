@@ -2,7 +2,6 @@ import axios from 'axios';
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { toast } from 'react-hot-toast'; // Added for Toast
 import Swal from 'sweetalert2';
 
 const EditGraduate = () => {
@@ -26,38 +25,82 @@ const EditGraduate = () => {
 
   useEffect(() => {
     const fetchGraduate = async () => {
-      const res = await axios.get(`http://localhost:5000/api/admin/certificates/${certificateID}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      const data = await res.data;
-
-      setFormData({
-        ...data,
-        startDate: data.startDate ? data.startDate.slice(0, 10) : '',
-        endDate: data.endDate ? data.endDate.slice(0, 10) : '',
-      });
+      try {
+        const res = await axios.get(
+          `http://localhost:5000/api/admin/certificates/${certificateID}`,
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+        const data = await res.data;
+        setFormData({
+          ...data,
+          startDate: data.startDate ? data.startDate.slice(0, 10) : '',
+          endDate: data.endDate ? data.endDate.slice(0, 10) : '',
+        });
+      } catch (error) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Error fetching graduate data',
+          text: error.response?.data?.message || 'Something went wrong.',
+        });
+        navigate('/admin/view-graduates');
+      }
     };
     fetchGraduate();
-  }, [certificateID, token]);
+  }, [certificateID, token, navigate]);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
+  // Field-specific validation
+  const nameRegex = /^[A-Za-z\s-]+$/;
+  const certificateIDRegex = /^[A-Za-z0-9]+$/;
+  
+  const validateForm = () => {
+    if (!formData.firstName.trim()) return "First name is required";
+    if (!nameRegex.test(formData.firstName)) return "First name can only contain letters, spaces, or hyphens";
+  
+    if (!formData.middleName.trim()) return "Middle name is required";
+    if (!nameRegex.test(formData.middleName)) return "Middle name can only contain letters, spaces, or hyphens";
+  
+    if (!formData.lastName.trim()) return "Last name is required";
+    if (!nameRegex.test(formData.lastName)) return "Last name can only contain letters, spaces, or hyphens";
+  
+    if (!formData.certificateID.trim()) return "Certificate ID is required";
+    if (!certificateIDRegex.test(formData.certificateID)) return "Certificate ID can only contain letters and numbers";
+  
+    if (!formData.startDate || !formData.endDate) return "Start and end dates are required";
+    if (formData.endDate < formData.startDate) return "End date must be after start date";
+    // Add more checks as needed
+    return "";
+  };
+
+  const errorMessage = validateForm();
+  const isFormInvalid = !!errorMessage;
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    await axios.put(
-      `http://localhost:5000/api/admin/certificates/${certificateID}/edit`,
-      formData,
-      { headers: { Authorization: `Bearer ${token}` }
-    });
-    Swal.fire({
-      icon: 'success',
-      title: 'Graduate updated successfully!',
-      showConfirmButton: false,
-      timer: 1500
-    });
-    setTimeout(() => navigate('/admin/view-graduates'), 1500);
+    if (isFormInvalid) return;
+    try {
+      await axios.put(
+        `http://localhost:5000/api/admin/certificates/${certificateID}/edit`,
+        formData,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      Swal.fire({
+        icon: 'success',
+        title: 'Graduate updated successfully!',
+        showConfirmButton: false,
+        timer: 1500
+      });
+      setTimeout(() => navigate('/admin/view-graduates'), 1500);
+    } catch (error) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Update failed',
+        text: error.response?.data?.message || 'Something went wrong.',
+      });
+    }
   };
 
   // Floating Input
@@ -84,7 +127,7 @@ const EditGraduate = () => {
 
   // Floating Select
   const renderSelect = (name, options) => (
-    <div className="relative w-full">
+    <div className="relative w-full" key={name}>
       <select
         id={name}
         name={name}
@@ -107,11 +150,6 @@ const EditGraduate = () => {
     </div>
   );
 
-  // Check if any field is empty
-  const isFormInvalid = Object.values(formData).some(
-    value => typeof value === "string" ? value.trim() === "" : value === "" || value == null
-  );
-
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-gray-900 p-4">
       <motion.div
@@ -125,6 +163,10 @@ const EditGraduate = () => {
         </h2>
 
         <form onSubmit={handleSubmit} className="flex flex-col gap-6">
+          {/* Show validation error */}
+          {errorMessage && (
+            <div className="text-red-500 text-sm mb-2">{errorMessage}</div>
+          )}
 
           {/* Certificate ID */}
           {renderInput('certificateID')}
@@ -172,7 +214,6 @@ const EditGraduate = () => {
           >
             Back
           </motion.button>
-
         </form>
       </motion.div>
     </div>

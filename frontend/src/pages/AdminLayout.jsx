@@ -71,7 +71,7 @@ const AdminLayout = ({ children }) => {
       </div>
 
       {/* Main content */}
-      <main className="flex-1 p-4 mt-20  max-w-6xl mx-auto">{children}
+      <main className="flex-1 p-4 mt-20  max-w-7xl mx-auto">{children}
 
       </main>
     </div>
