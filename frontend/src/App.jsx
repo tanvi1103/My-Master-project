@@ -62,6 +62,8 @@ import AdminLayout from "./pages/AdminLayout";
 import CertificateDetail from './components/CertificateDetail';
 import EditGraduate from './pages/EditCertificate';
 import axios from 'axios';
+import BulkGraduateUpload from "./pages/BulkGraduateUpload";
+import SingleGraduateForm from "./pages/SingleGraduateForm";
 
 axios.defaults.withCredentials = true;
 
@@ -89,6 +91,22 @@ const App = () => {
           element={
             <AdminLayout>
               <AddGraduate />
+            </AdminLayout>
+          }
+        />
+        <Route
+          path="/admin/add-graduate/single"
+          element={
+            <AdminLayout>
+              <SingleGraduateForm />
+            </AdminLayout>
+          }
+        />
+        <Route
+          path="/admin/add-graduate/file"
+          element={
+            <AdminLayout>
+              <BulkGraduateUpload />
             </AdminLayout>
           }
         />
