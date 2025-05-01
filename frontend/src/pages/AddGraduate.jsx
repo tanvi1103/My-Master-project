@@ -73,6 +73,7 @@ const initialGraduateState = {
 const nameRegex = /^[A-Za-z\s-]+$/;
 
 const AddGraduate = () => {
+  const navigate = useNavigate();
   const [mode, setMode] = useState("single"); // 'single' or 'file'
   const [graduate, setGraduate] = useState(initialGraduateState);
   const [formValid, setFormValid] = useState(false);
@@ -189,7 +190,8 @@ const AddGraduate = () => {
     } catch (error) {
       const { status } = error.response || {};
       if (status === 401) {
-        setErrorMessage("Unauthorized.");
+        setErrorMessage("Unauthorized. Please log in again.");
+        navigate("/admin/login"); // Redirect to login page
       } else if (status === 403) {
         setErrorMessage("Forbidden.");
       } else {
@@ -223,36 +225,36 @@ const AddGraduate = () => {
         </button>
       </div>
 
-      {mode === "single" && <SingleGraduateForm 
-      validateForm={validateForm} 
-      handleGraduateChange={handleGraduateChange}
-      handleGraduateSubmit={handleGraduateSubmit}
-      departmentOptions={departmentOptions}
-      graduate={graduate}
-      errorMessage={errorMessage}
-      formValid={formValid}
-      setGraduate={setGraduate}
-      setErrorMessage={setErrorMessage}
-      setFormValid={setFormValid}
-      collegeDepartmentData={collegeDepartmentData}
-      initialGraduateState={initialGraduateState}
-      nameRegex={nameRegex}
-      
+      {mode === "single" && (
+        <SingleGraduateForm
+          validateForm={validateForm}
+          handleGraduateChange={handleGraduateChange}
+          handleGraduateSubmit={handleGraduateSubmit}
+          departmentOptions={departmentOptions}
+          graduate={graduate}
+          errorMessage={errorMessage}
+          formValid={formValid}
+          setGraduate={setGraduate}
+          setErrorMessage={setErrorMessage}
+          setFormValid={setFormValid}
+          collegeDepartmentData={collegeDepartmentData}
+          initialGraduateState={initialGraduateState}
+          nameRegex={nameRegex}
+        />
+      )}
 
-
-      />}
-
-      {mode === "file" && <BulkGraduateUpload 
-      file={file}
-      setFile={setFile}
-      uploadStatus={uploadStatus}
-      setUploadStatus={setUploadStatus}
-      handleFileChange={handleFileChange}
-      handleFileUpload={handleFileUpload}
-      errorMessage={errorMessage}
-      setErrorMessage={setErrorMessage}
-      
-      />}
+      {mode === "file" && (
+        <BulkGraduateUpload
+          file={file}
+          setFile={setFile}
+          uploadStatus={uploadStatus}
+          setUploadStatus={setUploadStatus}
+          handleFileChange={handleFileChange}
+          handleFileUpload={handleFileUpload}
+          errorMessage={errorMessage}
+          setErrorMessage={setErrorMessage}
+        />
+      )}
     </div>
   );
 };
