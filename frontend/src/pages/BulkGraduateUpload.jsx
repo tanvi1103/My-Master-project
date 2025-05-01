@@ -1,37 +1,47 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import { FaFileExcel } from "react-icons/fa";
+import { FaFileExcel, FaUpload } from "react-icons/fa";
+import Swal from "sweetalert2";
+
 
 const BulkGraduateUpload = () => {
   const [file, setFile] = useState(null);
   const [uploadStatus, setUploadStatus] = useState("");
   const [showProgress, setShowProgress] = useState(false);
-  const [progress, setProgress] = useState(100); // Start at 100%
+  const [progress, setProgress] = useState(100);
   const [errorMessage, setErrorMessage] = useState("");
+  const [isUploading, setIsUploading] = useState(false);
+  const navigate = useNavigate();
 
   const handleFileChange = (e) => {
     setFile(e.target.files[0]);
-    setErrorMessage(""); // Clear error when a file is selected
+    setErrorMessage("");
+    setUploadStatus("");
   };
 
   const handleFileUpload = async (e) => {
     e.preventDefault();
+    setIsUploading(true);
     setUploadStatus("");
-    setErrorMessage(""); // Reset previous errors
+    setErrorMessage("");
 
     if (!file) {
       setErrorMessage("Please select a file to upload.");
+      setIsUploading(false);
       return;
     }
 
-    // Validate file type and size
-    if (!file.name || !file.name.match(/\.(xlsx|xls)$/i)) { // Case-insensitive match
+    // File validation
+    if (!file.name.match(/\.(xlsx|xls)$/i)) {
       setErrorMessage("Invalid file type. Please upload an Excel file.");
+      setIsUploading(false);
       return;
     }
-    if (file.size > 5 * 1024 * 1024) { // 5MB limit
-      setErrorMessage(`File size exceeds the 5MB limit. Your file is ${(file.size / (1024 * 1024)).toFixed(2)}MB.`);
+
+    if (file.size > 5 * 1024 * 1024) {
+      setErrorMessage(`File size exceeds 5MB limit (${(file.size / (1024 * 1024)).toFixed(2)}MB)`);
+      setIsUploading(false);
       return;
     }
 
@@ -41,20 +51,7 @@ const BulkGraduateUpload = () => {
     try {
       const token = localStorage.getItem("adminToken");
       if (!token) {
-        setErrorMessage("Unauthorized: No token found.");
-        setShowProgress(true); // Show progress indicator
-        let progressValue = 100; // Start at 100%
-        const interval = setInterval(() => {
-          progressValue -= 5; // Decrease progress by 5% every 100ms
-          setProgress(progressValue);
-
-          if (progressValue <= 0) {
-            clearInterval(interval);
-            setProgress(100); // Reset progress to 100%
-            setShowProgress(false);
-            navigate("/admin/login");
-          }
-        }, 100); // Update every 100ms
+        handleUnauthorized();
         return;
       }
 
@@ -66,78 +63,200 @@ const BulkGraduateUpload = () => {
             "Content-Type": "multipart/form-data",
             Authorization: `Bearer ${token}`,
           },
+          onUploadProgress: (progressEvent) => {
+            const percentCompleted = Math.round(
+              (progressEvent.loaded * 100) / progressEvent.total
+            );
+            setProgress(percentCompleted);
+          },
         }
       );
 
       if (response.status === 200) {
-        setUploadStatus("File uploaded successfully.");
-        setFile(null); // Reset the file input
-        setTimeout(() => setUploadStatus(""), 3000); // Clear success message after 3 seconds
-      } else {
-        setErrorMessage("Failed to upload file. Please try again.");
+        Swal.fire({
+          title: "Success!",
+          text: "File uploaded successfully",
+          icon: "success",
+          confirmButtonColor: "#10b981",
+          timer: 3000,
+          timerProgressBar: true,
+        });
+        setFile(null);
+        document.getElementById("file-upload").value = ""; // Reset file input
       }
     } catch (error) {
-      const { status } = error.response || {};
-      if (status === 401) {
-        setErrorMessage("Unauthorized. Redirecting to login...");
-        setShowProgress(true); // Show progress indicator
-      
-        let progressValue = 100; // Start at 100%
-        const interval = setInterval(() => {
-          progressValue -= 5; // Decrease progress by 5% every 100ms
-          setProgress(progressValue);
-      
-          if (progressValue <= 0) {
-            clearInterval(interval); // Stop the interval when progress reaches 0
-            setProgress(100); // Reset progress to 100%
-            setShowProgress(false); // Hide progress indicator
-            navigate("/admin/login"); // Redirect to login page
-          }
-        }, 100); // Update every 100ms
-      } else if (status === 403) {
-        setErrorMessage("Forbidden.");
-      } else {
-        setErrorMessage("An unexpected error occurred. Please try again.");
+      handleUploadError(error);
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
+  const handleUnauthorized = () => {
+    setErrorMessage("Session expired. Redirecting to login...");
+    setShowProgress(true);
+    
+    let progressValue = 100;
+    const interval = setInterval(() => {
+      progressValue -= 2;
+      setProgress(progressValue);
+
+      if (progressValue <= 0) {
+        clearInterval(interval);
+        navigate("/admin/login");
       }
+    }, 50);
+  };
+
+  const handleUploadError = (error) => {
+    if (error.response?.status === 401) {
+      handleUnauthorized();
+    } else if (error.response?.status === 403) {
+      setErrorMessage("You don't have permission to upload files");
+    } else {
+      setErrorMessage(
+        error.response?.data?.message || 
+        "Failed to upload file. Please check your network connection."
+      );
     }
   };
 
   return (
-    <>
-      <h2 className="text-2xl font-bold mb-4">Upload Graduates (Bulk File)</h2>
-      <form
-        onSubmit={handleFileUpload}
-        className="bg-gray-100 dark:bg-gray-800 p-6 rounded-lg"
-      >
-        <input
-          type="file"
-          accept=".xlsx, .xls"
-          className="w-full p-2 rounded border dark:bg-gray-700"
-          onChange={handleFileChange}
-        />
-        <button
-          type="submit"
-          className="mt-4 w-full px-6 py-2 bg-green-600 text-white rounded hover:bg-green-700 flex items-center gap-2 justify-center"
-        >
-          <FaFileExcel /> Upload
-        </button>
-        {uploadStatus && !errorMessage && (
-          <p className="text-green-500 mt-2">{uploadStatus}</p>
-        )}
-        {errorMessage && (
-          <p className="text-red-500 mt-2" aria-live="assertive">{errorMessage}</p>
-        )}
-        {showProgress && (
-          <div className="w-full bg-gray-300 rounded-full h-4 mt-4 mb-5" aria-live="polite">
-            <div
-              className="bg-green-500 h-4 rounded-full"
-              style={{ width: `${progress}%`, transition: "width 0.1s linear" }}
-            ></div>
-            <p className="text-center text-red-500 mt-2">Redirecting to login page</p>
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 p-4 sm:p-6 transition-colors duration-300">
+      <div className="max-w-3xl mx-auto">
+        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden transition-all duration-300 hover:shadow-xl">
+          {/* Header */}
+          <div className="bg-gradient-to-r from-green-600 to-green-700 p-6 text-center">
+            <h2 className="text-2xl sm:text-3xl font-bold text-white flex items-center justify-center gap-3">
+              <FaFileExcel className="text-xl sm:text-2xl" />
+              Bulk Graduate Upload
+            </h2>
           </div>
-        )}
-      </form>
-    </>
+
+          {/* Form */}
+          <div className="p-6 sm:p-8">
+            <form onSubmit={handleFileUpload} className="space-y-6">
+              {/* File Upload Area */}
+              <div className="space-y-2">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  Select Excel File (.xlsx, .xls)
+                </label>
+                <div className="flex items-center justify-center w-full">
+                  <label
+                    htmlFor="file-upload"
+                    className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed rounded-lg cursor-pointer 
+                    border-gray-300 dark:border-gray-600 hover:border-green-500 dark:hover:border-green-500 transition-colors duration-200
+                    bg-gray-50 dark:bg-gray-700"
+                  >
+                    <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                      <FaUpload className="w-8 h-8 mb-3 text-gray-500 dark:text-gray-400" />
+                      <p className="mb-2 text-sm text-gray-500 dark:text-gray-400">
+                        <span className="font-semibold">Click to upload</span> or drag and drop
+                      </p>
+                      <p className="text-xs text-gray-500 dark:text-gray-400">
+                        Excel files only (MAX: 5MB)
+                      </p>
+                    </div>
+                    <input
+                      id="file-upload"
+                      type="file"
+                      accept=".xlsx, .xls"
+                      className="hidden"
+                      onChange={handleFileChange}
+                    />
+                  </label>
+                </div>
+                {file && (
+                  <div className="mt-2 p-3 bg-green-50 dark:bg-green-900/20 rounded-md">
+                    <p className="text-sm text-green-700 dark:text-green-400 flex items-center gap-2">
+                      <FaFileExcel />
+                      {file.name} ({(file.size / 1024).toFixed(2)} KB)
+                    </p>
+                  </div>
+                )}
+              </div>
+
+              {/* Upload Button */}
+              <button
+                type="submit"
+                disabled={!file || isUploading}
+                className={`w-full py-3 px-6 rounded-lg font-semibold text-white shadow-md transition-all duration-300 flex items-center justify-center gap-2
+                ${!file || isUploading 
+                  ? 'bg-gray-400 dark:bg-gray-600 cursor-not-allowed' 
+                  : 'bg-green-600 hover:bg-green-700 hover:scale-[1.02]'
+                }`}
+              >
+                {isUploading ? (
+                  <>
+                    <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    Uploading...
+                  </>
+                ) : (
+                  <>
+                    <FaUpload /> Upload File
+                  </>
+                )}
+              </button>
+
+              {/* Status Messages */}
+              {errorMessage && (
+                <div className="animate-shake p-4 bg-red-50 dark:bg-red-900/20 rounded-lg text-red-600 dark:text-red-400 text-sm font-medium">
+                  ⚠️ {errorMessage}
+                </div>
+              )}
+
+              {uploadStatus && (
+                <div className="p-4 bg-green-50 dark:bg-green-900/20 rounded-lg text-green-600 dark:text-green-400 text-sm font-medium">
+                  ✓ {uploadStatus}
+                </div>
+              )}
+
+              {/* Progress Bar (for redirect) */}
+              {showProgress && (
+                <div className="space-y-2">
+                  <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2.5">
+                    <div
+                      className="bg-green-500 h-2.5 rounded-full"
+                      style={{ width: `${progress}%`, transition: "width 0.05s linear" }}
+                    ></div>
+                  </div>
+                  <p className="text-sm text-center text-gray-600 dark:text-gray-400">
+                    Redirecting to login... {progress}%
+                  </p>
+                </div>
+              )}
+            </form>
+          </div>
+        </div>
+
+        {/* Instructions */}
+        <div className="mt-6 bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
+          <h3 className="text-lg font-semibold text-gray-800 dark:text-white mb-3">
+            📋 Upload Instructions
+          </h3>
+          <ul className="space-y-2 text-sm text-gray-600 dark:text-gray-300 list-disc pl-5">
+            <li>Only Excel files (.xlsx, .xls) are accepted</li>
+            <li>Maximum file size: 5MB</li>
+            <li>Ensure your file follows the required format</li>
+            <li>Required columns: First Name, Last Name, CGPA, etc.</li>
+          </ul>
+        </div>
+      </div>
+
+      {/* Add to your CSS */}
+      <style jsx global>{`
+        @keyframes shake {
+          0%, 100% { transform: translateX(0); }
+          20%, 60% { transform: translateX(-5px); }
+          40%, 80% { transform: translateX(5px); }
+        }
+        .animate-shake {
+          animation: shake 0.5s ease-in-out;
+        }
+      `}</style>
+    </div>
   );
 };
 
