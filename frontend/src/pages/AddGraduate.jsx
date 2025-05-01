@@ -1,23 +1,17 @@
-import axios from "axios";
 import React, { useState } from "react";
-import { FaFileExcel } from "react-icons/fa";
-import { useNavigate } from "react-router-dom";
+import SingleGraduateForm from "./SingleGraduateForm";
+import BulkGraduateUpload from "./BulkGraduateUpload";
 
 const AddGraduate = () => {
-  const navigate = useNavigate();
   const [mode, setMode] = useState("single"); // 'single' or 'file'
 
   const handleModeChange = (newMode) => {
-    setMode(newMode);
-    if (newMode === "single") {
-      navigate("/admin/add-graduate/single"); // Navigate to Single Upload
-    } else if (newMode === "file") {
-      navigate("/admin/add-graduate/file"); // Navigate to Bulk Upload
-    }
+    setMode(newMode); // Update the mode
   };
 
   return (
     <div className="p-6 max-w-4xl mx-auto bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-white min-h-screen">
+      {/* Mode Selection Buttons */}
       <div className="flex justify-center mb-6 space-x-4">
         <button
           onClick={() => handleModeChange("single")}
@@ -39,6 +33,12 @@ const AddGraduate = () => {
         >
           Bulk Upload (Excel)
         </button>
+      </div>
+
+      {/* Conditional Rendering of Components */}
+      <div>
+        {mode === "single" && <SingleGraduateForm />}
+        {mode === "file" && <BulkGraduateUpload />}
       </div>
     </div>
   );

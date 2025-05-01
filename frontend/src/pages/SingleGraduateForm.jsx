@@ -38,7 +38,7 @@ const SingleGraduateForm = () => {
       const num = parseFloat(value);
       if (value === "" || (num >= 1.75 && num <= 4.0)) {
         setGraduate({ ...graduate, [name]: value });
-        setErrorMessage(""); // Clear error if CGPA is valid
+        setErrorMessage("");
       } else {
         setErrorMessage("CGPA must be between 1.75 and 4.00");
       }
@@ -54,9 +54,9 @@ const SingleGraduateForm = () => {
       setErrorMessage(error);
       return;
     }
-    setErrorMessage(""); // Reset error message
+    setErrorMessage("");
     alert("Graduate added successfully!");
-    setGraduate(initialGraduateState); // Reset the form
+    setGraduate(initialGraduateState);
   };
 
   const departmentOptions = graduate.college ? collegeDepartmentData[graduate.college] || [] : [];
@@ -85,56 +85,187 @@ const SingleGraduateForm = () => {
   useEffect(() => {
     const result = validateForm(graduate);
     setErrorMessage(result);
-    setFormValid(!result); // If there's no error, the form is valid
+    setFormValid(!result);
   }, [graduate]);
 
   return (
-    <>
-      <h2 className="text-2xl font-bold mb-4">Add Graduate (Single)</h2>
-      <form onSubmit={handleGraduateSubmit} className="grid md:grid-cols-2 gap-4 bg-gray-100 dark:bg-gray-800 p-6 rounded-lg">
-        <input name="firstName" placeholder="First Name" className="p-2 rounded border dark:bg-gray-700" value={graduate.firstName} onChange={handleGraduateChange} />
-        <input name="middleName" placeholder="Middle Name" className="p-2 rounded border dark:bg-gray-700" value={graduate.middleName} onChange={handleGraduateChange} />
-        <input name="lastName" placeholder="Last Name" className="p-2 rounded border dark:bg-gray-700" value={graduate.lastName} onChange={handleGraduateChange} />
-        <input name="cgpa" type="number" step="0.01" placeholder="CGPA" className="p-2 rounded border dark:bg-gray-700" value={graduate.cgpa} onChange={handleGraduateChange} />
-        <select name="college" className="p-2 rounded border dark:bg-gray-700" value={graduate.college} onChange={handleGraduateChange}>
-          <option value="">Select College</option>
-          {Object.keys(collegeDepartmentData).map((college) => (
-            <option key={college} value={college}>{college}</option>
-          ))}
-        </select>
-        <select name="department" className="p-2 rounded border dark:bg-gray-700" value={graduate.department} onChange={handleGraduateChange}>
-          <option value="">Select Department</option>
-          {departmentOptions.map((dept) => (
-            <option key={dept} value={dept}>{dept}</option>
-          ))}
-        </select>
-        <select name="gstatus" className="p-2 rounded border dark:bg-gray-700" value={graduate.gstatus} onChange={handleGraduateChange}>
-          <option value="">Graduate Status</option>
-          <option value="Graduated">Graduated</option>
-          <option value="Pending">Pending</option>
-          <option value="Suspended">Suspended</option>
-        </select>
-        <select name="program" className="p-2 rounded border dark:bg-gray-700" value={graduate.program} onChange={handleGraduateChange}>
-          <option value="">Program</option>
-          <option value="BSc">BSc</option>
-          <option value="MSc">MSc</option>
-          <option value="PhD">PhD</option>
-        </select>
-        <select name="gender" className="p-2 rounded border dark:bg-gray-700" value={graduate.gender} onChange={handleGraduateChange}>
-          <option value="">Gender</option>
-          <option value="Male">Male</option>
-          <option value="Female">Female</option>
-        </select>
-        <input type="date" name="startDate" className="p-2 rounded border dark:bg-gray-700" value={graduate.startDate} onChange={handleGraduateChange} />
-        <input type="date" name="endDate" className="p-2 rounded border dark:bg-gray-700" value={graduate.endDate} onChange={handleGraduateChange} />
-        {errorMessage && <div className="md:col-span-2 text-red-500 text-sm">{errorMessage}</div>}
-        <div className="md:col-span-2 flex justify-center">
-          <button type="submit" className="px-6 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50" disabled={!formValid}>
-            Submit
-          </button>
+    <div className="min-h-screen bg-gray-100 dark:bg-gray-900 py-8 px-4 sm:px-6 lg:px-8 transition-colors duration-300">
+      <div className="max-w-4xl mx-auto">
+        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden transition-colors duration-300">
+          <div className="p-6 sm:p-8 md:p-10">
+            <div className="text-center mb-8">
+              <h2 className="text-3xl font-extrabold text-gray-900 dark:text-white">
+                🎓 Add Graduate
+              </h2>
+              <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
+                Please fill in the details of the graduate
+              </p>
+            </div>
+
+            <form onSubmit={handleGraduateSubmit} className="space-y-6">
+              <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+                {[
+                  { name: "firstName", label: "First Name", type: "text" },
+                  { name: "middleName", label: "Middle Name", type: "text" },
+                  { name: "lastName", label: "Last Name", type: "text" },
+                  { name: "cgpa", label: "CGPA", type: "number", step: "0.01" },
+                ].map((input) => (
+                  <div key={input.name}>
+                    <label htmlFor={input.name} className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                      {input.label}
+                    </label>
+                    <input
+                      id={input.name}
+                      name={input.name}
+                      type={input.type}
+                      step={input.step}
+                      className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
+                      value={graduate[input.name]}
+                      onChange={handleGraduateChange}
+                      placeholder={`Enter ${input.label.toLowerCase()}`}
+                    />
+                  </div>
+                ))}
+
+                <div>
+                  <label htmlFor="college" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                    College
+                  </label>
+                  <select
+                    id="college"
+                    name="college"
+                    className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
+                    value={graduate.college}
+                    onChange={handleGraduateChange}
+                  >
+                    <option value="">Select College</option>
+                    {Object.keys(collegeDepartmentData).map((college) => (
+                      <option key={college} value={college}>{college}</option>
+                    ))}
+                  </select>
+                </div>
+
+                <div>
+                  <label htmlFor="department" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                    Department
+                  </label>
+                  <select
+                    id="department"
+                    name="department"
+                    className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
+                    value={graduate.department}
+                    onChange={handleGraduateChange}
+                    disabled={!graduate.college}
+                  >
+                    <option value="">Select Department</option>
+                    {departmentOptions.map((dept) => (
+                      <option key={dept} value={dept}>{dept}</option>
+                    ))}
+                  </select>
+                </div>
+
+                <div>
+                  <label htmlFor="gstatus" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                    Graduate Status
+                  </label>
+                  <select
+                    id="gstatus"
+                    name="gstatus"
+                    className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
+                    value={graduate.gstatus}
+                    onChange={handleGraduateChange}
+                  >
+                    <option value="">Select Status</option>
+                    <option value="Graduated">Graduated</option>
+                    <option value="Pending">Pending</option>
+                    <option value="Suspended">Suspended</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label htmlFor="program" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                    Program
+                  </label>
+                  <select
+                    id="program"
+                    name="program"
+                    className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
+                    value={graduate.program}
+                    onChange={handleGraduateChange}
+                  >
+                    <option value="">Select Program</option>
+                    <option value="BSc">BSc</option>
+                    <option value="MSc">MSc</option>
+                    <option value="PhD">PhD</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label htmlFor="gender" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                    Gender
+                  </label>
+                  <select
+                    id="gender"
+                    name="gender"
+                    className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
+                    value={graduate.gender}
+                    onChange={handleGraduateChange}
+                  >
+                    <option value="">Select Gender</option>
+                    <option value="Male">Male</option>
+                    <option value="Female">Female</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label htmlFor="startDate" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                    Start Date
+                  </label>
+                  <input
+                    id="startDate"
+                    type="date"
+                    name="startDate"
+                    className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
+                    value={graduate.startDate}
+                    onChange={handleGraduateChange}
+                  />
+                </div>
+
+                <div>
+                  <label htmlFor="endDate" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                    End Date
+                  </label>
+                  <input
+                    id="endDate"
+                    type="date"
+                    name="endDate"
+                    className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
+                    value={graduate.endDate}
+                    onChange={handleGraduateChange}
+                  />
+                </div>
+              </div>
+
+              {errorMessage && (
+                <div className="p-4 bg-red-50 dark:bg-red-900/20 rounded-lg text-red-600 dark:text-red-400 text-sm font-medium">
+                  {errorMessage}
+                </div>
+              )}
+
+              <div className="flex justify-center pt-4">
+                <button
+                  type="submit"
+                  className={`px-8 py-3 rounded-lg font-semibold text-white shadow-md transition-colors duration-300 ${formValid ? 'bg-blue-600 hover:bg-blue-700' : 'bg-gray-400 dark:bg-gray-600 cursor-not-allowed'}`}
+                  disabled={!formValid}
+                >
+                  Submit Graduate
+                </button>
+              </div>
+            </form>
+          </div>
         </div>
-      </form>
-    </>
+      </div>
+    </div>
   );
 };
 
