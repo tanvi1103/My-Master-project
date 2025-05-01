@@ -80,6 +80,8 @@ const AddGraduate = () => {
   const [errorMessage, setErrorMessage] = useState("");
   const [file, setFile] = useState(null);
   const [uploadStatus, setUploadStatus] = useState("");
+  const [showProgress, setShowProgress] = useState(false);
+  const [progress, setProgress] = useState(100); // Start at 100%
 
   const validateForm = (grad) => {
     if (!grad.firstName.trim()) return "First name is required";
@@ -167,6 +169,18 @@ const AddGraduate = () => {
       const token = localStorage.getItem("adminToken");
       if (!token) {
         setErrorMessage("Unauthorized: No token found.");
+        setShowProgress(true); // Show progress indicator
+        let progressValue = 100; // Start at 100%
+        const interval = setInterval(() => {
+          progressValue -= 2; // Decrease progress by 5% every 100ms
+          setProgress(progressValue);
+
+          if (progressValue <= 0) {
+            clearInterval(interval); // Stop the interval when progress reaches 0
+            setShowProgress(false); // Hide progress indicator
+            navigate("/admin/login");
+          }
+        }, 100); // Update every 100ms
         return;
       }
 
@@ -190,8 +204,20 @@ const AddGraduate = () => {
     } catch (error) {
       const { status } = error.response || {};
       if (status === 401) {
-        setErrorMessage("Unauthorized. Please log in again.");
-        navigate("/admin/login"); // Redirect to login page
+        setErrorMessage("Unauthorized. Redirecting to login...");
+        setShowProgress(true); // Show progress indicator
+      
+        let progressValue = 100; // Start at 100%
+        const interval = setInterval(() => {
+          progressValue -= 2; // Decrease progress by 5% every 100ms
+          setProgress(progressValue);
+      
+          if (progressValue <= 0) {
+            clearInterval(interval); // Stop the interval when progress reaches 0
+            setShowProgress(false); // Hide progress indicator
+            navigate("/admin/login"); // Redirect to login page
+          }
+        }, 100); // Update every 100ms
       } else if (status === 403) {
         setErrorMessage("Forbidden.");
       } else {
@@ -253,6 +279,10 @@ const AddGraduate = () => {
           handleFileUpload={handleFileUpload}
           errorMessage={errorMessage}
           setErrorMessage={setErrorMessage}
+          showProgress={showProgress}
+          setShowProgress={setShowProgress}
+          progress={progress} // Pass the progress state to the component
+          setProgress={setProgress} // Pass the setProgress function to the component
         />
       )}
     </div>
