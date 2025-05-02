@@ -11,13 +11,29 @@ const ViewUpdateGraduates = () => {
 
   useEffect(() => {
     const fetchGraduates = async () => {
-      const response = await axios.get("http://localhost:5000/api/admin/certificates", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      const data = await response.data;
-      setGraduates(data);
+      try {
+        const response = await axios.get("http://localhost:5000/api/admin/certificates", {
+          headers: {
+            Authorization: `Bearer ${token}`, // Ensure the token is sent
+          },
+        });
+        const data = await response.data;
+        setGraduates(data);
+      } catch (error) {
+        if (error.response && error.response.status === 401) {
+          Swal.fire({
+            title: "Unauthorized",
+            text: "Please log in to access this page.",
+            icon: "error",
+            confirmButtonText: "OK",
+            background: "#1f2937",
+            color: "#fff",
+          });
+          navigate("/admin/login"); // Redirect to login page
+        } else {
+          console.error("Error fetching graduates:", error);
+        }
+      }
     };
     fetchGraduates();
   }, []);
