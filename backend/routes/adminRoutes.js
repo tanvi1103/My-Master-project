@@ -8,6 +8,7 @@ const {
   deleteSingleCertificate,
   addStudentCredentials,
   logoutAdmin,
+  uploadFile,
 } = require("../controllers/adminController");
 
 const router = express.Router();
@@ -15,7 +16,9 @@ const router = express.Router();
 router.post("/login", loginAdmin);
 router.get('/logout', logoutAdmin);
 
-router.post("/addStudents", addStudentCredentials); 
+router.post("/addStudents", addStudentCredentials);
+router.post("/upload", authenticateToken, uploadFile); // Ensure this matches your backend route
+
 router.get("/certificates", authenticateToken, getAllCertificates);
 router.get("/certificates/:certificateID", getSingleCertificate);
 router.delete("/certificates/:certificateID", authenticateToken, deleteSingleCertificate);
