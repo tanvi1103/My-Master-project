@@ -21,7 +21,7 @@ const upload = multer({
       cb(null, uniqueName);
     },
   }),
-  limits: { fileSize: 2 * 1024 * 1024 }, // 2MB limit
+  limits: { fileSize: 5 * 1024 * 1024 }, // 5MB limit
   fileFilter: (req, file, cb) => {
     const filetypes = /xlsx|xls/;
     const extname = filetypes.test(
