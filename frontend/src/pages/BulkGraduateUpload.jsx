@@ -1,9 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import { FaFileExcel, FaUpload } from "react-icons/fa";
+import { FaFileExcel, FaUpload, FaDownload } from "react-icons/fa";
 import Swal from "sweetalert2";
-
+import * as XLSX from "xlsx";
 
 const BulkGraduateUpload = () => {
   const [file, setFile] = useState(null);
@@ -12,19 +12,88 @@ const BulkGraduateUpload = () => {
   const [progress, setProgress] = useState(100);
   const [errorMessage, setErrorMessage] = useState("");
   const [isUploading, setIsUploading] = useState(false);
+  const [validationErrors, setValidationErrors] = useState([]);
+  const fileInputRef = useRef(null);
   const navigate = useNavigate();
 
   const handleFileChange = (e) => {
-    setFile(e.target.files[0]);
+    const selectedFile = e.target.files[0];
+    if (!selectedFile) return;
+
+    setFile(selectedFile);
     setErrorMessage("");
     setUploadStatus("");
+    setValidationErrors([]);
+  };
+
+  const handleDragOver = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+  };
+
+  const handleDrop = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    const droppedFile = e.dataTransfer.files[0];
+    if (droppedFile && droppedFile.name.match(/\.(xlsx|xls)$/i)) {
+      setFile(droppedFile);
+      // Sync with file input for form submission
+      if (fileInputRef.current) {
+        const dataTransfer = new DataTransfer();
+        dataTransfer.items.add(droppedFile);
+        fileInputRef.current.files = dataTransfer.files;
+      }
+    }
+  };
+
+  const downloadSampleFile = () => {
+    // Create sample data
+    const sampleData = [
+      {
+        certificateID: "CERT-001",
+        firstName: "John",
+        middleName: "A.",
+        lastName: "Doe",
+        department: "Computer Science",
+        gender: "Male",
+        cgpa: 3.75,
+        program: "BSc",
+        gstatus: "Graduated",
+        college: "Engineering",
+        startDate: "2020-09-01",
+        endDate: "2024-06-30"
+      },
+      {
+        certificateID: "CERT-002",
+        firstName: "Jane",
+        lastName: "Smith",
+        department: "Electrical Engineering",
+        gender: "Female",
+        cgpa: 3.9,
+        program: "BSc",
+        gstatus: "Graduated",
+        college: "Engineering",
+        startDate: "2020-09-01",
+        endDate: "2024-06-30"
+      }
+    ];
+
+    // Create workbook
+    const wb = XLSX.utils.book_new();
+    const ws = XLSX.utils.json_to_sheet(sampleData);
+    XLSX.utils.book_append_sheet(wb, ws, "Graduates");
+
+    // Generate and download
+    XLSX.writeFile(wb, "graduate_template.xlsx");
   };
 
   const handleFileUpload = async (e) => {
     e.preventDefault();
     setIsUploading(true);
-    setUploadStatus("");
     setErrorMessage("");
+    setUploadStatus("");
+    setValidationErrors([]);
 
     if (!file) {
       setErrorMessage("Please select a file to upload.");
@@ -72,17 +141,18 @@ const BulkGraduateUpload = () => {
         }
       );
 
-      if (response.status === 200) {
+      if (response.status === 201) {
         Swal.fire({
           title: "Success!",
-          text: "File uploaded successfully",
+          text: `File processed successfully. ${response.data.recordsProcessed} records added.`,
           icon: "success",
           confirmButtonColor: "#10b981",
           timer: 3000,
           timerProgressBar: true,
         });
         setFile(null);
-        document.getElementById("file-upload").value = ""; // Reset file input
+        if (fileInputRef.current) fileInputRef.current.value = "";
+        setUploadStatus(`Successfully processed ${response.data.recordsProcessed} records`);
       }
     } catch (error) {
       handleUploadError(error);
@@ -108,16 +178,73 @@ const BulkGraduateUpload = () => {
   };
 
   const handleUploadError = (error) => {
-    if (error.response?.status === 401) {
-      handleUnauthorized();
-    } else if (error.response?.status === 403) {
-      setErrorMessage("You don't have permission to upload files");
-    } else {
-      setErrorMessage(
-        error.response?.data?.message || 
-        "Failed to upload file. Please check your network connection."
-      );
+    console.log('Full error object:', error); // For debugging
+    
+    // Default error message
+    let errorMessage = "Something went wrong. Please try again.";
+    let showValidationErrors = false;
+    let validationErrors = [];
+  
+    if (error.response) {
+      const { data } = error.response;
+      
+      // Handle 400 Bad Request errors
+      if (error.response.status === 400) {
+        if (data.type === 'validation') {
+          if (data.errors) {
+            validationErrors = data.errors;
+            showValidationErrors = true;
+            errorMessage = "There were validation errors in your file:";
+          } else {
+            errorMessage = data.message || "Validation error occurred";
+          }
+        } 
+        else if (data.type === 'duplicate') {
+          errorMessage = `Duplicate certificate IDs found: ${data.duplicateIds?.join(', ') || 'Unknown IDs'}`;
+          if (data.recordsProcessed > 0) {
+            setUploadStatus(`Successfully processed ${data.recordsProcessed} records (duplicates skipped)`);
+          }
+        }
+      }
+      // Handle 401 Unauthorized
+      else if (error.response.status === 401) {
+        handleUnauthorized();
+        return;
+      }
+      // Handle 403 Forbidden
+      else if (error.response.status === 403) {
+        errorMessage = "You don't have permission to upload files";
+      }
+      // Handle 500 Server Error
+      else if (error.response.status === 500) {
+        if (data.type === 'duplicate') {
+          errorMessage = `Duplicate certificate ID detected: ${data.duplicateIds?.join(', ') || 'Unknown ID'}`;
+        } else {
+          errorMessage = data.message || "Server error occurred. Please try again later.";
+        }
+      }
+    } 
+    // Handle network errors
+    else if (error.code === 'ERR_NETWORK') {
+      errorMessage = "Network error. Please check your internet connection.";
+    } 
+    // Handle request cancellation
+    else if (error.code === 'ECONNABORTED') {
+      errorMessage = "Request timeout. Please try again.";
     }
+  
+    // Set the state
+    setErrorMessage(errorMessage);
+    if (showValidationErrors) {
+      setValidationErrors(validationErrors);
+    }
+  
+    // For debugging
+    console.error('Upload error details:', {
+      message: error.message,
+      code: error.code,
+      response: error.response?.data
+    });
   };
 
   return (
@@ -140,7 +267,11 @@ const BulkGraduateUpload = () => {
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                   Select Excel File (.xlsx, .xls)
                 </label>
-                <div className="flex items-center justify-center w-full">
+                <div 
+                  className="flex items-center justify-center w-full"
+                  onDragOver={handleDragOver}
+                  onDrop={handleDrop}
+                >
                   <label
                     htmlFor="file-upload"
                     className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed rounded-lg cursor-pointer 
@@ -162,6 +293,7 @@ const BulkGraduateUpload = () => {
                       accept=".xlsx, .xls"
                       className="hidden"
                       onChange={handleFileChange}
+                      ref={fileInputRef}
                     />
                   </label>
                 </div>
@@ -200,6 +332,15 @@ const BulkGraduateUpload = () => {
                 )}
               </button>
 
+              {/* Download Sample Button */}
+              <button
+                type="button"
+                onClick={downloadSampleFile}
+                className="w-full py-2 px-4 border border-green-600 text-green-600 dark:text-green-400 dark:border-green-400 rounded-lg font-medium hover:bg-green-50 dark:hover:bg-green-900/20 transition-colors duration-200 flex items-center justify-center gap-2"
+              >
+                <FaDownload /> Download Sample Template
+              </button>
+
               {/* Status Messages */}
               {errorMessage && (
                 <div className="animate-shake p-4 bg-red-50 dark:bg-red-900/20 rounded-lg text-red-600 dark:text-red-400 text-sm font-medium">
@@ -210,6 +351,20 @@ const BulkGraduateUpload = () => {
               {uploadStatus && (
                 <div className="p-4 bg-green-50 dark:bg-green-900/20 rounded-lg text-green-600 dark:text-green-400 text-sm font-medium">
                   ✓ {uploadStatus}
+                </div>
+              )}
+
+              {/* Validation Errors */}
+              {validationErrors.length > 0 && (
+                <div className="p-4 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg">
+                  <h4 className="font-medium text-yellow-700 dark:text-yellow-400 mb-2">
+                    Validation Errors:
+                  </h4>
+                  <ul className="text-sm text-yellow-600 dark:text-yellow-300 space-y-1 max-h-60 overflow-y-auto">
+                    {validationErrors.map((error, index) => (
+                      <li key={index}>• {error}</li>
+                    ))}
+                  </ul>
                 </div>
               )}
 
@@ -239,23 +394,14 @@ const BulkGraduateUpload = () => {
           <ul className="space-y-2 text-sm text-gray-600 dark:text-gray-300 list-disc pl-5">
             <li>Only Excel files (.xlsx, .xls) are accepted</li>
             <li>Maximum file size: 5MB</li>
-            <li>Ensure your file follows the required format</li>
-            <li>Required columns: First Name, Last Name, CGPA, etc.</li>
+            <li>Download and use our template to ensure proper formatting</li>
+            <li>Required fields: CertificateID, First Name, Last Name, Department, Gender, CGPA, Program, Graduation Status, College, Start Date, End Date</li>
+            <li>CertificateIDs must be unique across the system</li>
+            <li>Dates should be in YYYY-MM-DD format</li>
+            <li>CGPA must be between 0 and 4</li>
           </ul>
         </div>
       </div>
-
-      {/* Add to your CSS */}
-      <style jsx global>{`
-        @keyframes shake {
-          0%, 100% { transform: translateX(0); }
-          20%, 60% { transform: translateX(-5px); }
-          40%, 80% { transform: translateX(5px); }
-        }
-        .animate-shake {
-          animation: shake 0.5s ease-in-out;
-        }
-      `}</style>
     </div>
   );
 };
