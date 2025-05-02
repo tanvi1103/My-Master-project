@@ -16,7 +16,7 @@ const router = express.Router();
 router.post("/login", loginAdmin);
 router.get('/logout', logoutAdmin);
 
-router.post("/addStudents", addStudentCredentials);
+router.post("/addStudents",authenticateToken, addStudentCredentials);
 router.post("/upload", authenticateToken, uploadFile); // Ensure this matches your backend route
 
 router.get("/certificates", authenticateToken, getAllCertificates);
