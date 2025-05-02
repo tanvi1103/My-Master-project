@@ -7,7 +7,7 @@ const Certificate = require("../models/Certificate");
 const XLSX = require("xlsx");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const { validationResult } = require('express-validator');
+const { validationResult } = require("express-validator");
 
 // ==============================
 // Multer Configuration (Secure)
@@ -16,14 +16,17 @@ const upload = multer({
   storage: multer.diskStorage({
     destination: (req, file, cb) => cb(null, "uploads/"),
     filename: (req, file, cb) => {
-      const uniqueName = crypto.randomBytes(8).toString("hex") + path.extname(file.originalname);
+      const uniqueName =
+        crypto.randomBytes(8).toString("hex") + path.extname(file.originalname);
       cb(null, uniqueName);
     },
   }),
   limits: { fileSize: 2 * 1024 * 1024 }, // 2MB limit
   fileFilter: (req, file, cb) => {
     const filetypes = /xlsx|xls/;
-    const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
+    const extname = filetypes.test(
+      path.extname(file.originalname).toLowerCase()
+    );
     const mimetype = filetypes.test(file.mimetype);
     if (mimetype && extname) return cb(null, true);
     cb(new Error("Only Excel files (xlsx, xls) are allowed!"));
@@ -47,12 +50,16 @@ const loginAdmin = async (req, res) => {
       return res.status(401).json({ message: "Invalid credentials" });
     }
 
-    const token = jwt.sign({ id: admin._id, role: "admin" }, process.env.JWT_SECRET, { expiresIn: "1h" });
+    const token = jwt.sign(
+      { id: admin._id, role: "admin" },
+      process.env.JWT_SECRET,
+      { expiresIn: "1h" }
+    );
 
     res.cookie("token", token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'Strict',
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "Strict",
       maxAge: 60 * 60 * 1000,
     });
 
@@ -67,10 +74,10 @@ const loginAdmin = async (req, res) => {
 // Admin Logout
 // ========================
 const logoutAdmin = (req, res) => {
-  res.clearCookie('token', {
+  res.clearCookie("token", {
     httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
-    sameSite: 'Strict',
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "Strict",
   });
   res.status(200).json({ message: "Logged out successfully" });
 };
@@ -93,7 +100,7 @@ const uploadFile = (req, res) => {
       const sheetNameList = workbook.SheetNames;
       const data = XLSX.utils.sheet_to_json(workbook.Sheets[sheetNameList[0]]);
 
-      const students = data.map(record => ({
+      const students = data.map((record) => ({
         certificateID: record.certificateID,
         firstName: record.firstName,
         middleName: record.middleName,
@@ -107,7 +114,9 @@ const uploadFile = (req, res) => {
       }));
 
       await Student.insertMany(students);
-      res.status(200).json({ message: "File uploaded and data saved successfully" });
+      res
+        .status(200)
+        .json({ message: "File uploaded and data saved successfully" });
     } catch (error) {
       console.error(error);
       res.status(500).json({ message: "Error processing file" });
@@ -136,7 +145,9 @@ const getAllCertificates = async (req, res) => {
 // ========================
 const getSingleCertificate = async (req, res) => {
   try {
-    const certificate = await Certificate.findOne({ certificateID: req.params.certificateID });
+    const certificate = await Certificate.findOne({
+      certificateID: req.params.certificateID,
+    });
     if (!certificate) {
       return res.status(404).json({ message: "Certificate not found" });
     }
@@ -173,7 +184,9 @@ const updateSingleCertificate = async (req, res) => {
 // ========================
 const deleteSingleCertificate = async (req, res) => {
   try {
-    const result = await Certificate.findOneAndDelete({ certificateID: req.params.certificateID });
+    const result = await Certificate.findOneAndDelete({
+      certificateID: req.params.certificateID,
+    });
     if (!result) {
       return res.status(404).json({ message: "Certificate not found" });
     }
@@ -190,21 +203,45 @@ const deleteSingleCertificate = async (req, res) => {
 const addStudentCredentials = async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    return res.status(400).json({ message: "Validation failed", errors: errors.array() });
+    return res
+      .status(400)
+      .json({ message: "Validation failed", errors: errors.array() });
   }
 
   try {
-    const { certificateID, studentName, internshipDomain, startDate, endDate } = req.body;
+    const {
+      certificateID,
+      firstName,
+      middleName,
+      lastName,
+      department,
+      college,
+      gender,
+      cgpa,
+      program,
+      gstatus,
+      startDate,
+      endDate,
+    } = req.body;
 
     const existing = await Certificate.findOne({ certificateID });
     if (existing) {
-      return res.status(400).json({ message: `Certificate ID ${certificateID} already exists` });
+      return res
+        .status(400)
+        .json({ message: `Certificate ID ${certificateID} already exists` });
     }
 
     const certificate = new Certificate({
       certificateID,
-      studentName,
-      internshipDomain,
+      firstName,
+      middleName,
+      lastName,
+      department,
+      college,
+      gender,
+      cgpa,
+      program,
+      gstatus,
       startDate,
       endDate,
     });
