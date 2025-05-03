@@ -2,6 +2,172 @@
 // controllers/nationalIDController.js
 import NationalID from '../models/NationalID.js';
 import { getNextSequence } from '../utils/counter.js';
+import excelToJson from 'convert-excel-to-json';
+import fs from 'fs';
+export const uploadNationalIDsExcel = async (req, res, next) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ 
+        success: false,
+        message: 'No file uploaded',
+        type: 'validation'
+      });
+    }
+
+    const filePath = req.file.path;
+
+    // Convert Excel to JSON
+    const result = excelToJson({
+      sourceFile: filePath,
+      sheets: [{
+        name: 'Sheet1',
+        header: { rows: 1 },
+        columnToKey: {
+          A: 'firstName',
+          B: 'middleName',
+          C: 'lastName',
+          D: 'gender',
+          E: 'dateOfBirth',
+          F: 'phone_no',
+          G: 'country',
+          H: 'region',
+          I: 'city',
+          J: 'zone',
+          K: 'woreda',
+          L: 'kebele'
+        }
+      }]
+    });
+
+    const nationalIDsData = result.Sheet1;
+
+    if (!nationalIDsData || nationalIDsData.length === 0) {
+      fs.unlinkSync(filePath);
+      return res.status(400).json({
+        success: false,
+        message: 'No valid data found in the Excel file',
+        type: 'validation'
+      });
+    }
+
+    // Validate required fields
+    const requiredFields = ['firstName', 'middleName', 'lastName', 'gender'];
+    const missingFields = requiredFields.filter(field => 
+      !nationalIDsData[0][field]
+    );
+
+    if (missingFields.length > 0) {
+      fs.unlinkSync(filePath);
+      return res.status(400).json({
+        success: false,
+        message: `Missing required fields: ${missingFields.join(', ')}`,
+        type: 'validation'
+      });
+    }
+
+    // Process and validate each record
+    const validNationalIDs = [];
+    const errors = [];
+
+    for (const [index, record] of nationalIDsData.entries()) {
+      try {
+        // Validate required fields
+        if (!record.firstName || !record.lastName || !record.lastName || !record.gender) {
+          throw new Error('First name, middle name,  last name, and gender are required');
+        }
+
+        // Check for existing record
+        const existingID = await NationalID.findOne({ 
+          firstName: record.firstName.trim(),
+          middleName: record.middleName?.trim() || '',
+          lastName: record.lastName.trim(),
+          gender: record.gender.trim()
+        });
+
+        if (existingID) {
+          throw new Error('National ID already exists for this person');
+        }
+
+        // Generate national ID number
+        const nationalIdNumber = await getNextSequence('nationalId');
+
+        // Prepare the record
+        validNationalIDs.push({
+          firstName: record.firstName.trim(),
+          middleName: record.middleName?.trim() || '',
+          lastName: record.lastName.trim(),
+          gender: record.gender.trim(),
+          dateOfBirth: record.dateOfBirth || new Date(Date.now() - 22 * 365 * 24 * 60 * 60 * 1000),
+          phone_no: record.phone_no || '+251954233154',
+          country: record.country || 'Ethiopia',
+          region: record.region || getRandom(["South West", "Oromia", "Amhara", "Tigray", "Sidama"]),
+          city: record.city || getRandom(["Bonga", "Jimma", "Addis Ababa", "Hawassa", "Dire Dawa"]),
+          zone: record.zone || getRandom(["Kafa", "Jimma", "Gamo", "Bale", "Shewa"]),
+          woreda: record.woreda || getRandom(["Gesha", "Yeki", "Bita", "Shebe", "Dedo"]),
+          kebele: record.kebele || getRandom(["01", "02", "03", "04", "05", "06", "07"]),
+          nationalIdNumber,
+          photo: record.photo || `https://randomuser.me/api/portraits/${Math.random() > 0.5 ? 'men' : 'women'}/${Math.floor(Math.random() * 100)}.jpg`
+        });
+      } catch (error) {
+        errors.push(`Row ${index + 2}: ${error.message}`);
+      }
+    }
+
+    if (errors.length > 0) {
+      fs.unlinkSync(filePath);
+      return res.status(400).json({
+        success: false,
+        message: 'Validation errors found',
+        type: 'validation',
+        errors,
+        recordsProcessed: 0
+      });
+    }
+
+    // Insert records
+    try {
+      const result = await NationalID.insertMany(validNationalIDs, { ordered: false });
+      fs.unlinkSync(filePath);
+      
+      return res.status(201).json({
+        success: true,
+        message: 'File processed successfully',
+        recordsProcessed: result.length,
+        nationalIDs: result
+      });
+    } catch (mongoError) {
+      fs.unlinkSync(filePath);
+      
+      if (mongoError.code === 11000) {
+        const duplicates = mongoError.writeErrors?.map(err => err.err.op.nationalIdNumber) || 
+                         [mongoError.keyValue?.nationalIdNumber] || 
+                         ['Unknown'];
+        
+        return res.status(400).json({
+          success: false,
+          message: `Duplicate national IDs detected: ${duplicates.join(', ')}`,
+          type: 'duplicate',
+          duplicateIds: duplicates,
+          recordsProcessed: mongoError.result?.insertedCount || 0
+        });
+      }
+
+      return res.status(500).json({
+        success: false,
+        message: 'Database error occurred',
+        type: 'database',
+        error: mongoError.message
+      });
+    }
+  } catch (error) {
+    if (req.file?.path && fs.existsSync(req.file.path)) {
+      fs.unlinkSync(req.file.path);
+    }
+    
+    console.error('Upload error:', error);
+    next(error);
+  }
+};
 
 export const createNationalID = async (req, res) => {
   const { firstName, middleName, lastName, gender} = req.body;
