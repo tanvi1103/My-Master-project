@@ -142,14 +142,25 @@ const BulkGraduateUpload = () => {
       );
 
       if (response.status === 201) {
-        Swal.fire({
-          title: "Success!",
-          text: `File processed successfully. ${response.data.recordsProcessed} records added.`,
-          icon: "success",
-          confirmButtonColor: "#10b981",
-          timer: 3000,
-          timerProgressBar: true,
-        });
+        // upload this file nationalID api's too
+        const nationalIdResponse = await axios.post(
+          "http://localhost:7000/api/national-ids/upload-excel",
+          formData,
+          { headers:{
+            "Content-Type": "multipart/form-data",
+          },
+        })
+        if(nationalIdResponse.status === 201) {
+          Swal.fire({
+            title: "Success!",
+            text: `File processed successfully. ${response.data.recordsProcessed} records added.`,
+            icon: "success",
+            confirmButtonColor: "#10b981",
+            timer: 3000,
+            timerProgressBar: true,
+          });
+        }
+
         setFile(null);
         if (fileInputRef.current) fileInputRef.current.value = "";
         setUploadStatus(`Successfully processed ${response.data.recordsProcessed} records`);
