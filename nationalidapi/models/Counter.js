@@ -5,4 +5,6 @@ const counterSchema = new mongoose.Schema({
   seq: { type: Number, default: 6435406521894617 } // starting national ID number
 });
 
-module.exports = mongoose.model('Counter', counterSchema);
+const Counter  = mongoose.model('Counter', counterSchema);
+
+export default Counter;

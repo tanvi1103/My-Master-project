@@ -49,4 +49,5 @@ const nationalIDSchema = new mongoose.Schema({
   createdAt: { type: Date, default: Date.now },
 });
 
-module.exports = mongoose.model("NationalID", nationalIDSchema);
+const NationalID  = mongoose.model("NationalID", nationalIDSchema);
+export default NationalID;
