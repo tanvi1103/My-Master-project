@@ -4,11 +4,25 @@ import NationalID from '../models/NationalID.js';
 import { getNextSequence } from '../utils/counter.js';
 
 export const createNationalID = async (req, res) => {
+  const { firstName, middleName, lastName, gender} = req.body;
+  // Create new national ID document
+  if (!firstName || !middleName || !lastName || !gender){
+    return res.status(400).json({
+      success: false,
+      message: 'Please provide all required fields'
+    });
+  }
   try {
     // Generate the next national ID number
     const nationalIdNumber = await getNextSequence('nationalId');
     
-    // Create new national ID document
+    const existingID = await NationalID.findOne({ firstName, middleName, lastName, gender})
+    if (existingID) {
+      return res.status(400).json({
+        success: false,
+        message: 'National ID already exists for this person'
+      });
+    }
     const nationalID = new NationalID({
       ...req.body,
       nationalIdNumber
