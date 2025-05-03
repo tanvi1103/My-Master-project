@@ -19,6 +19,7 @@ app.use(express.json());
 
 app.use('/api/national-ids', nationalIDRouter);
 
+
 app.get ("/", (req, res) => {
   res.send("National id api running...")
 })
