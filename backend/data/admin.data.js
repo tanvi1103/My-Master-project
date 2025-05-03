@@ -10,7 +10,7 @@ const createAdmin = async () => {
   try {
     await mongoose.connect(process.env.MONGO_URI);
     
-    const existingAdmin = await Admin.findOne({ email: "admin@example.com" });
+  const existingAdmin = await Admin.findOne({ email: "admin@example.com" });
     if (!existingAdmin) {
       const hashedPassword = await bcrypt.hash("1234", 10);
       const newAdmin = new Admin({
