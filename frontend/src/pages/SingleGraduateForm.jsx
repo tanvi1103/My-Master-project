@@ -1,7 +1,7 @@
 import axios from "axios";
 import React, { useState, useEffect, useRef } from "react";
 import Swal from "sweetalert2";
-import { useNavigate } from "react-router-dom"; // Added for navigation
+import { useNavigate } from "react-router-dom";
 
 const collegeDepartmentData = {
   "Engineering and Technology": [
@@ -71,31 +71,20 @@ const initialStudentState = {
 
 const AddStudentCredentials = () => {
   const [student, setStudent] = useState(initialStudentState);
-  const [errors, setErrors] = useState({});
+  const [currentError, setCurrentError] = useState("All fields marked with * are required");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [currentField, setCurrentField] = useState("");
   const certificateIdRef = useRef(null);
-  const navigate = useNavigate(); // Initialize navigate
+  const navigate = useNavigate();
 
   // Auto-focus first input on mount
   useEffect(() => {
     certificateIdRef.current?.focus();
   }, []);
 
-  const isFormComplete = () => {
-    return (
-      student.certificateID.trim() && /^[A-Za-z]{2}\d{4}$/i.test(student.certificateID) &&
-      student.firstName.trim() &&
-      student.middleName.trim() &&
-      student.lastName.trim() &&
-      student.college &&
-      student.department &&
-      student.gender &&
-      student.program &&
-      student.gstatus &&
-      student.cgpa && parseFloat(student.cgpa) >= 1.75 && parseFloat(student.cgpa) <= 4.0 &&
-      student.startDate &&
-      student.endDate && new Date(student.endDate) >= new Date(student.startDate)
-    );
+  const handleFieldFocus = (fieldName) => {
+    setCurrentField(fieldName);
+    setCurrentError("");
   };
 
   const handleChange = (e) => {
@@ -103,65 +92,102 @@ const AddStudentCredentials = () => {
     
     if (name === "college") {
       setStudent(prev => ({ ...prev, college: value, department: "" }));
+    } else if (["firstName", "middleName", "lastName"].includes(name)) {
+      // Only allow alphabets and spaces for names
+      if (/^[a-zA-Z\s]*$/.test(value)) {
+        setStudent(prev => ({ ...prev, [name]: value }));
+      }
+    } else if (name === "cgpa") {
+      // Strict CGPA validation
+      const cgpaValue = value.trim();
+      if (cgpaValue === "" || (parseFloat(cgpaValue) >= 1.75 && parseFloat(cgpaValue) <= 4.00)) {
+        setStudent(prev => ({ ...prev, [name]: value }));
+      }
     } else {
       setStudent(prev => ({ ...prev, [name]: value }));
     }
-    
-    // Clear error when user starts typing
-    if (errors[name]) {
-      setErrors(prev => ({ ...prev, [name]: "" }));
+  };
+
+  const validateField = (fieldName, value) => {
+    switch(fieldName) {
+      case "certificateID":
+        if (!value.trim()) return "Certificate ID is required";
+        if (!/^[A-Za-z]{2}\d{4}$/.test(value)) return "Format: 2 letters + 4 numbers (e.g. AB1234)";
+        break;
+      case "firstName":
+      case "middleName":
+      case "lastName":
+        if (!value.trim()) return "This field is required";
+        if (!/^[a-zA-Z\s]+$/.test(value)) return "Only alphabets allowed";
+        break;
+      case "cgpa":
+        if (!value.trim()) return "CGPA is required";
+        const cgpaNum = parseFloat(value);
+        if (isNaN(cgpaNum)) return "Must be a number";
+        if (cgpaNum < 1.75 || cgpaNum > 4.0) return "Must be between 1.75 and 4.00";
+        break;
+      case "college":
+        if (!value) return "College is required";
+        break;
+      case "department":
+        if (!value) return "Department is required";
+        break;
+      case "gender":
+        if (!value) return "Gender is required";
+        break;
+      case "program":
+        if (!value) return "Program is required";
+        break;
+      case "gstatus":
+        if (!value) return "Status is required";
+        break;
+      case "startDate":
+        if (!value) return "Start date is required";
+        break;
+      case "endDate":
+        if (!value) return "End date is required";
+        if (student.startDate && new Date(value) < new Date(student.startDate)) {
+          return "End date must be after start date";
+        }
+        break;
+      default:
+        break;
     }
+    return "";
   };
 
   const validateForm = () => {
-    const newErrors = {};
-    
-    if (!student.certificateID.trim()) {
-      newErrors.certificateID = "Certificate ID is required";
-    } else if (!/^[A-Za-z]{2}\d{4}$/i.test(student.certificateID)) {
-      newErrors.certificateID = "Format: 2 letters followed by 4 numbers (e.g., AB1234)";
+    if (!currentField) {
+      setCurrentError("Please fill in the required fields");
+      return false;
     }
 
-    if (!student.firstName.trim()) newErrors.firstName = "First name is required";
-    if (!student.middleName.trim()) newErrors.middleName = "Middle name is required";
-    if (!student.lastName.trim()) newErrors.lastName = "Last name is required";
-    if (!student.college) newErrors.college = "College is required";
-    if (!student.department) newErrors.department = "Department is required";
-    if (!student.gender) newErrors.gender = "Gender is required";
-    if (!student.program) newErrors.program = "Program is required";
-    if (!student.gstatus) newErrors.gstatus = "Status is required";
-    
-    if (!student.cgpa) {
-      newErrors.cgpa = "CGPA is required";
-    } else {
-      const cgpaNum = parseFloat(student.cgpa);
-      if (isNaN(cgpaNum) || cgpaNum < 1.75 || cgpaNum > 4.0) {
-        newErrors.cgpa = "Must be between 1.75 and 4.00";
-      }
+    const error = validateField(currentField, student[currentField]);
+    if (error) {
+      setCurrentError(error);
+      return false;
     }
+    return true;
+  };
 
-    if (!student.startDate) newErrors.startDate = "Start date is required";
-    if (!student.endDate) newErrors.endDate = "End date is required";
-    else if (new Date(student.endDate) < new Date(student.startDate)) {
-      newErrors.endDate = "End date must be after start date";
-    }
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
+  const isFormComplete = () => {
+    return Object.keys(initialStudentState).every(field => {
+      const value = student[field];
+      return value && !validateField(field, value);
+    });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
   
-    if (isSubmitting) return; // Prevent duplicate submissions
+    if (isSubmitting) return;
   
     if (!validateForm()) {
-      Swal.fire({
-        icon: "error",
-        title: "Validation Error",
-        text: "Please fix all errors before submitting",
-        confirmButtonColor: "#3b82f6",
-      });
+      return;
+    }
+  
+    if (!isFormComplete()) {
+      setCurrentError("Please complete all required fields");
       return;
     }
   
@@ -176,7 +202,7 @@ const AddStudentCredentials = () => {
           text: "You are not authenticated. Please log in.",
           confirmButtonColor: "#3b82f6",
         });
-        navigate("/admin/login"); // Redirect to login page
+        navigate("/admin/login");
         return;
       }
   
@@ -194,7 +220,8 @@ const AddStudentCredentials = () => {
   
       // Reset form
       setStudent(initialStudentState);
-      setErrors({});
+      setCurrentError("All fields marked with * are required");
+      setCurrentField("");
       if (certificateIdRef.current) {
         certificateIdRef.current.focus();
       }
@@ -235,14 +262,21 @@ const AddStudentCredentials = () => {
       <div className="max-w-4xl mx-auto">
         <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden">
           <div className="bg-gradient-to-r from-blue-600 to-blue-700 p-6 text-center">
-          <h2 className="text-3xl font-bold text-white flex items-center justify-center gap-2">
+            <h2 className="text-3xl font-bold text-white flex items-center justify-center gap-2">
               <span className="animate-bounce">🎓</span>
               Add Graduate Credentials
             </h2>
+    
           </div>
 
           <div className="p-6 sm:p-8 md:p-10">
+            {/* Single error display area */}
+            <div className={`mb-4 p-3 rounded-lg ${currentError ? "bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400" : "hidden"}`}>
+              {currentError}
+            </div>
+
             <form onSubmit={handleSubmit} className="space-y-6">
+            <p className="text-red-500 mt-2">All fields marked with * are required</p>
               <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
                 {/* Certificate ID */}
                 <div className="sm:col-span-2">
@@ -254,16 +288,15 @@ const AddStudentCredentials = () => {
                     name="certificateID"
                     type="text"
                     className={`w-full px-4 py-3 rounded-lg border ${
-                      errors.certificateID ? "border-red-500" : "border-gray-300 dark:border-gray-600"
+                      currentField === "certificateID" && currentError ? "border-red-500" : "border-gray-300 dark:border-gray-600"
                     } bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent`}
                     value={student.certificateID}
                     onChange={handleChange}
+                    onFocus={() => handleFieldFocus("certificateID")}
+                    onBlur={() => validateField("certificateID", student.certificateID)}
                     placeholder="AB1234"
                     maxLength="6"
                   />
-                  {errors.certificateID && (
-                    <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.certificateID}</p>
-                  )}
                 </div>
 
                 {/* Name Fields */}
@@ -275,14 +308,13 @@ const AddStudentCredentials = () => {
                     name="firstName"
                     type="text"
                     className={`w-full px-4 py-3 rounded-lg border ${
-                      errors.firstName ? "border-red-500" : "border-gray-300 dark:border-gray-600"
+                      currentField === "firstName" && currentError ? "border-red-500" : "border-gray-300 dark:border-gray-600"
                     } bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent`}
                     value={student.firstName}
                     onChange={handleChange}
+                    onFocus={() => handleFieldFocus("firstName")}
+                    onBlur={() => validateField("firstName", student.firstName)}
                   />
-                  {errors.firstName && (
-                    <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.firstName}</p>
-                  )}
                 </div>
 
                 <div>
@@ -293,14 +325,13 @@ const AddStudentCredentials = () => {
                     name="middleName"
                     type="text"
                     className={`w-full px-4 py-3 rounded-lg border ${
-                      errors.middleName ? "border-red-500" : "border-gray-300 dark:border-gray-600"
+                      currentField === "middleName" && currentError ? "border-red-500" : "border-gray-300 dark:border-gray-600"
                     } bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent`}
                     value={student.middleName}
                     onChange={handleChange}
+                    onFocus={() => handleFieldFocus("middleName")}
+                    onBlur={() => validateField("middleName", student.middleName)}
                   />
-                  {errors.middleName && (
-                    <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.middleName}</p>
-                  )}
                 </div>
 
                 <div>
@@ -311,14 +342,13 @@ const AddStudentCredentials = () => {
                     name="lastName"
                     type="text"
                     className={`w-full px-4 py-3 rounded-lg border ${
-                      errors.lastName ? "border-red-500" : "border-gray-300 dark:border-gray-600"
+                      currentField === "lastName" && currentError ? "border-red-500" : "border-gray-300 dark:border-gray-600"
                     } bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent`}
                     value={student.lastName}
                     onChange={handleChange}
+                    onFocus={() => handleFieldFocus("lastName")}
+                    onBlur={() => validateField("lastName", student.lastName)}
                   />
-                  {errors.lastName && (
-                    <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.lastName}</p>
-                  )}
                 </div>
 
                 {/* Academic Info */}
@@ -333,14 +363,13 @@ const AddStudentCredentials = () => {
                     min="1.75"
                     max="4.00"
                     className={`w-full px-4 py-3 rounded-lg border ${
-                      errors.cgpa ? "border-red-500" : "border-gray-300 dark:border-gray-600"
+                      currentField === "cgpa" && currentError ? "border-red-500" : "border-gray-300 dark:border-gray-600"
                     } bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent`}
                     value={student.cgpa}
                     onChange={handleChange}
+                    onFocus={() => handleFieldFocus("cgpa")}
+                    onBlur={() => validateField("cgpa", student.cgpa)}
                   />
-                  {errors.cgpa && (
-                    <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.cgpa}</p>
-                  )}
                 </div>
 
                 {/* College and Department */}
@@ -351,19 +380,18 @@ const AddStudentCredentials = () => {
                   <select
                     name="college"
                     className={`w-full px-4 py-3 rounded-lg border ${
-                      errors.college ? "border-red-500" : "border-gray-300 dark:border-gray-600"
+                      currentField === "college" && currentError ? "border-red-500" : "border-gray-300 dark:border-gray-600"
                     } bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent`}
                     value={student.college}
                     onChange={handleChange}
+                    onFocus={() => handleFieldFocus("college")}
+                    onBlur={() => validateField("college", student.college)}
                   >
                     <option value="">Select College</option>
                     {Object.keys(collegeDepartmentData).map(college => (
                       <option key={college} value={college}>{college}</option>
                     ))}
                   </select>
-                  {errors.college && (
-                    <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.college}</p>
-                  )}
                 </div>
 
                 <div>
@@ -373,10 +401,12 @@ const AddStudentCredentials = () => {
                   <select
                     name="department"
                     className={`w-full px-4 py-3 rounded-lg border ${
-                      errors.department ? "border-red-500" : "border-gray-300 dark:border-gray-600"
+                      currentField === "department" && currentError ? "border-red-500" : "border-gray-300 dark:border-gray-600"
                     } bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:opacity-50`}
                     value={student.department}
                     onChange={handleChange}
+                    onFocus={() => handleFieldFocus("department")}
+                    onBlur={() => validateField("department", student.department)}
                     disabled={!student.college}
                   >
                     <option value="">
@@ -386,9 +416,6 @@ const AddStudentCredentials = () => {
                       <option key={dept} value={dept}>{dept}</option>
                     ))}
                   </select>
-                  {errors.department && (
-                    <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.department}</p>
-                  )}
                 </div>
 
                 {/* Program and Status */}
@@ -399,19 +426,18 @@ const AddStudentCredentials = () => {
                   <select
                     name="program"
                     className={`w-full px-4 py-3 rounded-lg border ${
-                      errors.program ? "border-red-500" : "border-gray-300 dark:border-gray-600"
+                      currentField === "program" && currentError ? "border-red-500" : "border-gray-300 dark:border-gray-600"
                     } bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent`}
                     value={student.program}
                     onChange={handleChange}
+                    onFocus={() => handleFieldFocus("program")}
+                    onBlur={() => validateField("program", student.program)}
                   >
                     <option value="">Select Program</option>
                     <option value="BSc">BSc</option>
                     <option value="MSc">MSc</option>
                     <option value="PhD">PhD</option>
                   </select>
-                  {errors.program && (
-                    <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.program}</p>
-                  )}
                 </div>
 
                 <div>
@@ -421,19 +447,18 @@ const AddStudentCredentials = () => {
                   <select
                     name="gstatus"
                     className={`w-full px-4 py-3 rounded-lg border ${
-                      errors.gstatus ? "border-red-500" : "border-gray-300 dark:border-gray-600"
+                      currentField === "gstatus" && currentError ? "border-red-500" : "border-gray-300 dark:border-gray-600"
                     } bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent`}
                     value={student.gstatus}
                     onChange={handleChange}
+                    onFocus={() => handleFieldFocus("gstatus")}
+                    onBlur={() => validateField("gstatus", student.gstatus)}
                   >
                     <option value="">Select Status</option>
                     <option value="Graduated">Graduated</option>
                     <option value="Pending">Pending</option>
                     <option value="Suspended">Suspended</option>
                   </select>
-                  {errors.gstatus && (
-                    <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.gstatus}</p>
-                  )}
                 </div>
 
                 {/* Dates */}
@@ -445,14 +470,13 @@ const AddStudentCredentials = () => {
                     type="date"
                     name="startDate"
                     className={`w-full px-4 py-3 rounded-lg border ${
-                      errors.startDate ? "border-red-500" : "border-gray-300 dark:border-gray-600"
+                      currentField === "startDate" && currentError ? "border-red-500" : "border-gray-300 dark:border-gray-600"
                     } bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent`}
                     value={student.startDate}
                     onChange={handleChange}
+                    onFocus={() => handleFieldFocus("startDate")}
+                    onBlur={() => validateField("startDate", student.startDate)}
                   />
-                  {errors.startDate && (
-                    <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.startDate}</p>
-                  )}
                 </div>
 
                 <div>
@@ -463,15 +487,14 @@ const AddStudentCredentials = () => {
                     type="date"
                     name="endDate"
                     className={`w-full px-4 py-3 rounded-lg border ${
-                      errors.endDate ? "border-red-500" : "border-gray-300 dark:border-gray-600"
+                      currentField === "endDate" && currentError ? "border-red-500" : "border-gray-300 dark:border-gray-600"
                     } bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent`}
                     value={student.endDate}
                     onChange={handleChange}
+                    onFocus={() => handleFieldFocus("endDate")}
+                    onBlur={() => validateField("endDate", student.endDate)}
                     min={student.startDate}
                   />
-                  {errors.endDate && (
-                    <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.endDate}</p>
-                  )}
                 </div>
 
                 {/* Gender */}
@@ -482,18 +505,17 @@ const AddStudentCredentials = () => {
                   <select
                     name="gender"
                     className={`w-full px-4 py-3 rounded-lg border ${
-                      errors.gender ? "border-red-500" : "border-gray-300 dark:border-gray-600"
+                      currentField === "gender" && currentError ? "border-red-500" : "border-gray-300 dark:border-gray-600"
                     } bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent`}
                     value={student.gender}
                     onChange={handleChange}
+                    onFocus={() => handleFieldFocus("gender")}
+                    onBlur={() => validateField("gender", student.gender)}
                   >
                     <option value="">Select Gender</option>
                     <option value="Male">Male</option>
                     <option value="Female">Female</option>
                   </select>
-                  {errors.gender && (
-                    <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.gender}</p>
-                  )}
                 </div>
               </div>
 
@@ -527,7 +549,7 @@ const AddStudentCredentials = () => {
                 </button>
                 {!isFormComplete() && (
                   <p className="mt-2 text-sm text-gray-600 dark:text-gray-400 text-center">
-                    Please fill all required fields to enable submission
+                    Please complete all required fields to enable submission
                   </p>
                 )}
               </div>
