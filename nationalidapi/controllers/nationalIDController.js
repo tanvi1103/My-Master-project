@@ -27,14 +27,6 @@ export const uploadNationalIDsExcel = async (req, res, next) => {
           B: 'middleName',
           C: 'lastName',
           D: 'gender',
-          E: 'dateOfBirth',
-          F: 'phone_no',
-          G: 'country',
-          H: 'region',
-          I: 'city',
-          J: 'zone',
-          K: 'woreda',
-          L: 'kebele'
         }
       }]
     });
@@ -97,16 +89,7 @@ export const uploadNationalIDsExcel = async (req, res, next) => {
           middleName: record.middleName?.trim() || '',
           lastName: record.lastName.trim(),
           gender: record.gender.trim(),
-          dateOfBirth: record.dateOfBirth || new Date(Date.now() - 22 * 365 * 24 * 60 * 60 * 1000),
-          phone_no: record.phone_no || '+251954233154',
-          country: record.country || 'Ethiopia',
-          region: record.region || getRandom(["South West", "Oromia", "Amhara", "Tigray", "Sidama"]),
-          city: record.city || getRandom(["Bonga", "Jimma", "Addis Ababa", "Hawassa", "Dire Dawa"]),
-          zone: record.zone || getRandom(["Kafa", "Jimma", "Gamo", "Bale", "Shewa"]),
-          woreda: record.woreda || getRandom(["Gesha", "Yeki", "Bita", "Shebe", "Dedo"]),
-          kebele: record.kebele || getRandom(["01", "02", "03", "04", "05", "06", "07"]),
-          nationalIdNumber,
-          photo: record.photo || `https://randomuser.me/api/portraits/${Math.random() > 0.5 ? 'men' : 'women'}/${Math.floor(Math.random() * 100)}.jpg`
+          
         });
       } catch (error) {
         errors.push(`Row ${index + 2}: ${error.message}`);
