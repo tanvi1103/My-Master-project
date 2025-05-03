@@ -81,6 +81,23 @@ const AddStudentCredentials = () => {
     certificateIdRef.current?.focus();
   }, []);
 
+  const isFormComplete = () => {
+    return (
+      student.certificateID.trim() && /^[A-Za-z]{2}\d{4}$/i.test(student.certificateID) &&
+      student.firstName.trim() &&
+      student.middleName.trim() &&
+      student.lastName.trim() &&
+      student.college &&
+      student.department &&
+      student.gender &&
+      student.program &&
+      student.gstatus &&
+      student.cgpa && parseFloat(student.cgpa) >= 1.75 && parseFloat(student.cgpa) <= 4.0 &&
+      student.startDate &&
+      student.endDate && new Date(student.endDate) >= new Date(student.startDate)
+    );
+  };
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     
@@ -218,8 +235,9 @@ const AddStudentCredentials = () => {
       <div className="max-w-4xl mx-auto">
         <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden">
           <div className="bg-gradient-to-r from-blue-600 to-blue-700 p-6 text-center">
-            <h2 className="text-3xl font-bold text-white">
-              Add Student Credentials
+          <h2 className="text-3xl font-bold text-white flex items-center justify-center gap-2">
+              <span className="animate-bounce">🎓</span>
+              Add Graduate Credentials
             </h2>
           </div>
 
@@ -483,8 +501,12 @@ const AddStudentCredentials = () => {
               <div className="pt-4">
                 <button
                   type="submit"
-                  disabled={isSubmitting}
-                  className="w-full py-3 px-6 rounded-lg font-semibold text-white bg-blue-600 hover:bg-blue-700 shadow-md disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors duration-200"
+                  disabled={!isFormComplete() || isSubmitting}
+                  className={`w-full py-3 px-6 rounded-lg font-semibold text-white shadow-md transition-colors duration-200 ${
+                    isFormComplete()
+                      ? "bg-blue-600 hover:bg-blue-700"
+                      : "bg-gray-400 cursor-not-allowed"
+                  }`}
                 >
                   {isSubmitting ? (
                     <>
@@ -503,6 +525,11 @@ const AddStudentCredentials = () => {
                     "Add Student Credentials"
                   )}
                 </button>
+                {!isFormComplete() && (
+                  <p className="mt-2 text-sm text-gray-600 dark:text-gray-400 text-center">
+                    Please fill all required fields to enable submission
+                  </p>
+                )}
               </div>
             </form>
           </div>
