@@ -1,0 +1,24 @@
+{
+  "name": "nationalidapi",
+  "version": "1.0.0",
+  "main": "idServer.js",
+  "scripts": {
+    "id": "node idServer.js",
+    "dev": "nodemon idServer.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "description": "",
+  "devDependencies": {
+    "nodemon": "^3.1.10"
+  },
+  "dependencies": {
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.5",
+    "dotenv": "^16.5.0",
+    "express": "^5.1.0",
+    "mongoose": "^8.14.1"
+  }
+}
