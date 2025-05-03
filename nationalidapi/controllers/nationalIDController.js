@@ -28,3 +28,32 @@ export const createNationalID = async (req, res) => {
     });
   }
 };
+
+export const searchNationalIDs = async (req, res) => {
+  try {
+    // Extract query parameters
+    const { gender, firstName, middleName, lastName } = req.query;
+    
+    // Build the search filter dynamically
+    const filter = {};
+    
+    if (gender) filter.gender = { $regex: new RegExp(gender, 'i') };
+    if (firstName) filter.firstName = { $regex: new RegExp(firstName, 'i') };
+    if (middleName) filter.middleName = { $regex: new RegExp(middleName, 'i') };
+    if (lastName) filter.lastName = { $regex: new RegExp(lastName, 'i') };
+    
+    // Execute the query
+    const nationalIDs = await NationalID.find(filter);
+    
+    res.status(200).json({
+      success: true,
+      count: nationalIDs.length,
+      data: nationalIDs
+    });
+  } catch (error) {
+    res.status(400).json({
+      success: false,
+      error: error.message
+    });
+  }
+};
