@@ -45,3 +45,8 @@ app.use((err, req, res, next) => {
   console.error(err.stack); // only log in server
   res.status(500).json({ message: 'Something went wrong' });
 });
+
+
+// MONGO_URI=mongodb+srv://madishamadiso00:NJp3PQFUdpXrPtaP@cluster0.lqt7xgr.mongodb.net/file?retryWrites=true&w=majority&appName=Cluster0
+// PORT=5000
+// JWT_SECRET=madisomelese

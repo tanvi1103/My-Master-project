@@ -39,3 +39,12 @@ app.listen(PORT, () => {
   connectDB();
   console.log(`Server running on port http://localhost:${PORT}`);
 });
+
+
+// MONGODB_NATIONAL_ID_URI=mongodb+srv://madishamadiso00:6Yxq5O9YKtEm6Iks@cluster0.s4fepks.mongodb.net/nationalIdInfo?retryWrites=true&w=majority&appName=Cluster0
+
+// PORT=7000
+
+// JWT_SECRET=madishamadiso00
+
+// CLIENT_URL=http://localhost:5173
