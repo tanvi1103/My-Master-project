@@ -71,7 +71,7 @@ export const uploadNationalIDsExcel = async (req, res, next) => {
         // Check for existing record
         const existingID = await NationalID.findOne({ 
           firstName: record.firstName.trim(),
-          middleName: record.middleName?.trim() || '',
+          middleName: record.middleName?.trim(),
           lastName: record.lastName.trim(),
           gender: record.gender.trim()
         });
@@ -86,7 +86,7 @@ export const uploadNationalIDsExcel = async (req, res, next) => {
         // Prepare the record
         validNationalIDs.push({
           firstName: record.firstName.trim(),
-          middleName: record.middleName?.trim() || '',
+          middleName: record.middleName?.trim() ,
           lastName: record.lastName.trim(),
           gender: record.gender.trim(),
           

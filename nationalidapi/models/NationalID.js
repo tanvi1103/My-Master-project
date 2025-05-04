@@ -4,12 +4,13 @@ const nationalIDSchema = new mongoose.Schema({
   firstName: { type: String, required: true },
   middleName: { type: String, required: true },
   lastName: { type: String, required: true },
+  gender: { type: String, required: true },
   dateOfBirth: {
     type: String,
     required: true,
     default: Date.now() - 22 * 365 * 24 * 60 * 60 * 1000, // Default to 22 years ago
   },
-  gender: { type: String, required: true },
+
   phone_no: {type: String, required: true, default: "+251954233154", },
   country: { type: String, required: true, default: "Ethiopia" },
   region: {
@@ -37,7 +38,6 @@ const nationalIDSchema = new mongoose.Schema({
     required: true,
     default: () => getRandom(["01", "02", "03", "04", "05", "06", "07"])
   },
-  nationalIdNumber: { type: Number, unique: true },
   photo: {
     type: String,
     default: () => {
