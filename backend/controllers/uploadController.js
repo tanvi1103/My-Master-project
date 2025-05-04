@@ -22,18 +22,18 @@ const uploadExcelFile = async (req, res, next) => {
         name: 'Sheet1',
         header: { rows: 1 },
         columnToKey: {
-          A: 'certificateID',
-          B: 'firstName',
-          C: 'middleName',
-          D: 'lastName',
-          E: 'college',
-          F: 'department',
-          G: 'cgpa',
-          H: 'startDate',
-          I: 'endDate',
-          J: 'gender',
+          A: 'firstName',
+          B: 'middleName',
+          C: 'lastName',
+          D: 'gender',
+          E: 'certificateID',
+          F: 'college',
+          G: 'department',
+          H: 'cgpa',
+          I: 'startDate',
+          J: 'endDate',
           K: 'program',
-          L: 'gstatus'
+          L: 'gstatus'      
         }
       }]
     });
@@ -50,7 +50,7 @@ const uploadExcelFile = async (req, res, next) => {
     }
 
     // Validate required fields
-    const requiredFields = ['certificateID', 'firstName', 'lastName', 'department', 
+    const requiredFields = ['certificateID', 'firstName', 'middleName', 'lastName', 'department', 
                           'college', 'cgpa', 'startDate', 'endDate', 
                           'gender', 'program', 'gstatus'];
     
@@ -124,16 +124,16 @@ const uploadExcelFile = async (req, res, next) => {
         if (cgpa < 0 || cgpa > 4) throw new Error('CGPA must be between 0 and 4');
 
         validCertificates.push({
-          certificateID: cert.certificateID.trim(),
           firstName: cert.firstName.trim(),
-          middleName: cert.middleName?.trim() || '',
+          middleName: cert.middleName?.trim(),
           lastName: cert.lastName.trim(),
+          gender: cert.gender.trim(),
+          certificateID: cert.certificateID.trim(),
           college: cert.college.trim(),
           department: cert.department.trim(),
           cgpa,
           startDate,
           endDate,
-          gender: cert.gender.trim(),
           program: cert.program.trim(),
           gstatus: cert.gstatus.trim()
         });
