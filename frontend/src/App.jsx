@@ -17,6 +17,8 @@ import axios from 'axios';
 import BulkGraduateUpload from "./pages/BulkGraduateUpload";
 import SingleGraduateForm from "./pages/SingleGraduateForm";
 
+import RegistrarDashboard from "./registrar/RegistrarDashboard ";
+
 axios.defaults.withCredentials = true;
 
 const App = () => {
@@ -28,6 +30,7 @@ const App = () => {
         <Route path="/search" element={<GraduateSearch />} />
         <Route path="/certificate/:id" element={<CertificateDetail />} />
         <Route path="/admin/login" element={<AdminLogin />} />
+        <Route path="/registrar" element={<RegistrarDashboard />} />
        {/* admin routes */}
         <Route
           path="/admin"
