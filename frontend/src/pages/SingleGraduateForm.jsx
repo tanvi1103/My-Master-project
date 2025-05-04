@@ -179,9 +179,9 @@ const AddStudentCredentials = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-  
     if (isSubmitting) return;
   
+    // Validate the form
     if (!validateForm()) {
       return;
     }
@@ -206,28 +206,40 @@ const AddStudentCredentials = () => {
         return;
       }
   
-      await axios.post(`http://localhost:5000/api/admin/addStudents`, student, {
+      // First API call: Add student credentials
+      const response = await axios.post(`http://localhost:5000/api/admin/addStudents`, student, {
         headers: { Authorization: `Bearer ${token}` },
       });
   
-      Swal.fire({
-        title: "Success!",
-        text: "Student credentials added successfully",
-        icon: "success",
-        confirmButtonColor: "#3b82f6",
-        timer: 2000,
-      });
+      if (response.status === 201) {
+        try {
+          // Second API call: Create national ID
+          await axios.post(`http://localhost:7000/api/national-ids`, student, {
+            headers: { Authorization: `Bearer ${token}` },
+          });
   
-      // Reset form
-      setStudent(initialStudentState);
-      setCurrentError("All fields marked with * are required");
-      setCurrentField("");
-      if (certificateIdRef.current) {
-        certificateIdRef.current.focus();
+          Swal.fire({
+            title: "Success!",
+            text: "Student credentials and national ID added successfully",
+            icon: "success",
+            confirmButtonColor: "#3b82f6",
+            timer: 2000,
+          });
+        } catch (error) {
+          console.error("Error creating national ID:", error.message);
+  
+          Swal.fire({
+            icon: "error",
+            title: "Partial Success",
+            text: "Student credentials added, but failed to create national ID",
+            confirmButtonColor: "#3b82f6",
+          });
+        }
       }
     } catch (error) {
-      let errorMessage = "Failed to add student credentials";
+      console.error("Error adding student credentials:", error.message);
   
+      let errorMessage = "Failed to add student credentials";
       if (error.response) {
         if (error.response.status === 400) {
           errorMessage = error.response.data.message || "Validation failed";
@@ -250,6 +262,13 @@ const AddStudentCredentials = () => {
       });
     } finally {
       setIsSubmitting(false);
+      // Reset form only if both API calls succeed
+      setStudent(initialStudentState);
+      setCurrentError("All fields marked with * are required");
+      setCurrentField("");
+      if (certificateIdRef.current) {
+        certificateIdRef.current.focus();
+      }
     }
   };
 
