@@ -18,6 +18,7 @@ import BulkGraduateUpload from "./pages/BulkGraduateUpload";
 import SingleGraduateForm from "./pages/SingleGraduateForm";
 
 import RegistrarDashboard from "./registrar/RegistrarDashboard ";
+import RegistrarLayout from "./registrar/RegistrarLayout";
 
 axios.defaults.withCredentials = true;
 
@@ -30,7 +31,58 @@ const App = () => {
         <Route path="/search" element={<GraduateSearch />} />
         <Route path="/certificate/:id" element={<CertificateDetail />} />
         <Route path="/admin/login" element={<AdminLogin />} />
-        <Route path="/registrar" element={<RegistrarDashboard />} />
+
+        {/* registrar routes */}
+        <Route path="/registrar" element={
+              <RegistrarLayout>
+              <div className="space-y-4">
+                <h3 className="text-lg font-semibold text-gray-800 dark:text-white">Welcome back!</h3>
+                <p className="text-gray-600 dark:text-gray-300">
+                  Here's an overview of your recent activities and important notifications.
+                </p>
+                {/* Add your dashboard content here */}
+              </div>
+            </RegistrarLayout>
+        } />
+
+        <Route path="/registrar/verifyunverified" element={
+              <RegistrarLayout>
+              <div className="space-y-4">
+                <h3 className="text-lg font-semibold text-gray-800 dark:text-white">Welcome back!</h3>
+                <p className="text-gray-600 dark:text-gray-300">
+                  Here's an overview of your recent activities and important notifications.
+                </p>
+                {/* Add your dashboard content here */}
+              </div>
+            </RegistrarLayout>
+        } />
+
+        <Route path="/registrar/viewverified" element={
+              <RegistrarLayout>
+              <div className="space-y-4">
+                <h3 className="text-lg font-semibold text-gray-800 dark:text-white">Welcome back!</h3>
+                <p className="text-gray-600 dark:text-gray-300">
+                  Here's an overview of your recent activities and important notifications.
+                </p>
+                {/* Add your dashboard content here */}
+              </div>
+            </RegistrarLayout>
+        } />
+
+        <Route path="/registrar/viewallcertificates" element={
+              <RegistrarLayout>
+              <div className="space-y-4">
+                <h3 className="text-lg font-semibold text-gray-800 dark:text-white">Welcome back!</h3>
+                <p className="text-gray-600 dark:text-gray-300">
+                  Here's an overview of your recent activities and important notifications.
+                </p>
+                {/* Add your dashboard content here */}
+              </div>
+            </RegistrarLayout>
+        } />
+
+
+
        {/* admin routes */}
         <Route
           path="/admin"
