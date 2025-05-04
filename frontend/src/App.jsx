@@ -19,6 +19,7 @@ import SingleGraduateForm from "./pages/SingleGraduateForm";
 
 import RegistrarDashboard from "./registrar/RegistrarDashboard ";
 import RegistrarLayout from "./registrar/RegistrarLayout";
+import StudentsPage from "./registrar/StudentsPage";
 
 axios.defaults.withCredentials = true;
 
@@ -73,9 +74,17 @@ const App = () => {
               <RegistrarLayout>
               <div className="space-y-4">
                 <h3 className="text-lg font-semibold text-gray-800 dark:text-white">Welcome back!</h3>
-                <p className="text-gray-600 dark:text-gray-300">
-                  Here's an overview of your recent activities and important notifications.
-                </p>
+                <ViewUpdateGraduates />
+                {/* Add your dashboard content here */}
+              </div>
+            </RegistrarLayout>
+        } />
+
+        <Route path="/registrar/studentsearch" element={
+              <RegistrarLayout>
+              <div className="space-y-4">
+                <h3 className="text-lg font-semibold text-gray-800 dark:text-white">Welcome back!</h3>
+                <StudentsPage />
                 {/* Add your dashboard content here */}
               </div>
             </RegistrarLayout>
