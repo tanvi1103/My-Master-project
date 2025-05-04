@@ -5,6 +5,7 @@ const nationalIDSchema = new mongoose.Schema({
   middleName: { type: String, required: true },
   lastName: { type: String, required: true },
   gender: { type: String, required: true },
+  nationalIdNumber: { type: Number, unique: true, required: true, min:1 },
   dateOfBirth: {
     type: String,
     required: true,

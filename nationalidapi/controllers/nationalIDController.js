@@ -86,10 +86,10 @@ export const uploadNationalIDsExcel = async (req, res, next) => {
         // Prepare the record
         validNationalIDs.push({
           firstName: record.firstName.trim(),
-          middleName: record.middleName?.trim() ,
+          middleName: record.middleName?.trim(),
           lastName: record.lastName.trim(),
           gender: record.gender.trim(),
-          
+          nationalIdNumber // Include the generated National ID number
         });
       } catch (error) {
         errors.push(`Row ${index + 2}: ${error.message}`);
@@ -153,39 +153,72 @@ export const uploadNationalIDsExcel = async (req, res, next) => {
 };
 
 export const createNationalID = async (req, res) => {
-  const { firstName, middleName, lastName, gender} = req.body;
-  // Create new national ID document
-  if (!firstName || !middleName || !lastName || !gender){
+  const { firstName, middleName, lastName, gender } = req.body;
+
+  if (!firstName || !middleName || !lastName || !gender) {
     return res.status(400).json({
       success: false,
       message: 'Please provide all required fields'
     });
   }
+
   try {
-    // Generate the next national ID number
-    const nationalIdNumber = await getNextSequence('nationalId');
-    
-    const existingID = await NationalID.findOne({ firstName, middleName, lastName, gender})
+    let nationalIdNumber;
+    let retries = 3; // Retry up to 3 times in case of duplicate key error
+
+    while (retries > 0) {
+      try {
+        nationalIdNumber = await getNextSequence('nationalId');
+        break; // Exit loop if successful
+      } catch (error) {
+        if (error.code === 11000) {
+          retries -= 1;
+          console.warn('Duplicate nationalIdNumber detected, retrying...');
+        } else {
+          throw error;
+        }
+      }
+    }
+
+    if (!nationalIdNumber) {
+      return res.status(500).json({
+        success: false,
+        message: 'Failed to generate a unique National ID number after multiple attempts'
+      });
+    }
+
+    const existingID = await NationalID.findOne({
+      firstName: firstName.trim(),
+      middleName: middleName.trim(),
+      lastName: lastName.trim(),
+      gender: gender.trim()
+    });
+
     if (existingID) {
       return res.status(400).json({
         success: false,
         message: 'National ID already exists for this person'
       });
     }
+
     const nationalID = new NationalID({
-      ...req.body,
-      nationalIdNumber
+      firstName: firstName.trim(),
+      middleName: middleName.trim(),
+      lastName: lastName.trim(),
+      gender: gender.trim(),
+      nationalIdNumber: nationalIdNumber.toString() // Convert BigInt to string
     });
 
-    // Save to database
     await nationalID.save();
 
     res.status(201).json({
       success: true,
-     nationalID
+      nationalID
     });
   } catch (error) {
-    res.status(400).json({
+    console.error('Error creating National ID:', error.message);
+
+    res.status(500).json({
       success: false,
       error: error.message
     });

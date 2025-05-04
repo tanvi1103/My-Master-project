@@ -5,6 +5,7 @@ import dotenv from 'dotenv';
 
 import connectDB from './config/nationalIDdb.js';
 import nationalIDRouter from './routes/nationalIDRoutes.js';
+import Counter from './models/Counter.js';
 dotenv.config()
 
 const PORT =  process.env.PORT || 6000;
@@ -30,6 +31,14 @@ app.get ("/", (req, res) => {
 
 
 
+// Initialize Counter
+const initializeCounter = async () => {
+  const existingCounter = await Counter.findOne({ id: 'nationalId' });
+  if (!existingCounter) {
+    await Counter.create({ id: 'nationalId', seq: 0 });
+    console.log('Counter initialized for nationalId');
+  }
+};
 
 
 
@@ -37,6 +46,7 @@ app.get ("/", (req, res) => {
 
 app.listen(PORT, () => {
   connectDB();
+  initializeCounter(); // Initialize the counter when the server starts
   console.log(`Server running on port http://localhost:${PORT}`);
 });
 
