@@ -71,9 +71,9 @@ const AdminLayout = ({ children }) => {
       </div>
 
       {/* Main content */}
-      <main className="flex-1 p-4 mt-20  max-w-7xl mx-auto">{children}
-
-      </main>
+      <main className="flex-1 md:ml-64 overflow-auto p-6 md:p-8 mt-16 max-w-7xl mx-auto">
+  {children}
+</main>
     </div>
   );
 };

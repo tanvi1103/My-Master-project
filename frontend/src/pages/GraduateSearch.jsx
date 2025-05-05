@@ -76,7 +76,7 @@ const [error, setError] = useState("");
         "http://localhost:5000/api/certificates/name",
         { params: formData }
       );
-      
+
       console.log(data)
       setCertificate(data);
     } catch (err) {
