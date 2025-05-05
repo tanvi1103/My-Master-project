@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import axios from "axios";
+import React, { useEffect, useState } from "react";
 import {
   FiSearch,
   FiFilter,
@@ -12,43 +13,66 @@ import {
   FiX,
 } from "react-icons/fi";
 
+const api = `http://localhost:5000/api/admin`;
 const StudentsPage = () => {
   // Sample certificate data matching your schema
-  const [certificates, setCertificates] = useState([
-    {
-      certificateID: "RU2023001",
-      firstName: "Abel",
-      middleName: "T",
-      lastName: "Tesfaye",
-      college: "Engineering and Technology",
-      department: "Computer Science",
-      program: "BSc Computer Science",
-      gstatus: "Verified",
-      cgpa: 3.75,
-      gender: "Male",
-      photo: "https://randomuser.me/api/portraits/men/1.jpg",
-      startDate: "2020-09-15",
-      endDate: "2024-06-15",
-    },
-    {
-      certificateID: "RU2023002",
-      firstName: "Meron",
-      middleName: "G",
-      lastName: "Girma",
-      college: "Business and Economics",
-      department: "Business Administration",
-      program: "MBA",
-      gstatus: "Verified",
-      cgpa: 3.92,
-      gender: "Female",
-      photo: "https://randomuser.me/api/portraits/women/2.jpg",
-      startDate: "2019-09-10",
-      endDate: "2023-06-10",
-    },
-    // Add more sample data as needed
-  ]);
+  // const [certificates, setCertificates] = useState([
+  //   {
+  //     certificateID: "RU2023001",
+  //     firstName: "Abel",
+  //     middleName: "T",
+  //     lastName: "Tesfaye",
+  //     college: "Engineering and Technology",
+  //     department: "Computer Science",
+  //     program: "BSc Computer Science",
+  //     gstatus: "Verified",
+  //     cgpa: 3.75,
+  //     gender: "Male",
+  //     photo: "https://randomuser.me/api/portraits/men/1.jpg",
+  //     startDate: "2020-09-15",
+  //     endDate: "2024-06-15",
+  //   },
+  //   {
+  //     certificateID: "RU2023002",
+  //     firstName: "Meron",
+  //     middleName: "G",
+  //     lastName: "Girma",
+  //     college: "Business and Economics",
+  //     department: "Business Administration",
+  //     program: "MBA",
+  //     gstatus: "Verified",
+  //     cgpa: 3.92,
+  //     gender: "Female",
+  //     photo: "https://randomuser.me/api/portraits/women/2.jpg",
+  //     startDate: "2019-09-10",
+  //     endDate: "2023-06-10",
+  //   },
+  //   // Add more sample data as needed
+  // ]);
+  const [certificates, setCertificates] = useState([]);
+
+  
+    useEffect(() => {
+      const fetchCertificates = async () => {
+        try {
+          const response = await axios.get(`${api}/certificates`); // Replace with your backend endpoint
+          console.log(response.data); // Log the response data for debugging
+          setCertificates(response.data); // Assuming the backend returns an array of certificates
+          setIsLoading(false);
+        } catch (err) {
+          console.error("Error fetching certificates:", err);
+          setError("Failed to fetch certificates. Please try again later.");
+          setIsLoading(false);
+        }
+      };
+  
+      fetchCertificates();
+    }, []);
+ 
 
   const [searchTerm, setSearchTerm] = useState("");
+  const [error, setError] = useState("");
+  const [isLoading, setIsLoading] = useState(true);
   const [selectedStatus, setSelectedStatus] = useState("All");
   const [selectedCollege, setSelectedCollege] = useState("All");
   const [selectedDepartment, setSelectedDepartment] = useState("All");
@@ -57,19 +81,7 @@ const StudentsPage = () => {
   const [selectedCertificate, setSelectedCertificate] = useState(null);
   const certificatesPerPage = 5;
 
-  const [editFormData, setEditFormData] = useState({
-    firstName: "",
-    middleName: "",
-    lastName: "",
-    college: "",
-    department: "",
-    program: "",
-    gstatus: "",
-    cgpa: 0,
-    gender: "Male",
-    startDate: "",
-    endDate: "",
-  });
+  const [editFormData, setEditFormData] = useState([]);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
   // college options
@@ -164,7 +176,7 @@ const StudentsPage = () => {
   // Handle form submission
   const handleEditSubmit = (e) => {
     e.preventDefault();
-
+    
     // Validate CGPA
     if (editFormData.cgpa < 1.75 || editFormData.cgpa > 4.0) {
       alert("CGPA must be between 1.75 and 4.0");
