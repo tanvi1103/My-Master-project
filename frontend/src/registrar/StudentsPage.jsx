@@ -1,559 +1,51 @@
 import React, { useState } from 'react';
-import { FiSearch, FiFilter, FiEdit2, FiTrash2, FiEye, FiDownload, FiPlus, FiChevronLeft, FiChevronRight } from 'react-icons/fi';
+import { 
+  FiSearch, 
+  FiFilter, 
+  FiEdit2, 
+  FiTrash2, 
+  FiEye, 
+  FiDownload, 
+  FiPlus, 
+  FiChevronLeft, 
+  FiChevronRight, 
+  FiX 
+} from 'react-icons/fi';
 
 const StudentsPage = () => {
-  // Enhanced sample student data
-  const [students, setStudents] = useState([
+  // Sample certificate data matching your schema
+  const [certificates, setCertificates] = useState([
     {
-      id: 'RU2023001',
-      name: 'Abel Tesfaye',
+      certificateID: 'RU2023001',
+      firstName: 'Abel',
+      middleName: 'T',
+      lastName: 'Tesfaye',
+      college: 'Engineering and Technology',
+      department: 'Computer Science',
       program: 'BSc Computer Science',
-      department: 'Computer Science',
-      college: 'Engineering and Technology',
-      status: 'Verfied',
-      cgpa: '3.75',
-      enrollmentDate: '2023-09-15',
-      avatar: 'https://randomuser.me/api/portraits/men/1.jpg'
+      gstatus: 'Verified',
+      cgpa: 3.75,
+      gender: 'Male',
+      photo: 'https://randomuser.me/api/portraits/men/1.jpg',
+      startDate: '2020-09-15',
+      endDate: '2024-06-15'
     },
     {
-      id: 'RU2023002',
-      name: 'Meron Girma',
-      program: 'MBA',
+      certificateID: 'RU2023002',
+      firstName: 'Meron',
+      middleName: 'G',
+      lastName: 'Girma',
+      college: 'Business and Economics',
       department: 'Business Administration',
-      college: 'Business and Economics',
-      status: 'Verfied',
-      cgpa: '3.92',
-      enrollmentDate: '2021-09-10',
-      avatar: 'https://randomuser.me/api/portraits/women/2.jpg'
+      program: 'MBA',
+      gstatus: 'Verified',
+      cgpa: 3.92,
+      gender: 'Female',
+      photo: 'https://randomuser.me/api/portraits/women/2.jpg',
+      startDate: '2019-09-10',
+      endDate: '2023-06-10'
     },
-    {
-      id: 'RU2023003',
-      name: 'Yohannes Bekele',
-      program: 'BSc Nursing',
-      department: 'Nursing',
-      college: 'Health Science',
-      status: 'Verfied',
-      cgpa: '3.45',
-      enrollmentDate: '2023-09-20',
-      avatar: 'https://randomuser.me/api/portraits/men/3.jpg'
-    },
-    {
-      id: 'RU2023004',
-      name: 'Selamawit Abebe',
-      program: 'PhD Psychology',
-      department: 'Psychology',
-      college: 'Social Science',
-      status: 'Pending',
-      cgpa: '3.10',
-      enrollmentDate: '2020-09-05',
-      avatar: 'https://randomuser.me/api/portraits/women/4.jpg'
-    },
-    {
-      id: 'RU2023005',
-      name: 'Dawit Kebede',
-      program: 'BSc Civil Engineering',
-      department: 'Civil Engineering',
-      college: 'Engineering and Technology',
-      status: 'Verfied',
-      cgpa: '3.68',
-      enrollmentDate: '2023-09-18',
-      avatar: 'https://randomuser.me/api/portraits/men/5.jpg'
-    },
-    {
-      id: 'RU2023006',
-      name: 'Eyerusalem Tadesse',
-      program: 'LLB Law',
-      department: 'Law',
-      college: 'Social Science',
-      status: 'Verfied',
-      cgpa: '3.55',
-      enrollmentDate: '2023-09-12',
-      avatar: 'https://randomuser.me/api/portraits/women/6.jpg'
-    },
-    {
-      id: 'RU2023007',
-      name: 'Tewodros Assefa',
-      program: 'BSc Electrical Engineering',
-      department: 'Electrical Engineering',
-      college: 'Engineering and Technology',
-      status: 'Verfied',
-      cgpa: '3.20',
-      enrollmentDate: '2023-09-22',
-      avatar: 'https://randomuser.me/api/portraits/men/7.jpg'
-    },
-    {
-      id: 'RU2023008',
-      name: 'Hana Mohammed',
-      program: 'BSc Accounting',
-      department: 'Accounting',
-      college: 'Business and Economics',
-      status: 'Verfied',
-      cgpa: '3.85',
-      enrollmentDate: '2023-09-14',
-      avatar: 'https://randomuser.me/api/portraits/women/8.jpg'
-    },
-    {
-      id: 'RU2023009',
-      name: 'Kebede Hailu',
-      program: 'BSc Mechanical Engineering',
-      department: 'Mechanical Engineering',
-      college: 'Engineering and Technology',
-      status: 'Pending',
-      cgpa: '2.95',
-      enrollmentDate: '2023-09-16',
-      avatar: 'https://randomuser.me/api/portraits/men/9.jpg'
-    },
-    {
-      id: 'RU2023010',
-      name: 'Alemitu Fekadu',
-      program: 'BSc Public Health',
-      department: 'Public Health',
-      college: 'Health Science',
-      status: 'Verfied',
-      cgpa: '3.60',
-      enrollmentDate: '2023-09-19',
-      avatar: 'https://randomuser.me/api/portraits/women/10.jpg'
-    },
-    {
-      id: 'RU2023011',
-      name: 'Getachew Worku',
-      program: 'BSc Software Engineering',
-      department: 'Computer Science',
-      college: 'Engineering and Technology',
-      status: 'Verfied',
-      cgpa: '3.72',
-      enrollmentDate: '2023-09-17',
-      avatar: 'https://randomuser.me/api/portraits/men/11.jpg'
-    },
-    {
-      id: 'RU2023012',
-      name: 'Zewditu Lemma',
-      program: 'BA Economics',
-      department: 'Economics',
-      college: 'Business and Economics',
-      status: 'Verfied',
-      cgpa: '3.88',
-      enrollmentDate: '2021-09-08',
-      avatar: 'https://randomuser.me/api/portraits/women/12.jpg'
-    },
-    {
-      id: 'RU2023013',
-      name: 'Ashenafi Mengistu',
-      program: 'BSc Architecture',
-      department: 'Architecture',
-      college: 'Engineering and Technology',
-      status: 'Verfied',
-      cgpa: '3.40',
-      enrollmentDate: '2023-09-21',
-      avatar: 'https://randomuser.me/api/portraits/men/13.jpg'
-    },
-    {
-      id: 'RU2023014',
-      name: 'Birtukan Solomon',
-      program: 'BSc Pharmacy',
-      department: 'Pharmacy',
-      college: 'Health Science',
-      status: 'Pending',
-      cgpa: '2.80',
-      enrollmentDate: '2023-09-15',
-      avatar: 'https://randomuser.me/api/portraits/women/14.jpg'
-    },
-    {
-      id: 'RU2023015',
-      name: 'Mekonnen Alemu',
-      program: 'BSc Chemical Engineering',
-      department: 'Chemical Engineering',
-      college: 'Engineering and Technology',
-      status: 'Verfied',
-      cgpa: '3.65',
-      enrollmentDate: '2023-09-18',
-      avatar: 'https://randomuser.me/api/portraits/men/15.jpg'
-    },
-    {
-      id: 'RU2023016',
-      name: 'Wubit Abate',
-      program: 'BA English Literature',
-      department: 'English',
-      college: 'Social Science',
-      status: 'Verfied',
-      cgpa: '3.50',
-      enrollmentDate: '2023-09-16',
-      avatar: 'https://randomuser.me/api/portraits/women/16.jpg'
-    },
-    {
-      id: 'RU2023017',
-      name: 'Girma Tsegaye',
-      program: 'BSc Information Systems',
-      department: 'Information Science',
-      college: 'Engineering and Technology',
-      status: 'Verfied',
-      cgpa: '3.30',
-      enrollmentDate: '2023-09-20',
-      avatar: 'https://randomuser.me/api/portraits/men/17.jpg'
-    },
-    {
-      id: 'RU2023018',
-      name: 'Meseret Demissie',
-      program: 'BSc Midwifery',
-      department: 'Midwifery',
-      college: 'Health Science',
-      status: 'Verfied',
-      cgpa: '3.75',
-      enrollmentDate: '2023-09-14',
-      avatar: 'https://randomuser.me/api/portraits/women/18.jpg'
-    },
-    {
-      id: 'RU2023019',
-      name: 'Tadesse Gebre',
-      program: 'BSc Food Technology',
-      department: 'Food Science',
-      college: 'Agriculture and Natural Resource',
-      status: 'Verfied',
-      cgpa: '3.25',
-      enrollmentDate: '2023-09-19',
-      avatar: 'https://randomuser.me/api/portraits/men/19.jpg'
-    },
-    {
-      id: 'RU2023020',
-      name: 'Hirut Wolde',
-      program: 'BA Sociology',
-      department: 'Sociology',
-      college: 'Social Science',
-      status: 'Verfied',
-      cgpa: '3.90',
-      enrollmentDate: '2021-09-12',
-      avatar: 'https://randomuser.me/api/portraits/women/20.jpg'
-    },
-    {
-      id: 'RU2023021',
-      name: 'Fikru Teshome',
-      program: 'BSc Biotechnology',
-      department: 'Biotechnology',
-      college: 'Natural and Computational Science',
-      status: 'Verfied',
-      cgpa: '3.60',
-      enrollmentDate: '2023-09-17',
-      avatar: 'https://randomuser.me/api/portraits/men/21.jpg'
-    },
-    {
-      id: 'RU2023022',
-      name: 'Aster Getahun',
-      program: 'BSc Banking and Finance',
-      department: 'Banking and Finance',
-      college: 'Business and Economics',
-      status: 'Verfied',
-      cgpa: '3.45',
-      enrollmentDate: '2023-09-15',
-      avatar: 'https://randomuser.me/api/portraits/women/22.jpg'
-    },
-    {
-      id: 'RU2023023',
-      name: 'Yared Mekonnen',
-      program: 'BSc Geology',
-      department: 'Geology',
-      college: 'Natural and Computational Science',
-      status: 'Verfied',
-      cgpa: '3.35',
-      enrollmentDate: '2023-09-21',
-      avatar: 'https://randomuser.me/api/portraits/men/23.jpg'
-    },
-    {
-      id: 'RU2023024',
-      name: 'Rahel Assefa',
-      program: 'BSc Hotel Management',
-      department: 'Hotel and Tourism Management',
-      college: 'Business and Economics',
-      status: 'Verfied',
-      cgpa: '3.55',
-      enrollmentDate: '2023-09-18',
-      avatar: 'https://randomuser.me/api/portraits/women/24.jpg'
-    },
-    {
-      id: 'RU2023025',
-      name: 'Solomon Girma',
-      program: 'BSc Statistics',
-      department: 'Statistics',
-      college: 'Natural and Computational Science',
-      status: 'Verfied',
-      cgpa: '3.70',
-      enrollmentDate: '2023-09-16',
-      avatar: 'https://randomuser.me/api/portraits/men/25.jpg'
-    },
-    {
-      id: 'RU2023026',
-      name: 'Genet Lemma',
-      program: 'BA Political Science',
-      department: 'Political Science',
-      college: 'Social Science',
-      status: 'Verfied',
-      cgpa: '3.65',
-      enrollmentDate: '2023-09-19',
-      avatar: 'https://randomuser.me/api/portraits/women/26.jpg'
-    },
-    {
-      id: 'RU2023027',
-      name: 'Bekele Abebe',
-      program: 'BSc Environmental Science',
-      department: 'Environmental Science',
-      college: 'Natural and Computational Science',
-      status: 'Verfied',
-      cgpa: '3.40',
-      enrollmentDate: '2023-09-20',
-      avatar: 'https://randomuser.me/api/portraits/men/27.jpg'
-    },
-    {
-      id: 'RU2023028',
-      name: 'Marta Tesfaye',
-      program: 'BSc Marketing',
-      department: 'Marketing Management',
-      college: 'Business and Economics',
-      status: 'Verfied',
-      cgpa: '3.50',
-      enrollmentDate: '2023-09-17',
-      avatar: 'https://randomuser.me/api/portraits/women/28.jpg'
-    },
-    {
-      id: 'RU2023029',
-      name: 'Assefa Wolde',
-      program: 'BSc Physics',
-      department: 'Physics',
-      college: 'Natural and Computational Science',
-      status: 'Verfied',
-      cgpa: '3.75',
-      enrollmentDate: '2023-09-15',
-      avatar: 'https://randomuser.me/api/portraits/men/29.jpg'
-    },
-    {
-      id: 'RU2023030',
-      name: 'Tigist Hailu',
-      program: 'BSc Psychology',
-      department: 'Psychology',
-      college: 'Social Science',
-      status: 'Verfied',
-      cgpa: '3.60',
-      enrollmentDate: '2023-09-18',
-      avatar: 'https://randomuser.me/api/portraits/women/30.jpg'
-    },
-    {
-      id: 'RU2023031',
-      name: 'Desta Mulugeta',
-      program: 'BSc Mathematics',
-      department: 'Mathematics',
-      college: 'Natural and Computational Science',
-      status: 'Verfied',
-      cgpa: '3.85',
-      enrollmentDate: '2023-09-16',
-      avatar: 'https://randomuser.me/api/portraits/men/31.jpg'
-    },
-    {
-      id: 'RU2023032',
-      name: 'Alemnesh Bekele',
-      program: 'BA History',
-      department: 'History',
-      college: 'Social Science',
-      status: 'Verfied',
-      cgpa: '3.45',
-      enrollmentDate: '2023-09-19',
-      avatar: 'https://randomuser.me/api/portraits/women/32.jpg'
-    },
-    {
-      id: 'RU2023033',
-      name: 'Yohannes Tadesse',
-      program: 'BSc Chemistry',
-      department: 'Chemistry',
-      college: 'Natural and Computational Science',
-      status: 'Verfied',
-      cgpa: '3.55',
-      enrollmentDate: '2023-09-17',
-      avatar: 'https://randomuser.me/api/portraits/men/33.jpg'
-    },
-    {
-      id: 'RU2023034',
-      name: 'Sara Mohammed',
-      program: 'BSc Management',
-      department: 'Management',
-      college: 'Business and Economics',
-      status: 'Verfied',
-      cgpa: '3.65',
-      enrollmentDate: '2023-09-20',
-      avatar: 'https://randomuser.me/api/portraits/women/34.jpg'
-    },
-    {
-      id: 'RU2023035',
-      name: 'Teshome Lemma',
-      program: 'BSc Biology',
-      department: 'Biology',
-      college: 'Natural and Computational Science',
-      status: 'Verfied',
-      cgpa: '3.70',
-      enrollmentDate: '2023-09-18',
-      avatar: 'https://randomuser.me/api/portraits/men/35.jpg'
-    },
-    {
-      id: 'RU2023036',
-      name: 'Mihret Abebe',
-      program: 'BA Geography',
-      department: 'Geography',
-      college: 'Social Science',
-      status: 'Verfied',
-      cgpa: '3.50',
-      enrollmentDate: '2023-09-16',
-      avatar: 'https://randomuser.me/api/portraits/women/36.jpg'
-    },
-    {
-      id: 'RU2023037',
-      name: 'Getnet Hailu',
-      program: 'BSc Animal Science',
-      department: 'Animal Science',
-      college: 'Agriculture and Natural Resource',
-      status: 'Verfied',
-      cgpa: '3.40',
-      enrollmentDate: '2023-09-19',
-      avatar: 'https://randomuser.me/api/portraits/men/37.jpg'
-    },
-    {
-      id: 'RU2023038',
-      name: 'Elsa Tadesse',
-      program: 'BSc Horticulture',
-      department: 'Horticulture',
-      college: 'Agriculture and Natural Resource',
-      status: 'Verfied',
-      cgpa: '3.60',
-      enrollmentDate: '2023-09-17',
-      avatar: 'https://randomuser.me/api/portraits/women/38.jpg'
-    },
-    {
-      id: 'RU2023039',
-      name: 'Kassahun Gebre',
-      program: 'BSc Forestry',
-      department: 'Forestry',
-      college: 'Agriculture and Natural Resource',
-      status: 'Verfied',
-      cgpa: '3.45',
-      enrollmentDate: '2023-09-20',
-      avatar: 'https://randomuser.me/api/portraits/men/39.jpg'
-    },
-    {
-      id: 'RU2023040',
-      name: 'Bethelhem Solomon',
-      program: 'BSc Natural Resource Management',
-      department: 'Natural Resource Management',
-      college: 'Agriculture and Natural Resource',
-      status: 'Verfied',
-      cgpa: '3.55',
-      enrollmentDate: '2023-09-18',
-      avatar: 'https://randomuser.me/api/portraits/women/40.jpg'
-    },
-    {
-      id: 'RU2023041',
-      name: 'Abebe Kebede',
-      program: 'BSc Veterinary Medicine',
-      department: 'Veterinary Medicine',
-      college: 'Agriculture and Natural Resource',
-      status: 'Verfied',
-      cgpa: '3.65',
-      enrollmentDate: '2023-09-16',
-      avatar: 'https://randomuser.me/api/portraits/men/41.jpg'
-    },
-    {
-      id: 'RU2023042',
-      name: 'Zeritu Hailu',
-      program: 'BSc Agro-economics',
-      department: 'Agro-economics',
-      college: 'Agriculture and Natural Resource',
-      status: 'Verfied',
-      cgpa: '3.50',
-      enrollmentDate: '2023-09-19',
-      avatar: 'https://randomuser.me/api/portraits/women/42.jpg'
-    },
-    {
-      id: 'RU2023043',
-      name: 'Mulugeta Assefa',
-      program: 'BSc Plant Science',
-      department: 'Plant Science',
-      college: 'Agriculture and Natural Resource',
-      status: 'Verfied',
-      cgpa: '3.40',
-      enrollmentDate: '2023-09-17',
-      avatar: 'https://randomuser.me/api/portraits/men/43.jpg'
-    },
-    {
-      id: 'RU2023044',
-      name: 'Hana Demissie',
-      program: 'BSc Soil and Water Conservation',
-      department: 'Soil and Water Conservation',
-      college: 'Agriculture and Natural Resource',
-      status: 'Verfied',
-      cgpa: '3.60',
-      enrollmentDate: '2023-09-20',
-      avatar: 'https://randomuser.me/api/portraits/women/44.jpg'
-    },
-    {
-      id: 'RU2023045',
-      name: 'Girma Tesfaye',
-      program: 'BSc Coffee Science and Technology',
-      department: 'Coffee Science and Technology',
-      college: 'Agriculture and Natural Resource',
-      status: 'Verfied',
-      cgpa: '3.75',
-      enrollmentDate: '2023-09-18',
-      avatar: 'https://randomuser.me/api/portraits/men/45.jpg'
-    },
-    {
-      id: 'RU2023046',
-      name: 'Meskerem Abate',
-      program: 'BA Civics and Ethical Studies',
-      department: 'Civics and Ethical Studies',
-      college: 'Social Science',
-      status: 'Verfied',
-      cgpa: '3.55',
-      enrollmentDate: '2023-09-16',
-      avatar: 'https://randomuser.me/api/portraits/women/46.jpg'
-    },
-    {
-      id: 'RU2023047',
-      name: 'Temesgen Wolde',
-      program: 'BA Special Needs Education',
-      department: 'Special Needs and Inclusive Education',
-      college: 'Social Science',
-      status: 'Verfied',
-      cgpa: '3.65',
-      enrollmentDate: '2023-09-19',
-      avatar: 'https://randomuser.me/api/portraits/men/47.jpg'
-    },
-    {
-      id: 'RU2023048',
-      name: 'Birtukan Mohammed',
-      program: 'BA Curriculum and Instruction',
-      department: 'Curriculum and Instruction',
-      college: 'Social Science',
-      status: 'Verfied',
-      cgpa: '3.50',
-      enrollmentDate: '2023-09-17',
-      avatar: 'https://randomuser.me/api/portraits/women/48.jpg'
-    },
-    {
-      id: 'RU2023049',
-      name: 'Yared Assefa',
-      program: 'BA Political Science and International Relations',
-      department: 'Political Science and International Relations',
-      college: 'Social Science',
-      status: 'Verfied',
-      cgpa: '3.70',
-      enrollmentDate: '2023-09-20',
-      avatar: 'https://randomuser.me/api/portraits/men/49.jpg'
-    },
-    {
-      id: 'RU2023050',
-      name: 'Selamawit Gebre',
-      program: 'BA English Language and Literature',
-      department: 'English Language and Literature',
-      college: 'Social Science',
-      status: 'Verfied',
-      cgpa: '3.60',
-      enrollmentDate: '2023-09-18',
-      avatar: 'https://randomuser.me/api/portraits/women/50.jpg'
-    }
+    // Add more sample data as needed
   ]);
 
   const [searchTerm, setSearchTerm] = useState('');
@@ -561,44 +53,51 @@ const StudentsPage = () => {
   const [selectedCollege, setSelectedCollege] = useState('All');
   const [selectedDepartment, setSelectedDepartment] = useState('All');
   const [currentPage, setCurrentPage] = useState(1);
-  const studentsPerPage = 5;
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedCertificate, setSelectedCertificate] = useState(null);
+  const certificatesPerPage = 5;
+
+  // Get full name
+  const getFullName = (certificate) => {
+    return `${certificate.firstName} ${certificate.middleName} ${certificate.lastName}`;
+  };
 
   // Get unique departments based on selected college
   const getFilteredDepartments = () => {
     if (selectedCollege === 'All') {
-      // Get all unique departments across all colleges
       const allDepartments = new Set();
-      students.forEach(student => allDepartments.add(student.department));
+      certificates.forEach(cert => allDepartments.add(cert.department));
       return Array.from(allDepartments);
     }
     return Array.from(new Set(
-      students
-        .filter(student => student.college === selectedCollege)
-        .map(student => student.department)
+      certificates
+        .filter(cert => cert.college === selectedCollege)
+        .map(cert => cert.department)
     ));
   };
 
-  // Filter students based on search and filters
-  const filteredStudents = students.filter(student => {
-    const matchesSearch = student.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
-                         student.id.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesStatus = selectedStatus === 'All' || student.status === selectedStatus;
-    const matchesCollege = selectedCollege === 'All' || student.college === selectedCollege;
-    const matchesDepartment = selectedDepartment === 'All' || student.department === selectedDepartment;
+  // Filter certificates based on search and filters
+  const filteredCertificates = certificates.filter(cert => {
+    const fullName = getFullName(cert).toLowerCase();
+    const matchesSearch = fullName.includes(searchTerm.toLowerCase()) || 
+                         cert.certificateID.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesStatus = selectedStatus === 'All' || cert.gstatus === selectedStatus;
+    const matchesCollege = selectedCollege === 'All' || cert.college === selectedCollege;
+    const matchesDepartment = selectedDepartment === 'All' || cert.department === selectedDepartment;
     
     return matchesSearch && matchesStatus && matchesCollege && matchesDepartment;
   });
 
   // Pagination logic
-  const indexOfLastStudent = currentPage * studentsPerPage;
-  const indexOfFirstStudent = indexOfLastStudent - studentsPerPage;
-  const currentStudents = filteredStudents.slice(indexOfFirstStudent, indexOfLastStudent);
-  const totalPages = Math.ceil(filteredStudents.length / studentsPerPage);
+  const indexOfLastCertificate = currentPage * certificatesPerPage;
+  const indexOfFirstCertificate = indexOfLastCertificate - certificatesPerPage;
+  const currentCertificates = filteredCertificates.slice(indexOfFirstCertificate, indexOfLastCertificate);
+  const totalPages = Math.ceil(filteredCertificates.length / certificatesPerPage);
 
-  // Handle student deletion
+  // Handle certificate deletion
   const handleDelete = (id) => {
-    if (window.confirm('Are you sure you want to delete this student record?')) {
-      setStudents(students.filter(student => student.id !== id));
+    if (window.confirm('Are you sure you want to delete this certificate record?')) {
+      setCertificates(certificates.filter(cert => cert.certificateID !== id));
     }
   };
 
@@ -613,12 +112,12 @@ const StudentsPage = () => {
 
   return (
     <div className="space-y-6">
-      {/* Enhanced Page Header */}
+      {/* Page Header */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 bg-gradient-to-r from-blue-600 to-blue-700 dark:from-blue-800 dark:to-blue-900 p-6 rounded-xl shadow-lg">
         <div>
-          <h2 className="text-2xl font-bold text-white">Student Records Management</h2>
+          <h2 className="text-2xl font-bold text-white">Certificate Records Management</h2>
           <p className="text-blue-100 dark:text-blue-200">
-            Comprehensive view and management of all student academic records
+            Comprehensive view and management of all certificate records
           </p>
         </div>
         <div className="flex space-x-3">
@@ -628,12 +127,12 @@ const StudentsPage = () => {
           </button>
           <button className="flex items-center px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg transition-all hover:shadow-md transform hover:-translate-y-0.5">
             <FiPlus className="mr-2" />
-            <span>Add New Student</span>
+            <span>Add New Certificate</span>
           </button>
         </div>
       </div>
 
-      {/* Enhanced Search and Filter Bar */}
+      {/* Search and Filter Bar */}
       <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 border border-gray-100 dark:border-gray-700">
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
           {/* Search Input */}
@@ -708,7 +207,7 @@ const StudentsPage = () => {
         </div>
       </div>
 
-      {/* Enhanced Students Table */}
+      {/* Certificates Table */}
       <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden border border-gray-100 dark:border-gray-700">
         <div className="overflow-x-auto">
           <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
@@ -729,67 +228,78 @@ const StudentsPage = () => {
                 <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 dark:text-gray-300 uppercase tracking-wider">
                   Status
                 </th>
+                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                  Study Period
+                </th>
                 <th className="px-6 py-4 text-right text-xs font-semibold text-gray-500 dark:text-gray-300 uppercase tracking-wider">
                   Actions
                 </th>
               </tr>
             </thead>
             <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
-              {currentStudents.length > 0 ? (
-                currentStudents.map((student) => (
-                  <tr key={student.id} className="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-150">
+              {currentCertificates.length > 0 ? (
+                currentCertificates.map((cert) => (
+                  <tr key={cert.certificateID} className="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-150">
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="flex items-center">
                         <div className="flex-shrink-0 h-10 w-10">
-                          <img className="h-10 w-10 rounded-full object-cover" src={student.avatar} alt={student.name} />
+                          <img className="h-10 w-10 rounded-full object-cover" src={cert.photo} alt={getFullName(cert)} />
                         </div>
                         <div className="ml-4">
                           <div className="text-sm font-medium text-gray-900 dark:text-white">
-                            {student.name}
+                            {getFullName(cert)}
                           </div>
                           <div className="text-sm text-gray-500 dark:text-gray-400">
-                            {student.id}
+                            {cert.certificateID}
                           </div>
                         </div>
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm text-gray-900 dark:text-white">{student.program}</div>
+                      <div className="text-sm text-gray-900 dark:text-white">{cert.program}</div>
                       <div className="text-sm text-gray-500 dark:text-gray-400">
-                        {student.college}
+                        {cert.college}
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm text-gray-900 dark:text-white">{student.department}</div>
+                      <div className="text-sm text-gray-900 dark:text-white">{cert.department}</div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="flex items-center">
                         <div className="h-2 w-16 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
                           <div 
                             className="h-full bg-blue-500" 
-                            style={{ width: `${parseFloat(student.cgpa)/4*100}%` }}
+                            style={{ width: `${(cert.cgpa/4)*100}%` }}
                           ></div>
                         </div>
                         <span className="ml-2 text-sm font-medium text-gray-900 dark:text-white">
-                          {student.cgpa}
+                          {cert.cgpa.toFixed(2)}
                         </span>
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <span className={`px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                        student.status === 'Verfied' ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' :
-                        student.status === 'Pending' ? 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200' :
-                        student.status === 'Suspended' ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200' :
+                        cert.gstatus === 'Verified' ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' :
+                        cert.gstatus === 'Pending' ? 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200' :
                         'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200'
                       }`}>
-                        {student.status}
+                        {cert.gstatus}
                       </span>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="text-sm text-gray-900 dark:text-white">
+                        {new Date(cert.startDate).toLocaleDateString()} - {new Date(cert.endDate).toLocaleDateString()}
+                      </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                       <div className="flex justify-end space-x-3">
                         <button 
                           className="p-2 text-blue-600 hover:text-blue-900 dark:text-blue-400 dark:hover:text-blue-300 bg-blue-50 dark:bg-blue-900/30 rounded-lg hover:bg-blue-100 dark:hover:bg-blue-900/50 transition-colors"
                           title="View Details"
+                          onClick={() => {
+                            setSelectedCertificate(cert);
+                            setIsModalOpen(true);
+                          }}
                         >
                           <FiEye className="h-5 w-5" />
                         </button>
@@ -801,7 +311,7 @@ const StudentsPage = () => {
                         </button>
                         <button 
                           className="p-2 text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300 bg-red-50 dark:bg-red-900/30 rounded-lg hover:bg-red-100 dark:hover:bg-red-900/50 transition-colors"
-                          onClick={() => handleDelete(student.id)}
+                          onClick={() => handleDelete(cert.certificateID)}
                           title="Delete"
                         >
                           <FiTrash2 className="h-5 w-5" />
@@ -812,12 +322,12 @@ const StudentsPage = () => {
                 ))
               ) : (
                 <tr>
-                  <td colSpan="6" className="px-6 py-8 text-center">
+                  <td colSpan="7" className="px-6 py-8 text-center">
                     <div className="flex flex-col items-center justify-center">
                       <FiSearch className="h-12 w-12 text-gray-400 dark:text-gray-500 mb-4" />
-                      <h3 className="text-lg font-medium text-gray-900 dark:text-white">No students found</h3>
+                      <h3 className="text-lg font-medium text-gray-900 dark:text-white">No certificates found</h3>
                       <p className="text-gray-500 dark:text-gray-400 mt-1">
-                        {searchTerm ? 'Try adjusting your search query' : 'No students match your current filters'}
+                        {searchTerm ? 'Try adjusting your search query' : 'No certificates match your current filters'}
                       </p>
                     </div>
                   </td>
@@ -827,17 +337,17 @@ const StudentsPage = () => {
           </table>
         </div>
 
-        {/* Enhanced Pagination */}
-        {filteredStudents.length > 0 && (
+        {/* Pagination */}
+        {filteredCertificates.length > 0 && (
           <div className="px-6 py-4 bg-gray-50 dark:bg-gray-700 border-t border-gray-200 dark:border-gray-700">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-gray-700 dark:text-gray-400">
-                  Showing <span className="font-medium">{indexOfFirstStudent + 1}</span> to{' '}
+                  Showing <span className="font-medium">{indexOfFirstCertificate + 1}</span> to{' '}
                   <span className="font-medium">
-                    {Math.min(indexOfLastStudent, filteredStudents.length)}
+                    {Math.min(indexOfLastCertificate, filteredCertificates.length)}
                   </span> of{' '}
-                  <span className="font-medium">{filteredStudents.length}</span> students
+                  <span className="font-medium">{filteredCertificates.length}</span> certificates
                 </p>
               </div>
               <div className="flex space-x-2">
@@ -885,6 +395,121 @@ const StudentsPage = () => {
           </div>
         )}
       </div>
+
+      {/* View Details Modal */}
+      {isModalOpen && selectedCertificate && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="p-6">
+              <div className="flex justify-between items-center mb-4">
+                <h3 className="text-xl font-bold text-gray-900 dark:text-white">
+                  Graduate Details
+                </h3>
+                <button 
+                  onClick={() => setIsModalOpen(false)}
+                  className="text-gray-400 hover:text-gray-500 dark:hover:text-gray-300"
+                >
+                  <FiX className="h-6 w-6" />
+                </button>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {/* Left Column */}
+                <div className="space-y-4">
+                  <div className="flex items-center space-x-4">
+                    <div className="flex-shrink-0">
+                      <img 
+                        className="h-16 w-16 rounded-full object-cover" 
+                        src={selectedCertificate.photo} 
+                        alt={getFullName(selectedCertificate)} 
+                      />
+                    </div>
+                    <div>
+                      <h4 className="text-lg font-semibold text-gray-900 dark:text-white">
+                        {getFullName(selectedCertificate)}
+                      </h4>
+                      <p className="text-sm text-gray-500 dark:text-gray-400">
+                        {selectedCertificate.certificateID}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div>
+                    <h4 className="text-md font-medium text-gray-900 dark:text-white mb-2">
+                      Academic Information
+                    </h4>
+                    <div className="space-y-2">
+                      <p className="text-sm">
+                        <span className="font-medium text-gray-700 dark:text-gray-300">Program:</span> {selectedCertificate.program}
+                      </p>
+                      <p className="text-sm">
+                        <span className="font-medium text-gray-700 dark:text-gray-300">Department:</span> {selectedCertificate.department}
+                      </p>
+                      <p className="text-sm">
+                        <span className="font-medium text-gray-700 dark:text-gray-300">College:</span> {selectedCertificate.college}
+                      </p>
+                      <p className="text-sm">
+                        <span className="font-medium text-gray-700 dark:text-gray-300">CGPA:</span> {selectedCertificate.cgpa.toFixed(2)}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Right Column */}
+                <div className="space-y-4">
+                  <div>
+                    <h4 className="text-md font-medium text-gray-900 dark:text-white mb-2">
+                      Status Information
+                    </h4>
+                    <div className="space-y-2">
+                      <p className="text-sm">
+                        <span className="font-medium text-gray-700 dark:text-gray-300">Graduation Status:</span> 
+                        <span className={`ml-2 px-2 py-1 text-xs font-medium rounded-full ${
+                          selectedCertificate.gstatus === 'Verified' ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' :
+                          selectedCertificate.gstatus === 'Pending' ? 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200' :
+                          'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200'
+                        }`}>
+                          {selectedCertificate.gstatus}
+                        </span>
+                      </p>
+                      <p className="text-sm">
+                        <span className="font-medium text-gray-700 dark:text-gray-300">Study Period:</span> 
+                        {new Date(selectedCertificate.startDate).toLocaleDateString()} - {new Date(selectedCertificate.endDate).toLocaleDateString()}
+                      </p>
+                      <p className="text-sm">
+                        <span className="font-medium text-gray-700 dark:text-gray-300">Gender:</span> {selectedCertificate.gender}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div>
+                    <h4 className="text-md font-medium text-gray-900 dark:text-white mb-2">
+                      Actions
+                    </h4>
+                    <div className="flex space-x-3">
+                      <button className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm transition-colors">
+                        Generate Certificate
+                      </button>
+                      <button className="px-4 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg text-sm transition-colors">
+                        View Transcript
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="mt-6 flex justify-end space-x-3">
+                <button 
+                  onClick={() => setIsModalOpen(false)}
+                  className="px-4 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg text-sm transition-colors"
+                >
+                  Close
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
