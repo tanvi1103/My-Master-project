@@ -45,7 +45,15 @@ const CertificateSchema = new mongoose.Schema({
     required: true,
     enum: ['Male', 'Female']
   },
-  
+  photo: {
+    type: String,
+    default: () => {
+      const gender = Math.random() > 0.5 ? 'men' : 'women';
+      const id = Math.floor(Math.random() * 100);
+      return `https://randomuser.me/api/portraits/${gender}/${id}.jpg`;
+    }
+  },
+
   startDate: {
     type: Date,
     required: true,
