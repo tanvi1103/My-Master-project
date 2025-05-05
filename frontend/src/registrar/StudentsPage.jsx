@@ -57,6 +57,127 @@ const StudentsPage = () => {
   const [selectedCertificate, setSelectedCertificate] = useState(null);
   const certificatesPerPage = 5;
 
+  const [editFormData, setEditFormData] = useState({
+    firstName: '',
+    middleName: '',
+    lastName: '',
+    college: '',
+    department: '',
+    program: '',
+    gstatus: '',
+    cgpa: 0,
+    gender: 'Male',
+    startDate: '',
+    endDate: ''
+  });
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+
+  // college options
+  const colleges = [
+    'Engineering and Technology',
+    'Business and Economics',
+    'Health Science',
+    'Social Science',
+    'Agriculture and Natural Resource',
+    'Natural and Computational Science'
+  ];
+
+  const departmentsByCollege = {
+    'Engineering and Technology': [
+      "Computer Science",
+    "Mechanical Engineering",
+    "Electrical Engineering",
+    "Civil Engineering",
+    ],
+    'Business and Economics': [
+      "Accounting and Finance",
+      "Banking and Finance",
+      "Economics",
+      "Marketing Management",
+      "Management",
+      "Public Administration",
+      "Hotel and Tourism Management",
+    ],
+    "Health Science": ["Nursing", "Pharmacy", "Public Health", "Midwifery"],
+    "Social Science": [
+      "English Language and Literature",
+      "History and Heritage management",
+      "Geography and Environmental studies",
+      "Curriculum and Instruction",
+      "Psychology",
+      "Special Needs and Inclusive Education",
+      "Law",
+      "Sociology",
+      "Civics and Ethical Studies",
+      "Political Science and International Relations",
+    ],
+    "Natural and Computational Science": [
+      "Mathematics",
+      "Physics",
+      "Chemistry",
+      "Biology",
+      "Statistics",
+      "Geology",
+      "Sports Science",
+    ],
+    "Agriculture and Natural Resource": [
+      "Animal Science",
+      "Agro economics",
+      "Natural Resource Management",
+      "soil and water conservation",
+      "Horticulture",
+      "Plant Science",
+      "Forestry",
+      "Veterinary Medicine",
+      "Coffee Science and Technology",
+    ],
+    // Add other colleges and departments
+  };
+
+  const handleEditClick = (certificate) => {
+    setSelectedCertificate(certificate);
+    setEditFormData({
+      firstName: certificate.firstName,
+      middleName: certificate.middleName,
+      lastName: certificate.lastName,
+      college: certificate.college,
+      department: certificate.department,
+      program: certificate.program,
+      gstatus: certificate.gstatus,
+      cgpa: certificate.cgpa,
+      gender: certificate.gender,
+      startDate: certificate.startDate,
+      endDate: certificate.endDate
+    });
+    setIsEditModalOpen(true);
+  };
+
+  // Handle form input changes
+  const handleEditFormChange = (e) => {
+    const { name, value } = e.target;
+    setEditFormData({
+      ...editFormData,
+      [name]: name === "cgpa" ? parseFloat(value) : value, // Convert cgpa to a number
+    });
+  };
+
+  // Handle form submission
+  const handleEditSubmit = (e) => {
+    e.preventDefault();
+  
+    // Validate CGPA
+    if (editFormData.cgpa < 1.75 || editFormData.cgpa > 4.0) {
+      alert("CGPA must be between 1.75 and 4.0");
+      return;
+    }
+  
+    const updatedCertificates = certificates.map(cert => 
+      cert.certificateID === selectedCertificate.certificateID ? 
+      { ...cert, ...editFormData } : cert
+    );
+    setCertificates(updatedCertificates);
+    setIsEditModalOpen(false);
+  };
   // Get full name
   const getFullName = (certificate) => {
     return `${certificate.firstName} ${certificate.middleName} ${certificate.lastName}`;
@@ -84,8 +205,10 @@ const StudentsPage = () => {
     const matchesStatus = selectedStatus === 'All' || cert.gstatus === selectedStatus;
     const matchesCollege = selectedCollege === 'All' || cert.college === selectedCollege;
     const matchesDepartment = selectedDepartment === 'All' || cert.department === selectedDepartment;
-    
-    return matchesSearch && matchesStatus && matchesCollege && matchesDepartment;
+    const isValidCGPA = cert.cgpa >= 1.75 && cert.cgpa <= 4.0;
+    return isValidCGPA && 
+    matchesSearch && 
+    matchesStatus && matchesCollege && matchesDepartment;
   });
 
   // Pagination logic
@@ -238,7 +361,7 @@ const StudentsPage = () => {
             </thead>
             <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
               {currentCertificates.length > 0 ? (
-                currentCertificates.map((cert) => (
+                currentCertificates?.map((cert) => (
                   <tr key={cert.certificateID} className="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-150">
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="flex items-center">
@@ -265,18 +388,18 @@ const StudentsPage = () => {
                       <div className="text-sm text-gray-900 dark:text-white">{cert.department}</div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="flex items-center">
-                        <div className="h-2 w-16 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
-                          <div 
-                            className="h-full bg-blue-500" 
-                            style={{ width: `${(cert.cgpa/4)*100}%` }}
-                          ></div>
-                        </div>
-                        <span className="ml-2 text-sm font-medium text-gray-900 dark:text-white">
-                          {cert.cgpa.toFixed(2)}
-                        </span>
-                      </div>
-                    </td>
+  <div className="flex items-center">
+    <div className="h-2 w-16 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+      <div 
+        className="h-full bg-blue-500" 
+        style={{ width: `${Math.min(Math.max((cert.cgpa / 4) * 100, 0), 100)}%` }} // Ensure width is between 0% and 100%
+      ></div>
+    </div>
+    <span className="ml-2 text-sm font-medium text-gray-900 dark:text-white">
+      {cert?.cgpa >= 1.75 && cert?.cgpa <= 4.0 ? cert.cgpa.toFixed(2) : "Invalid CGPA"}
+    </span>
+  </div>
+</td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <span className={`px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${
                         cert.gstatus === 'Verified' ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' :
@@ -303,12 +426,14 @@ const StudentsPage = () => {
                         >
                           <FiEye className="h-5 w-5" />
                         </button>
-                        <button 
-                          className="p-2 text-yellow-600 hover:text-yellow-900 dark:text-yellow-400 dark:hover:text-yellow-300 bg-yellow-50 dark:bg-yellow-900/30 rounded-lg hover:bg-yellow-100 dark:hover:bg-yellow-900/50 transition-colors"
-                          title="Edit"
-                        >
-                          <FiEdit2 className="h-5 w-5" />
-                        </button>
+                       {/* Update your edit button in the table to use handleEditClick */}
+      <button 
+        className="p-2 text-yellow-600 hover:text-yellow-900 dark:text-yellow-400 dark:hover:text-yellow-300 bg-yellow-50 dark:bg-yellow-900/30 rounded-lg hover:bg-yellow-100 dark:hover:bg-yellow-900/50 transition-colors"
+        title="Edit"
+        onClick={() => handleEditClick(cert)}
+      >
+        <FiEdit2 className="h-5 w-5" />
+      </button>
                         <button 
                           className="p-2 text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300 bg-red-50 dark:bg-red-900/30 rounded-lg hover:bg-red-100 dark:hover:bg-red-900/50 transition-colors"
                           onClick={() => handleDelete(cert.certificateID)}
@@ -510,8 +635,248 @@ const StudentsPage = () => {
           </div>
         </div>
       )}
+        
+         {/* Edit Certificate Modal */}
+      {isEditModalOpen && selectedCertificate && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+            <div className="p-6">
+              <div className="flex justify-between items-center mb-4">
+                <h3 className="text-xl font-bold text-gray-900 dark:text-white">
+                  Edit Certificate
+                </h3>
+                <button 
+                  onClick={() => setIsEditModalOpen(false)}
+                  className="text-gray-400 hover:text-gray-500 dark:hover:text-gray-300"
+                >
+                  <FiX className="h-6 w-6" />
+                </button>
+              </div>
+
+              <form onSubmit={handleEditSubmit}>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {/* Personal Information */}
+                  <div className="space-y-4">
+                    <h4 className="text-md font-medium text-gray-900 dark:text-white">
+                      Personal Information
+                    </h4>
+                    
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                        First Name
+                      </label>
+                      <input
+                        type="text"
+                        name="firstName"
+                        value={editFormData.firstName}
+                        onChange={handleEditFormChange}
+                        className="w-full rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-700 text-gray-700 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent p-2"
+                        required
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                        Middle Name
+                      </label>
+                      <input
+                        type="text"
+                        name="middleName"
+                        value={editFormData.middleName}
+                        onChange={handleEditFormChange}
+                        className="w-full rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-700 text-gray-700 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent p-2"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                        Last Name
+                      </label>
+                      <input
+                        type="text"
+                        name="lastName"
+                        value={editFormData.lastName}
+                        onChange={handleEditFormChange}
+                        className="w-full rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-700 text-gray-700 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent p-2"
+                        required
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                        Gender
+                      </label>
+                      <select
+                        name="gender"
+                        value={editFormData.gender}
+                        onChange={handleEditFormChange}
+                        className="w-full rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-700 text-gray-700 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent p-2"
+                      >
+                        <option value="Male">Male</option>
+                        <option value="Female">Female</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  {/* Academic Information */}
+                  <div className="space-y-4">
+                    <h4 className="text-md font-medium text-gray-900 dark:text-white">
+                      Academic Information
+                    </h4>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                        College
+                      </label>
+                      <select
+                        name="college"
+                        value={editFormData.college}
+                        onChange={(e) => {
+                          handleEditFormChange(e);
+                          setEditFormData(prev => ({
+                            ...prev,
+                            department: ''
+                          }));
+                        }}
+                        className="w-full rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-700 text-gray-700 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent p-2"
+                        required
+                      >
+                        <option value="">Select College</option>
+                        {colleges.map(college => (
+                          <option key={college} value={college}>{college}</option>
+                        ))}
+                      </select>
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                        Department
+                      </label>
+                      <select
+                        name="department"
+                        value={editFormData.department}
+                        onChange={handleEditFormChange}
+                        className="w-full rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-700 text-gray-700 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent p-2"
+                        disabled={!editFormData.college}
+                        required
+                      >
+                        <option value="">Select Department</option>
+                        {editFormData.college && departmentsByCollege[editFormData.college]?.map(dept => (
+                          <option key={dept} value={dept}>{dept}</option>
+                        ))}
+                      </select>
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                        Program
+                      </label>
+                      <input
+                        type="text"
+                        name="program"
+                        value={editFormData.program}
+                        onChange={handleEditFormChange}
+                        className="w-full rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-700 text-gray-700 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent p-2"
+                        required
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                        Graduation Status
+                      </label>
+                      <select
+                        name="gstatus"
+                        value={editFormData.gstatus}
+                        onChange={handleEditFormChange}
+                        className="w-full rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-700 text-gray-700 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent p-2"
+                        required
+                      >
+                        <option value="Verified">Verified</option>
+                        <option value="Pending">Pending</option>
+                      </select>
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                        CGPA
+                      </label>
+                      <input
+  type="number"
+  name="cgpa"
+  value={editFormData.cgpa}
+  onChange={(e) => {
+    const value = parseFloat(e.target.value);
+    if (value >= 1.75 && value <= 4.0) {
+      handleEditFormChange(e);
+    } else {
+      alert("CGPA must be between 1.75 and 4.0");
+    }
+  }}
+  min="1.75"
+  max="4.0"
+  step="0.01"
+  className="w-full rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-700 text-gray-700 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent p-2"
+  required
+/>
+                    </div>
+                  </div>
+
+                  {/* Dates Section */}
+                  <div className="md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                        Start Date
+                      </label>
+                      <input
+                        type="date"
+                        name="startDate"
+                        value={editFormData.startDate}
+                        onChange={handleEditFormChange}
+                        className="w-full rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-700 text-gray-700 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent p-2"
+                        required
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                        End Date
+                      </label>
+                      <input
+                        type="date"
+                        name="endDate"
+                        value={editFormData.endDate}
+                        onChange={handleEditFormChange}
+                        className="w-full rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-700 text-gray-700 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent p-2"
+                        required
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div className="mt-6 flex justify-end space-x-3">
+                  <button 
+                    type="button"
+                    onClick={() => setIsEditModalOpen(false)}
+                    className="px-4 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg text-sm transition-colors"
+                  >
+                    Cancel
+                  </button>
+                  <button 
+                    type="submit"
+                    className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm transition-colors"
+                  >
+                    Save Changes
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      )}
+
     </div>
   );
 };
 
-export default StudentsPage;
+export default StudentsPage; 
