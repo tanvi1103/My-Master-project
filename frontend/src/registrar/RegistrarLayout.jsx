@@ -51,7 +51,7 @@ const RegistrarLayout = ({ children }) => {
   return (
     <div className={`flex flex-col min-h-screen ${darkMode ? "dark" : ""}`}>
       {/* Navbar */}
-      <header className="bg-white dark:bg-gray-800 shadow-md">
+      <header className="bg-white dark:bg-gray-800 shadow-md z-100">
         <div className="container mx-auto px-4 py-3 flex items-center justify-between">
           {/* Logo and title */}
           <div className="flex items-center space-x-2">
@@ -97,7 +97,7 @@ const RegistrarLayout = ({ children }) => {
         {/* Sidebar - Desktop */}
         <aside
           id="sidebar"
-          className={`fixed md:sticky top-0 z-200 w-64 h-full-screen bg-white dark:bg-gray-800 shadow-md transform transition-transform duration-300 ease-in-out 
+          className={`fixed md:sticky top-0 z-600 w-64 h-full-screen bg-white dark:bg-gray-800 shadow-md transform transition-transform duration-300 ease-in-out 
              ${
                sidebarOpen ? "translate-x-0" : "-translate-x-full"
              } md:translate-x-0 overflow-hidden`}
@@ -199,7 +199,7 @@ const RegistrarLayout = ({ children }) => {
       </div>
 
       {/* Footer */}
-      <footer className="bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 py-4">
+      <footer className="bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 py-4 z-100">
         <div className="container mx-auto px-4 text-center text-gray-600 dark:text-gray-400 text-sm">
           <p>
             © {new Date().getFullYear()} University Registrar System. All rights

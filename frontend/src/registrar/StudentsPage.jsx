@@ -1,95 +1,95 @@
-import React, { useState } from 'react';
-import { 
-  FiSearch, 
-  FiFilter, 
-  FiEdit2, 
-  FiTrash2, 
-  FiEye, 
-  FiDownload, 
-  FiPlus, 
-  FiChevronLeft, 
-  FiChevronRight, 
-  FiX 
-} from 'react-icons/fi';
+import React, { useState } from "react";
+import {
+  FiSearch,
+  FiFilter,
+  FiEdit2,
+  FiTrash2,
+  FiEye,
+  FiDownload,
+  FiPlus,
+  FiChevronLeft,
+  FiChevronRight,
+  FiX,
+} from "react-icons/fi";
 
 const StudentsPage = () => {
   // Sample certificate data matching your schema
   const [certificates, setCertificates] = useState([
     {
-      certificateID: 'RU2023001',
-      firstName: 'Abel',
-      middleName: 'T',
-      lastName: 'Tesfaye',
-      college: 'Engineering and Technology',
-      department: 'Computer Science',
-      program: 'BSc Computer Science',
-      gstatus: 'Verified',
+      certificateID: "RU2023001",
+      firstName: "Abel",
+      middleName: "T",
+      lastName: "Tesfaye",
+      college: "Engineering and Technology",
+      department: "Computer Science",
+      program: "BSc Computer Science",
+      gstatus: "Verified",
       cgpa: 3.75,
-      gender: 'Male',
-      photo: 'https://randomuser.me/api/portraits/men/1.jpg',
-      startDate: '2020-09-15',
-      endDate: '2024-06-15'
+      gender: "Male",
+      photo: "https://randomuser.me/api/portraits/men/1.jpg",
+      startDate: "2020-09-15",
+      endDate: "2024-06-15",
     },
     {
-      certificateID: 'RU2023002',
-      firstName: 'Meron',
-      middleName: 'G',
-      lastName: 'Girma',
-      college: 'Business and Economics',
-      department: 'Business Administration',
-      program: 'MBA',
-      gstatus: 'Verified',
+      certificateID: "RU2023002",
+      firstName: "Meron",
+      middleName: "G",
+      lastName: "Girma",
+      college: "Business and Economics",
+      department: "Business Administration",
+      program: "MBA",
+      gstatus: "Verified",
       cgpa: 3.92,
-      gender: 'Female',
-      photo: 'https://randomuser.me/api/portraits/women/2.jpg',
-      startDate: '2019-09-10',
-      endDate: '2023-06-10'
+      gender: "Female",
+      photo: "https://randomuser.me/api/portraits/women/2.jpg",
+      startDate: "2019-09-10",
+      endDate: "2023-06-10",
     },
     // Add more sample data as needed
   ]);
 
-  const [searchTerm, setSearchTerm] = useState('');
-  const [selectedStatus, setSelectedStatus] = useState('All');
-  const [selectedCollege, setSelectedCollege] = useState('All');
-  const [selectedDepartment, setSelectedDepartment] = useState('All');
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedStatus, setSelectedStatus] = useState("All");
+  const [selectedCollege, setSelectedCollege] = useState("All");
+  const [selectedDepartment, setSelectedDepartment] = useState("All");
   const [currentPage, setCurrentPage] = useState(1);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedCertificate, setSelectedCertificate] = useState(null);
   const certificatesPerPage = 5;
 
   const [editFormData, setEditFormData] = useState({
-    firstName: '',
-    middleName: '',
-    lastName: '',
-    college: '',
-    department: '',
-    program: '',
-    gstatus: '',
+    firstName: "",
+    middleName: "",
+    lastName: "",
+    college: "",
+    department: "",
+    program: "",
+    gstatus: "",
     cgpa: 0,
-    gender: 'Male',
-    startDate: '',
-    endDate: ''
+    gender: "Male",
+    startDate: "",
+    endDate: "",
   });
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
   // college options
   const colleges = [
-    'Engineering and Technology',
-    'Business and Economics',
-    'Health Science',
-    'Social Science',
-    'Agriculture and Natural Resource',
-    'Natural and Computational Science'
+    "Engineering and Technology",
+    "Business and Economics",
+    "Health Science",
+    "Social Science",
+    "Agriculture and Natural Resource",
+    "Natural and Computational Science",
   ];
 
   const departmentsByCollege = {
-    'Engineering and Technology': [
+    "Engineering and Technology": [
       "Computer Science",
-    "Mechanical Engineering",
-    "Electrical Engineering",
-    "Civil Engineering",
+      "Mechanical Engineering",
+      "Electrical Engineering",
+      "Civil Engineering",
     ],
-    'Business and Economics': [
+    "Business and Economics": [
       "Accounting and Finance",
       "Banking and Finance",
       "Economics",
@@ -147,7 +147,7 @@ const StudentsPage = () => {
       cgpa: certificate.cgpa,
       gender: certificate.gender,
       startDate: certificate.startDate,
-      endDate: certificate.endDate
+      endDate: certificate.endDate,
     });
     setIsEditModalOpen(true);
   };
@@ -164,16 +164,17 @@ const StudentsPage = () => {
   // Handle form submission
   const handleEditSubmit = (e) => {
     e.preventDefault();
-  
+
     // Validate CGPA
     if (editFormData.cgpa < 1.75 || editFormData.cgpa > 4.0) {
       alert("CGPA must be between 1.75 and 4.0");
       return;
     }
-  
-    const updatedCertificates = certificates.map(cert => 
-      cert.certificateID === selectedCertificate.certificateID ? 
-      { ...cert, ...editFormData } : cert
+
+    const updatedCertificates = certificates.map((cert) =>
+      cert.certificateID === selectedCertificate.certificateID
+        ? { ...cert, ...editFormData }
+        : cert
     );
     setCertificates(updatedCertificates);
     setIsEditModalOpen(false);
@@ -185,42 +186,59 @@ const StudentsPage = () => {
 
   // Get unique departments based on selected college
   const getFilteredDepartments = () => {
-    if (selectedCollege === 'All') {
+    if (selectedCollege === "All") {
       const allDepartments = new Set();
-      certificates.forEach(cert => allDepartments.add(cert.department));
+      certificates.forEach((cert) => allDepartments.add(cert.department));
       return Array.from(allDepartments);
     }
-    return Array.from(new Set(
-      certificates
-        .filter(cert => cert.college === selectedCollege)
-        .map(cert => cert.department)
-    ));
+    return Array.from(
+      new Set(
+        certificates
+          .filter((cert) => cert.college === selectedCollege)
+          .map((cert) => cert.department)
+      )
+    );
   };
 
   // Filter certificates based on search and filters
-  const filteredCertificates = certificates.filter(cert => {
+  const filteredCertificates = certificates.filter((cert) => {
     const fullName = getFullName(cert).toLowerCase();
-    const matchesSearch = fullName.includes(searchTerm.toLowerCase()) || 
-                         cert.certificateID.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesStatus = selectedStatus === 'All' || cert.gstatus === selectedStatus;
-    const matchesCollege = selectedCollege === 'All' || cert.college === selectedCollege;
-    const matchesDepartment = selectedDepartment === 'All' || cert.department === selectedDepartment;
+    const matchesSearch =
+      fullName.includes(searchTerm.toLowerCase()) ||
+      cert.certificateID.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesStatus =
+      selectedStatus === "All" || cert.gstatus === selectedStatus;
+    const matchesCollege =
+      selectedCollege === "All" || cert.college === selectedCollege;
+    const matchesDepartment =
+      selectedDepartment === "All" || cert.department === selectedDepartment;
     const isValidCGPA = cert.cgpa >= 1.75 && cert.cgpa <= 4.0;
-    return isValidCGPA && 
-    matchesSearch && 
-    matchesStatus && matchesCollege && matchesDepartment;
+    return (
+      isValidCGPA &&
+      matchesSearch &&
+      matchesStatus &&
+      matchesCollege &&
+      matchesDepartment
+    );
   });
 
   // Pagination logic
   const indexOfLastCertificate = currentPage * certificatesPerPage;
   const indexOfFirstCertificate = indexOfLastCertificate - certificatesPerPage;
-  const currentCertificates = filteredCertificates.slice(indexOfFirstCertificate, indexOfLastCertificate);
-  const totalPages = Math.ceil(filteredCertificates.length / certificatesPerPage);
+  const currentCertificates = filteredCertificates.slice(
+    indexOfFirstCertificate,
+    indexOfLastCertificate
+  );
+  const totalPages = Math.ceil(
+    filteredCertificates.length / certificatesPerPage
+  );
 
   // Handle certificate deletion
   const handleDelete = (id) => {
-    if (window.confirm('Are you sure you want to delete this certificate record?')) {
-      setCertificates(certificates.filter(cert => cert.certificateID !== id));
+    if (
+      window.confirm("Are you sure you want to delete this certificate record?")
+    ) {
+      setCertificates(certificates.filter((cert) => cert.certificateID !== id));
     }
   };
 
@@ -230,7 +248,7 @@ const StudentsPage = () => {
   // Handle college change - reset department filter
   const handleCollegeChange = (e) => {
     setSelectedCollege(e.target.value);
-    setSelectedDepartment('All');
+    setSelectedDepartment("All");
   };
 
   return (
@@ -238,7 +256,9 @@ const StudentsPage = () => {
       {/* Page Header */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 bg-gradient-to-r from-blue-600 to-blue-700 dark:from-blue-800 dark:to-blue-900 p-6 rounded-xl shadow-lg">
         <div>
-          <h2 className="text-2xl font-bold text-white">Certificate Records Management</h2>
+          <h2 className="text-2xl font-bold text-white">
+            Certificate Records Management
+          </h2>
           <p className="text-blue-100 dark:text-blue-200">
             Comprehensive view and management of all certificate records
           </p>
@@ -303,8 +323,12 @@ const StudentsPage = () => {
               <option value="Business and Economics">Business</option>
               <option value="Health Science">Health Science</option>
               <option value="Social Science">Social Science</option>
-              <option value="Agriculture and Natural Resource">Agriculture</option>
-              <option value="Natural and Computational Science">Natural Science</option>
+              <option value="Agriculture and Natural Resource">
+                Agriculture
+              </option>
+              <option value="Natural and Computational Science">
+                Natural Science
+              </option>
             </select>
           </div>
 
@@ -317,13 +341,19 @@ const StudentsPage = () => {
               className="pl-10 w-full rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-700 text-gray-700 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent h-11 transition-all duration-200 focus:shadow-md"
               value={selectedDepartment}
               onChange={(e) => setSelectedDepartment(e.target.value)}
-              disabled={selectedCollege === 'All' && selectedDepartment === 'All'}
+              disabled={
+                selectedCollege === "All" && selectedDepartment === "All"
+              }
             >
               <option value="All">
-                {selectedCollege === 'All' ? 'Select College First' : 'All Departments'}
+                {selectedCollege === "All"
+                  ? "Select College First"
+                  : "All Departments"}
               </option>
-              {getFilteredDepartments().map(department => (
-                <option key={department} value={department}>{department}</option>
+              {getFilteredDepartments().map((department) => (
+                <option key={department} value={department}>
+                  {department}
+                </option>
               ))}
             </select>
           </div>
@@ -362,11 +392,18 @@ const StudentsPage = () => {
             <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
               {currentCertificates.length > 0 ? (
                 currentCertificates?.map((cert) => (
-                  <tr key={cert.certificateID} className="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-150">
+                  <tr
+                    key={cert.certificateID}
+                    className="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-150"
+                  >
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="flex items-center">
                         <div className="flex-shrink-0 h-10 w-10">
-                          <img className="h-10 w-10 rounded-full object-cover" src={cert.photo} alt={getFullName(cert)} />
+                          <img
+                            className="h-10 w-10 rounded-full object-cover"
+                            src={cert.photo}
+                            alt={getFullName(cert)}
+                          />
                         </div>
                         <div className="ml-4">
                           <div className="text-sm font-medium text-gray-900 dark:text-white">
@@ -379,44 +416,60 @@ const StudentsPage = () => {
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm text-gray-900 dark:text-white">{cert.program}</div>
+                      <div className="text-sm text-gray-900 dark:text-white">
+                        {cert.program}
+                      </div>
                       <div className="text-sm text-gray-500 dark:text-gray-400">
                         {cert.college}
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm text-gray-900 dark:text-white">{cert.department}</div>
+                      <div className="text-sm text-gray-900 dark:text-white">
+                        {cert.department}
+                      </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-  <div className="flex items-center">
-    <div className="h-2 w-16 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
-      <div 
-        className="h-full bg-blue-500" 
-        style={{ width: `${Math.min(Math.max((cert.cgpa / 4) * 100, 0), 100)}%` }} // Ensure width is between 0% and 100%
-      ></div>
-    </div>
-    <span className="ml-2 text-sm font-medium text-gray-900 dark:text-white">
-      {cert?.cgpa >= 1.75 && cert?.cgpa <= 4.0 ? cert.cgpa.toFixed(2) : "Invalid CGPA"}
-    </span>
-  </div>
-</td>
+                      <div className="flex items-center">
+                        <div className="h-2 w-16 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+                          <div
+                            className="h-full bg-blue-500"
+                            style={{
+                              width: `${Math.min(
+                                Math.max((cert.cgpa / 4) * 100, 0),
+                                100
+                              )}%`,
+                            }} // Ensure width is between 0% and 100%
+                          ></div>
+                        </div>
+                        <span className="ml-2 text-sm font-medium text-gray-900 dark:text-white">
+                          {cert?.cgpa >= 1.75 && cert?.cgpa <= 4.0
+                            ? cert.cgpa.toFixed(2)
+                            : "Invalid CGPA"}
+                        </span>
+                      </div>
+                    </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <span className={`px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                        cert.gstatus === 'Verified' ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' :
-                        cert.gstatus === 'Pending' ? 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200' :
-                        'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200'
-                      }`}>
+                      <span
+                        className={`px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${
+                          cert.gstatus === "Verified"
+                            ? "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200"
+                            : cert.gstatus === "Pending"
+                            ? "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200"
+                            : "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200"
+                        }`}
+                      >
                         {cert.gstatus}
                       </span>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="text-sm text-gray-900 dark:text-white">
-                        {new Date(cert.startDate).toLocaleDateString()} - {new Date(cert.endDate).toLocaleDateString()}
+                        {new Date(cert.startDate).toLocaleDateString()} -{" "}
+                        {new Date(cert.endDate).toLocaleDateString()}
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                       <div className="flex justify-end space-x-3">
-                        <button 
+                        <button
                           className="p-2 text-blue-600 hover:text-blue-900 dark:text-blue-400 dark:hover:text-blue-300 bg-blue-50 dark:bg-blue-900/30 rounded-lg hover:bg-blue-100 dark:hover:bg-blue-900/50 transition-colors"
                           title="View Details"
                           onClick={() => {
@@ -426,15 +479,15 @@ const StudentsPage = () => {
                         >
                           <FiEye className="h-5 w-5" />
                         </button>
-                       {/* Update your edit button in the table to use handleEditClick */}
-      <button 
-        className="p-2 text-yellow-600 hover:text-yellow-900 dark:text-yellow-400 dark:hover:text-yellow-300 bg-yellow-50 dark:bg-yellow-900/30 rounded-lg hover:bg-yellow-100 dark:hover:bg-yellow-900/50 transition-colors"
-        title="Edit"
-        onClick={() => handleEditClick(cert)}
-      >
-        <FiEdit2 className="h-5 w-5" />
-      </button>
-                        <button 
+                        {/* Update your edit button in the table to use handleEditClick */}
+                        <button
+                          className="p-2 text-yellow-600 hover:text-yellow-900 dark:text-yellow-400 dark:hover:text-yellow-300 bg-yellow-50 dark:bg-yellow-900/30 rounded-lg hover:bg-yellow-100 dark:hover:bg-yellow-900/50 transition-colors"
+                          title="Edit"
+                          onClick={() => handleEditClick(cert)}
+                        >
+                          <FiEdit2 className="h-5 w-5" />
+                        </button>
+                        <button
                           className="p-2 text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300 bg-red-50 dark:bg-red-900/30 rounded-lg hover:bg-red-100 dark:hover:bg-red-900/50 transition-colors"
                           onClick={() => handleDelete(cert.certificateID)}
                           title="Delete"
@@ -450,9 +503,13 @@ const StudentsPage = () => {
                   <td colSpan="7" className="px-6 py-8 text-center">
                     <div className="flex flex-col items-center justify-center">
                       <FiSearch className="h-12 w-12 text-gray-400 dark:text-gray-500 mb-4" />
-                      <h3 className="text-lg font-medium text-gray-900 dark:text-white">No certificates found</h3>
+                      <h3 className="text-lg font-medium text-gray-900 dark:text-white">
+                        No certificates found
+                      </h3>
                       <p className="text-gray-500 dark:text-gray-400 mt-1">
-                        {searchTerm ? 'Try adjusting your search query' : 'No certificates match your current filters'}
+                        {searchTerm
+                          ? "Try adjusting your search query"
+                          : "No certificates match your current filters"}
                       </p>
                     </div>
                   </td>
@@ -468,11 +525,22 @@ const StudentsPage = () => {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-gray-700 dark:text-gray-400">
-                  Showing <span className="font-medium">{indexOfFirstCertificate + 1}</span> to{' '}
+                  Showing{" "}
                   <span className="font-medium">
-                    {Math.min(indexOfLastCertificate, filteredCertificates.length)}
-                  </span> of{' '}
-                  <span className="font-medium">{filteredCertificates.length}</span> certificates
+                    {indexOfFirstCertificate + 1}
+                  </span>{" "}
+                  to{" "}
+                  <span className="font-medium">
+                    {Math.min(
+                      indexOfLastCertificate,
+                      filteredCertificates.length
+                    )}
+                  </span>{" "}
+                  of{" "}
+                  <span className="font-medium">
+                    {filteredCertificates.length}
+                  </span>{" "}
+                  certificates
                 </p>
               </div>
               <div className="flex space-x-2">
@@ -481,35 +549,39 @@ const StudentsPage = () => {
                   disabled={currentPage === 1}
                   className={`px-3 py-1 rounded-md border flex items-center ${
                     currentPage === 1
-                      ? 'border-gray-200 dark:border-gray-600 text-gray-400 dark:text-gray-500 cursor-not-allowed'
-                      : 'border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-600'
+                      ? "border-gray-200 dark:border-gray-600 text-gray-400 dark:text-gray-500 cursor-not-allowed"
+                      : "border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-600"
                   }`}
                 >
                   <FiChevronLeft className="h-4 w-4 mr-1" />
                   <span>Previous</span>
                 </button>
-                
-                {Array.from({ length: totalPages }, (_, i) => i + 1).map((number) => (
-                  <button
-                    key={number}
-                    onClick={() => paginate(number)}
-                    className={`px-3 py-1 rounded-md ${
-                      currentPage === number
-                        ? 'bg-blue-600 text-white'
-                        : 'border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-600'
-                    }`}
-                  >
-                    {number}
-                  </button>
-                ))}
-                
+
+                {Array.from({ length: totalPages }, (_, i) => i + 1).map(
+                  (number) => (
+                    <button
+                      key={number}
+                      onClick={() => paginate(number)}
+                      className={`px-3 py-1 rounded-md ${
+                        currentPage === number
+                          ? "bg-blue-600 text-white"
+                          : "border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-600"
+                      }`}
+                    >
+                      {number}
+                    </button>
+                  )
+                )}
+
                 <button
-                  onClick={() => paginate(Math.min(totalPages, currentPage + 1))}
+                  onClick={() =>
+                    paginate(Math.min(totalPages, currentPage + 1))
+                  }
                   disabled={currentPage === totalPages}
                   className={`px-3 py-1 rounded-md border flex items-center ${
                     currentPage === totalPages
-                      ? 'border-gray-200 dark:border-gray-600 text-gray-400 dark:text-gray-500 cursor-not-allowed'
-                      : 'border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-600'
+                      ? "border-gray-200 dark:border-gray-600 text-gray-400 dark:text-gray-500 cursor-not-allowed"
+                      : "border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-600"
                   }`}
                 >
                   <span>Next</span>
@@ -523,14 +595,14 @@ const StudentsPage = () => {
 
       {/* View Details Modal */}
       {isModalOpen && selectedCertificate && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+        <div className="sticky inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
           <div className="bg-white dark:bg-gray-800 rounded-xl shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
             <div className="p-6">
               <div className="flex justify-between items-center mb-4">
                 <h3 className="text-xl font-bold text-gray-900 dark:text-white">
                   Graduate Details
                 </h3>
-                <button 
+                <button
                   onClick={() => setIsModalOpen(false)}
                   className="text-gray-400 hover:text-gray-500 dark:hover:text-gray-300"
                 >
@@ -543,10 +615,10 @@ const StudentsPage = () => {
                 <div className="space-y-4">
                   <div className="flex items-center space-x-4">
                     <div className="flex-shrink-0">
-                      <img 
-                        className="h-16 w-16 rounded-full object-cover" 
-                        src={selectedCertificate.photo} 
-                        alt={getFullName(selectedCertificate)} 
+                      <img
+                        className="h-16 w-16 rounded-full object-cover"
+                        src={selectedCertificate.photo}
+                        alt={getFullName(selectedCertificate)}
                       />
                     </div>
                     <div>
@@ -565,16 +637,28 @@ const StudentsPage = () => {
                     </h4>
                     <div className="space-y-2">
                       <p className="text-sm">
-                        <span className="font-medium text-gray-700 dark:text-gray-300">Program:</span> {selectedCertificate.program}
+                        <span className="font-medium text-gray-700 dark:text-gray-300">
+                          Program:
+                        </span>{" "}
+                        {selectedCertificate.program}
                       </p>
                       <p className="text-sm">
-                        <span className="font-medium text-gray-700 dark:text-gray-300">Department:</span> {selectedCertificate.department}
+                        <span className="font-medium text-gray-700 dark:text-gray-300">
+                          Department:
+                        </span>{" "}
+                        {selectedCertificate.department}
                       </p>
                       <p className="text-sm">
-                        <span className="font-medium text-gray-700 dark:text-gray-300">College:</span> {selectedCertificate.college}
+                        <span className="font-medium text-gray-700 dark:text-gray-300">
+                          College:
+                        </span>{" "}
+                        {selectedCertificate.college}
                       </p>
                       <p className="text-sm">
-                        <span className="font-medium text-gray-700 dark:text-gray-300">CGPA:</span> {selectedCertificate.cgpa.toFixed(2)}
+                        <span className="font-medium text-gray-700 dark:text-gray-300">
+                          CGPA:
+                        </span>{" "}
+                        {selectedCertificate.cgpa.toFixed(2)}
                       </p>
                     </div>
                   </div>
@@ -588,21 +672,38 @@ const StudentsPage = () => {
                     </h4>
                     <div className="space-y-2">
                       <p className="text-sm">
-                        <span className="font-medium text-gray-700 dark:text-gray-300">Graduation Status:</span> 
-                        <span className={`ml-2 px-2 py-1 text-xs font-medium rounded-full ${
-                          selectedCertificate.gstatus === 'Verified' ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' :
-                          selectedCertificate.gstatus === 'Pending' ? 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200' :
-                          'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200'
-                        }`}>
+                        <span className="font-medium text-gray-700 dark:text-gray-300">
+                          Graduation Status:
+                        </span>
+                        <span
+                          className={`ml-2 px-2 py-1 text-xs font-medium rounded-full ${
+                            selectedCertificate.gstatus === "Verified"
+                              ? "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200"
+                              : selectedCertificate.gstatus === "Pending"
+                              ? "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200"
+                              : "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200"
+                          }`}
+                        >
                           {selectedCertificate.gstatus}
                         </span>
                       </p>
                       <p className="text-sm">
-                        <span className="font-medium text-gray-700 dark:text-gray-300">Study Period:</span> 
-                        {new Date(selectedCertificate.startDate).toLocaleDateString()} - {new Date(selectedCertificate.endDate).toLocaleDateString()}
+                        <span className="font-medium text-gray-700 dark:text-gray-300">
+                          Study Period:
+                        </span>
+                        {new Date(
+                          selectedCertificate.startDate
+                        ).toLocaleDateString()}{" "}
+                        -{" "}
+                        {new Date(
+                          selectedCertificate.endDate
+                        ).toLocaleDateString()}
                       </p>
                       <p className="text-sm">
-                        <span className="font-medium text-gray-700 dark:text-gray-300">Gender:</span> {selectedCertificate.gender}
+                        <span className="font-medium text-gray-700 dark:text-gray-300">
+                          Gender:
+                        </span>{" "}
+                        {selectedCertificate.gender}
                       </p>
                     </div>
                   </div>
@@ -624,7 +725,7 @@ const StudentsPage = () => {
               </div>
 
               <div className="mt-6 flex justify-end space-x-3">
-                <button 
+                <button
                   onClick={() => setIsModalOpen(false)}
                   className="px-4 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg text-sm transition-colors"
                 >
@@ -635,17 +736,17 @@ const StudentsPage = () => {
           </div>
         </div>
       )}
-        
-         {/* Edit Certificate Modal */}
+
+      {/* Edit Certificate Modal */}
       {isEditModalOpen && selectedCertificate && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4 mt-1.5">
           <div className="bg-white dark:bg-gray-800 rounded-xl shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
             <div className="p-6">
               <div className="flex justify-between items-center mb-4">
                 <h3 className="text-xl font-bold text-gray-900 dark:text-white">
                   Edit Certificate
                 </h3>
-                <button 
+                <button
                   onClick={() => setIsEditModalOpen(false)}
                   className="text-gray-400 hover:text-gray-500 dark:hover:text-gray-300"
                 >
@@ -660,7 +761,7 @@ const StudentsPage = () => {
                     <h4 className="text-md font-medium text-gray-900 dark:text-white">
                       Personal Information
                     </h4>
-                    
+
                     <div>
                       <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                         First Name
@@ -733,17 +834,19 @@ const StudentsPage = () => {
                         value={editFormData.college}
                         onChange={(e) => {
                           handleEditFormChange(e);
-                          setEditFormData(prev => ({
+                          setEditFormData((prev) => ({
                             ...prev,
-                            department: ''
+                            department: "",
                           }));
                         }}
                         className="w-full rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-700 text-gray-700 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent p-2"
                         required
                       >
                         <option value="">Select College</option>
-                        {colleges.map(college => (
-                          <option key={college} value={college}>{college}</option>
+                        {colleges.map((college) => (
+                          <option key={college} value={college}>
+                            {college}
+                          </option>
                         ))}
                       </select>
                     </div>
@@ -761,9 +864,14 @@ const StudentsPage = () => {
                         required
                       >
                         <option value="">Select Department</option>
-                        {editFormData.college && departmentsByCollege[editFormData.college]?.map(dept => (
-                          <option key={dept} value={dept}>{dept}</option>
-                        ))}
+                        {editFormData.college &&
+                          departmentsByCollege[editFormData.college]?.map(
+                            (dept) => (
+                              <option key={dept} value={dept}>
+                                {dept}
+                              </option>
+                            )
+                          )}
                       </select>
                     </div>
 
@@ -802,23 +910,23 @@ const StudentsPage = () => {
                         CGPA
                       </label>
                       <input
-  type="number"
-  name="cgpa"
-  value={editFormData.cgpa}
-  onChange={(e) => {
-    const value = parseFloat(e.target.value);
-    if (value >= 1.75 && value <= 4.0) {
-      handleEditFormChange(e);
-    } else {
-      alert("CGPA must be between 1.75 and 4.0");
-    }
-  }}
-  min="1.75"
-  max="4.0"
-  step="0.01"
-  className="w-full rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-700 text-gray-700 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent p-2"
-  required
-/>
+                        type="number"
+                        name="cgpa"
+                        value={editFormData.cgpa}
+                        onChange={(e) => {
+                          const value = parseFloat(e.target.value);
+                          if (value >= 1.75 && value <= 4.0) {
+                            handleEditFormChange(e);
+                          } else {
+                            alert("CGPA must be between 1.75 and 4.0");
+                          }
+                        }}
+                        min="1.75"
+                        max="4.0"
+                        step="0.01"
+                        className="w-full rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-700 text-gray-700 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent p-2"
+                        required
+                      />
                     </div>
                   </div>
 
@@ -855,14 +963,14 @@ const StudentsPage = () => {
                 </div>
 
                 <div className="mt-6 flex justify-end space-x-3">
-                  <button 
+                  <button
                     type="button"
                     onClick={() => setIsEditModalOpen(false)}
                     className="px-4 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg text-sm transition-colors"
                   >
                     Cancel
                   </button>
-                  <button 
+                  <button
                     type="submit"
                     className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm transition-colors"
                   >
@@ -874,9 +982,8 @@ const StudentsPage = () => {
           </div>
         </div>
       )}
-
     </div>
   );
 };
 
-export default StudentsPage; 
+export default StudentsPage;
