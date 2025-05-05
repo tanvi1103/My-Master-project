@@ -16,6 +16,7 @@ const EditGraduate = () => {
     department: '',
     gender: '',
     gstatus: '',
+    cgpa: '',
     program: '',
     startDate: '',
     endDate: '',
