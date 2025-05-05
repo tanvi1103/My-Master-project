@@ -9,7 +9,7 @@ import AdminDashboard from "./pages/AdminDashboard";
 import AddGraduate from "./pages/AddGraduate";
 import ViewUpdateGraduates from "./pages/ViewUpdateGraduates";
 import ThemeProvider from "./pages/ThemeProvider";
-import AdminSidebar from "./pages/AdminSidebar";
+import AdminSidebar from "./pages/AdminSidebar"; 
 import AdminLayout from "./pages/AdminLayout";
 import CertificateDetail from './components/CertificateDetail';
 import EditGraduate from './pages/EditCertificate';
