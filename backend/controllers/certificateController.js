@@ -13,7 +13,7 @@ exports.getCertificateByName = async (req, res) => {
       department,
       endDate,
       gender,
-    } = req.query; // <-- use req.query
+    } = req.query;
 
     if (
       !firstName ||
@@ -24,17 +24,18 @@ exports.getCertificateByName = async (req, res) => {
       !endDate ||
       !gender
     ) {
-      return res
-        .status(400)
-        .json({
-          message: "all fields are required, please fill and try again",
-        });
+      return res.status(400).json({
+        message: "All fields are required, please fill and try again",
+      });
     }
+
     const endYear = parseInt(endDate, 10);
+
+    // Use case-insensitive regex for name fields
     const certificate = await Certificate.findOne({
-      firstName: firstName,
-      middleName: middleName,
-      lastName: lastName,
+      firstName: { $regex: new RegExp(`^${firstName}$`, "i") }, // Case-insensitive match
+      middleName: { $regex: new RegExp(`^${middleName}$`, "i") }, // Case-insensitive match
+      lastName: { $regex: new RegExp(`^${lastName}$`, "i") }, // Case-insensitive match
       cgpa: cgpa,
       department: department,
       gender: gender,
