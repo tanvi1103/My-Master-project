@@ -31,6 +31,13 @@ const AdminSidebar = () => {
         >
           <FaCloudUploadAlt /> Upload Excel (.xlsx)
         </Link>
+
+        <Link
+          to="/admin/add-graduate/file"
+          className="flex items-center gap-3 px-3 py-2 rounded hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-800 dark:text-white transition"
+        >
+          <FaCloudUploadAlt />Create New User
+        </Link>
       </nav>
     </aside>
   );
