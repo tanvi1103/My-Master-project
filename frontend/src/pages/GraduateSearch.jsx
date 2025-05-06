@@ -212,18 +212,25 @@ const GraduateSearch = () => {
 
     {error && <p className="text-red-600 mt-4">{error}</p>}
     {certificate && (
-      <div className="certificate-card">
-        <h3>Certificate Details</h3>
-        <p>
-          <strong>ID:</strong> {certificate.certificateID}
-        </p>
-        <p>
-          <strong>Name:</strong> {certificate.firstName}
-        </p>
-        <button onClick={handleOpen} className="open-button">
-          Open
-        </button>
-      </div>
+ <div className="certificate-card bg-gray-100 dark:bg-gray-800 rounded-lg shadow-md p-6 md:p-8 text-gray-900 dark:text-white">
+ <h3 className="text-xl md:text-2xl font-bold mb-4 text-blue-600 dark:text-blue-400">
+   Certificate Details
+ </h3>
+ <div className="space-y-2">
+   <p className="text-lg">
+     <strong className="font-semibold">ID:</strong> {certificate.certificateID}
+   </p>
+   <p className="text-lg">
+     <strong className="font-semibold">Name:</strong> {certificate.firstName}
+   </p>
+ </div>
+ <button
+   onClick={handleOpen}
+   className="cursor-pointer mt-6 w-full md:w-auto px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 transition duration-300"
+ >
+   Open Certificate
+ </button>
+</div>
     )}
   </div>
 </div>
