@@ -21,34 +21,34 @@ const departments = [
   "General Forestry",
   "Veterinary Medicine  ",
   "Coffee science and Technology",
- " Accounting and Finance",
-"Banking and Finance",
-"Economics",
-"Marketing Management ",
-"Management",
-"Public Administration Management",
-"Hotel and Tourism Management",
-"Public Health Department",
-"Pharmacy Department",
-"Nursing Department",
-"Midwifery Department",
-"English Language and Literature Department",
-"Geography and Environmental Studies Department",
-"History and Heritage Management Department",
-"Special Needs and Inclusive Education Department",
-"Sociology Department",
-"Psychology Department",
-"Law Department",
-"Curriculum and Instruction Department",
-"Social Anthropology Department",
-"Political Science and International Relations Department",
-
+  " Accounting and Finance",
+  "Banking and Finance",
+  "Business and Economics",
+  "Economics",
+  "Marketing Management ",
+  "Management",
+  "Public Administration Management",
+  "Hotel and Tourism Management",
+  "Public Health Department",
+  "Pharmacy Department",
+  "Nursing Department",
+  "Midwifery Department",
+  "English Language and Literature Department",
+  "Geography and Environmental Studies Department",
+  "History and Heritage Management Department",
+  "Special Needs and Inclusive Education Department",
+  "Sociology Department",
+  "Psychology Department",
+  "Law Department",
+  "Curriculum and Instruction Department",
+  "Social Anthropology Department",
+  "Political Science and International Relations Department",
 ];
 
 const GraduateSearch = () => {
   const navigate = useNavigate();
   const [certificate, setCertificate] = useState(null);
-const [error, setError] = useState("");
+  const [error, setError] = useState("");
   const [formData, setFormData] = useState({
     firstName: "",
     middleName: "",
@@ -77,7 +77,7 @@ const [error, setError] = useState("");
         { params: formData }
       );
 
-      console.log(data)
+      console.log(data);
       setCertificate(data);
     } catch (err) {
       setError(err.response?.data?.message || "Something went wrong");
@@ -98,39 +98,66 @@ const [error, setError] = useState("");
           onSubmit={handleSearch}
           className="flex flex-col gap-8 w-full max-w-4xl mx-auto py-4 px-6 bg-white dark:bg-gray-800 rounded-lg shadow-md text-2xl"
         >
-          <input
-            type="text"
-            name="firstName"
-            placeholder="First Name"
-            value={formData.firstName}
-            onChange={handleChange}
-            className="p-3 rounded border border-gray-300 dark:border-gray-600 dark:bg-gray-700 text-gray-900 dark:text-white"
-          />
-          <input
-            type="text"
-            name="middleName"
-            placeholder="Middle Name"
-            value={formData.middleName}
-            onChange={handleChange}
-            className="p-3 rounded border border-gray-300 dark:border-gray-600 dark:bg-gray-700 text-gray-900 dark:text-white"
-          />
-          <input
-            type="text"
-            name="lastName"
-            placeholder="Last Name"
-            value={formData.lastName}
-            onChange={handleChange}
-            className="p-3 rounded border border-gray-300 dark:border-gray-600 dark:bg-gray-700 text-gray-900 dark:text-white"
-          />
-          <input
-            type="number"
-            name="cgpa"
-            placeholder="CGPA (1.75 - 4.00)"
-            value={formData.cgpa}
-            onChange={handleChange}
-            step="0.01"
-            className="p-3 rounded border border-gray-300 dark:border-gray-600 dark:bg-gray-700 text-gray-900 dark:text-white"
-          />
+ <input
+  type="text"
+  name="firstName"
+  placeholder="First Name"
+  value={formData.firstName}
+  onChange={(e) => {
+    const value = e.target.value;
+    if (/^[a-zA-Z]*$/.test(value)) { // Allow only alphabets
+      handleChange(e);
+    }
+  }}
+  className="p-3 rounded border border-gray-300 dark:border-gray-600 dark:bg-gray-700 text-gray-900 dark:text-white"
+  required
+/>
+<input
+  type="text"
+  name="middleName"
+  placeholder="Middle Name"
+  value={formData.middleName}
+  onChange={(e) => {
+    const value = e.target.value;
+    if (/^[a-zA-Z]*$/.test(value)) { // Allow only alphabets
+      handleChange(e);
+    }
+  }}
+  className="p-3 rounded border border-gray-300 dark:border-gray-600 dark:bg-gray-700 text-gray-900 dark:text-white"
+/>
+<input
+  type="text"
+  name="lastName"
+  placeholder="Last Name"
+  value={formData.lastName}
+  onChange={(e) => {
+    const value = e.target.value;
+    if (/^[a-zA-Z]*$/.test(value)) { // Allow only alphabets
+      handleChange(e);
+    }
+  }}
+  className="p-3 rounded border border-gray-300 dark:border-gray-600 dark:bg-gray-700 text-gray-900 dark:text-white"
+  required
+/>
+<input
+  type="number"
+  name="cgpa"
+  placeholder="CGPA (1.75 - 4.00)"
+  value={formData.cgpa}
+  onChange={(e) => {
+    const value = e.target.value;
+    if (value === "" || (parseFloat(value) >= 1.75 && parseFloat(value) <= 4.0)) {
+      handleChange(e); // Allow empty value or valid range
+    }
+  }}
+  step="0.01"
+  className="p-3 rounded border border-gray-300 dark:border-gray-600 dark:bg-gray-700 text-gray-900 dark:text-white"
+  required
+/>
+{formData.cgpa && (formData.cgpa < 1.75 || formData.cgpa > 4.0) && (
+  <p className="text-red-600">CGPA must be between 1.75 and 4.00</p>
+)}
+
           <div className="flex flex-col md:flex-row gap-4">
             <select
               name="gender"
@@ -155,14 +182,22 @@ const [error, setError] = useState("");
                 </option>
               ))}
             </select>
-            <input
-          type="text"
-          name="endDate"
-          value={formData.endDate}
-          onChange={handleChange}
-          className="w-full p-2 border rounded"
-          required
-        />
+
+            <select
+              name="endDate"
+              value={formData.endDate}
+              onChange={handleChange}
+              className="w-full p-3 rounded border border-gray-300 dark:border-gray-600 dark:bg-gray-700 text-gray-900 dark:text-white"
+              required
+            >
+              <option value="">Select End Date</option>
+              <option value="2023">2021</option>
+              <option value="2023">2022</option>
+              <option value="2023">2023</option>
+              <option value="2024">2024</option>
+              <option value="2025">2025</option>
+              <option value="2026">2026</option>
+            </select>
           </div>
           <div className="flex justify-center mt-4 ">
             <button
@@ -173,21 +208,22 @@ const [error, setError] = useState("");
             </button>
           </div>
         </form>
+
         {error && <p className="text-red-600 mt-4">{error}</p>}
-      {certificate && (
-      <div className="certificate-card">
-      <h3>Certificate Details</h3>
-      <p>
-        <strong>ID:</strong> {certificate.certificateID}
-      </p>
-      <p>
-        <strong>Name:</strong> {certificate.firstName}
-      </p>
-      <button onClick={handleOpen} className="open-button">
-        Open
-      </button>
-    </div>
-      )}
+        {certificate && (
+          <div className="certificate-card">
+            <h3>Certificate Details</h3>
+            <p>
+              <strong>ID:</strong> {certificate.certificateID}
+            </p>
+            <p>
+              <strong>Name:</strong> {certificate.firstName}
+            </p>
+            <button onClick={handleOpen} className="open-button">
+              Open
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );
