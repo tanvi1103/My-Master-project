@@ -45,7 +45,7 @@ const AdminDashboard = () => {
 
         {/* Upload Excel */}
         <Link
-          to="/admin/upload-excel"
+          to="/admin/add-graduate/file"
           className="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow hover:shadow-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-all border dark:border-gray-700"
         >
           <div className="flex items-center gap-4">
