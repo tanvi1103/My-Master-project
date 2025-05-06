@@ -8,6 +8,7 @@ const XLSX = require("xlsx");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const { validationResult } = require("express-validator");
+const { v4: uuidv4 } = require('uuid');
 
 // ==============================
 // Multer Configuration (Secure)
@@ -366,7 +367,7 @@ const addStudentCredentials = async (req, res) => {
     }
 
     const certificate = new Certificate({
-      certificateID,
+      certificateID: uuidv4(),
       firstName,
       middleName,
       lastName,
