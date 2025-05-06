@@ -89,143 +89,145 @@ const GraduateSearch = () => {
     }
   };
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 px-4 py-12">
-      <div className="w-full max-w-7xl  bg-white dark:bg-gray-800 rounded-xl shadow-lg p-8">
-        <h2 className="text-2xl md:text-4xl font-bold text-center text-gray-900 dark:text-white mb-6">
-          Search Graduate
-        </h2>
-        <form
-          onSubmit={handleSearch}
-          className="flex flex-col gap-8 w-full max-w-4xl mx-auto py-4 px-6 bg-white dark:bg-gray-800 rounded-lg shadow-md text-2xl"
+<div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 px-4 py-12 overflow-x-hidden">
+  <div className="w-full max-w-full md:max-w-7xl bg-white dark:bg-gray-800 rounded-xl shadow-lg p-4 md:p-8">
+    <h2 className="text-2xl md:text-4xl font-bold text-center text-gray-900 dark:text-white mb-6">
+      Search Graduate
+    </h2>
+    <form
+      onSubmit={handleSearch}
+      className="flex flex-col gap-8 w-full max-w-full md:max-w-4xl mx-auto py-4 px-4 md:px-6 bg-white dark:bg-gray-800 rounded-lg shadow-md text-lg md:text-2xl"
+    >
+      <input
+        type="text"
+        name="firstName"
+        placeholder="First Name"
+        value={formData.firstName}
+        onChange={(e) => {
+          const value = e.target.value;
+          if (/^[a-zA-Z]*$/.test(value)) {
+            handleChange(e);
+          }
+        }}
+        className="p-3 rounded border border-gray-300 dark:border-gray-600 dark:bg-gray-700 text-gray-900 dark:text-white"
+        required
+      />
+      <input
+        type="text"
+        name="middleName"
+        placeholder="Middle Name"
+        value={formData.middleName}
+        onChange={(e) => {
+          const value = e.target.value;
+          if (/^[a-zA-Z]*$/.test(value)) {
+            handleChange(e);
+          }
+        }}
+        className="p-3 rounded border border-gray-300 dark:border-gray-600 dark:bg-gray-700 text-gray-900 dark:text-white"
+      />
+      <input
+        type="text"
+        name="lastName"
+        placeholder="Last Name"
+        value={formData.lastName}
+        onChange={(e) => {
+          const value = e.target.value;
+          if (/^[a-zA-Z]*$/.test(value)) {
+            handleChange(e);
+          }
+        }}
+        className="p-3 rounded border border-gray-300 dark:border-gray-600 dark:bg-gray-700 text-gray-900 dark:text-white"
+        required
+      />
+      <input
+        type="number"
+        name="cgpa"
+        placeholder="CGPA (1.75 - 4.00)"
+        value={formData.cgpa}
+        onChange={(e) => {
+          const value = e.target.value;
+          if (value === "" || (parseFloat(value) >= 1.75 && parseFloat(value) <= 4.0)) {
+            handleChange(e);
+          }
+        }}
+        step="0.01"
+        className="p-3 rounded border border-gray-300 dark:border-gray-600 dark:bg-gray-700 text-gray-900 dark:text-white"
+        required
+      />
+      {formData.cgpa && (formData.cgpa < 1.75 || formData.cgpa > 4.0) && (
+        <p className="text-red-600">CGPA must be between 1.75 and 4.00</p>
+      )}
+
+      <div className="flex flex-col md:flex-row gap-4">
+        <select
+          name="gender"
+          value={formData.gender}
+          onChange={handleChange}
+          className="w-full p-3 rounded border border-gray-300 dark:border-gray-600 dark:bg-gray-700 text-gray-900 dark:text-white"
         >
- <input
-  type="text"
-  name="firstName"
-  placeholder="First Name"
-  value={formData.firstName}
-  onChange={(e) => {
-    const value = e.target.value;
-    if (/^[a-zA-Z]*$/.test(value)) { // Allow only alphabets
-      handleChange(e);
-    }
-  }}
-  className="p-3 rounded border border-gray-300 dark:border-gray-600 dark:bg-gray-700 text-gray-900 dark:text-white"
-  required
-/>
-<input
-  type="text"
-  name="middleName"
-  placeholder="Middle Name"
-  value={formData.middleName}
-  onChange={(e) => {
-    const value = e.target.value;
-    if (/^[a-zA-Z]*$/.test(value)) { // Allow only alphabets
-      handleChange(e);
-    }
-  }}
-  className="p-3 rounded border border-gray-300 dark:border-gray-600 dark:bg-gray-700 text-gray-900 dark:text-white"
-/>
-<input
-  type="text"
-  name="lastName"
-  placeholder="Last Name"
-  value={formData.lastName}
-  onChange={(e) => {
-    const value = e.target.value;
-    if (/^[a-zA-Z]*$/.test(value)) { // Allow only alphabets
-      handleChange(e);
-    }
-  }}
-  className="p-3 rounded border border-gray-300 dark:border-gray-600 dark:bg-gray-700 text-gray-900 dark:text-white"
-  required
-/>
-<input
-  type="number"
-  name="cgpa"
-  placeholder="CGPA (1.75 - 4.00)"
-  value={formData.cgpa}
-  onChange={(e) => {
-    const value = e.target.value;
-    if (value === "" || (parseFloat(value) >= 1.75 && parseFloat(value) <= 4.0)) {
-      handleChange(e); // Allow empty value or valid range
-    }
-  }}
-  step="0.01"
-  className="p-3 rounded border border-gray-300 dark:border-gray-600 dark:bg-gray-700 text-gray-900 dark:text-white"
-  required
-/>
-{formData.cgpa && (formData.cgpa < 1.75 || formData.cgpa > 4.0) && (
-  <p className="text-red-600">CGPA must be between 1.75 and 4.00</p>
-)}
+          <option value="">Select Gender</option>
+          <option value="Male">Male</option>
+          <option value="Female">Female</option>
+        </select>
+        <select
+          name="department"
+          value={formData.department}
+          onChange={handleChange}
+          className="w-full p-3 rounded border border-gray-300 dark:border-gray-600 dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+        >
+          <option value="">Select Department</option>
+          {departments
+            .sort((a, b) => a.localeCompare(b))
+            .map((dept, index) => (
+              <option key={index} value={dept}>
+                {dept}
+              </option>
+            ))}
+        </select>
 
-          <div className="flex flex-col md:flex-row gap-4">
-            <select
-              name="gender"
-              value={formData.gender}
-              onChange={handleChange}
-              className="w-full p-3 rounded border border-gray-300 dark:border-gray-600 dark:bg-gray-700 text-gray-900 dark:text-white"
-            >
-              <option value="">Select Gender</option>
-              <option value="Male">Male</option>
-              <option value="Female">Female</option>
-            </select>
-            <select
-              name="department"
-              value={formData.department}
-              onChange={handleChange}
-              className="w-full p-3 rounded border border-gray-300 dark:border-gray-600 dark:bg-gray-700 text-gray-900 dark:text-white"
-            >
-              <option value="">Select Department</option>
-              {departments.map((dept, index) => (
-                <option key={index} value={dept}>
-                  {dept}
-                </option>
-              ))}
-            </select>
-
-            <select
-              name="endDate"
-              value={formData.endDate}
-              onChange={handleChange}
-              className="w-full p-3 rounded border border-gray-300 dark:border-gray-600 dark:bg-gray-700 text-gray-900 dark:text-white"
-              required
-            >
-              <option value="">Select End Date</option>
-              <option value="2023">2021</option>
-              <option value="2023">2022</option>
-              <option value="2023">2023</option>
-              <option value="2024">2024</option>
-              <option value="2025">2025</option>
-              <option value="2026">2026</option>
-            </select>
-          </div>
-          <div className="flex justify-center mt-4 ">
-            <button
-              type="submit"
-              className="w-full  px-6 py-3 bg-blue-600 text-white rounded hover:bg-blue-700 transition cursor-pointer"
-            >
-              Search
-            </button>
-          </div>
-        </form>
-
-        {error && <p className="text-red-600 mt-4">{error}</p>}
-        {certificate && (
-          <div className="certificate-card">
-            <h3>Certificate Details</h3>
-            <p>
-              <strong>ID:</strong> {certificate.certificateID}
-            </p>
-            <p>
-              <strong>Name:</strong> {certificate.firstName}
-            </p>
-            <button onClick={handleOpen} className="open-button">
-              Open
-            </button>
-          </div>
-        )}
+        <select
+          name="endDate"
+          value={formData.endDate}
+          onChange={handleChange}
+          className="w-full p-3 rounded border border-gray-300 dark:border-gray-600 dark:bg-gray-700 text-gray-900 dark:text-white"
+          required
+        >
+          <option value="">Select End Date</option>
+          <option value="2021">2021</option>
+          <option value="2022">2022</option>
+          <option value="2023">2023</option>
+          <option value="2024">2024</option>
+          <option value="2025">2025</option>
+          <option value="2026">2026</option>
+        </select>
       </div>
-    </div>
+      <div className="flex justify-center mt-4">
+        <button
+          type="submit"
+          className="w-full px-6 py-3 bg-blue-600 text-white rounded hover:bg-blue-700 transition cursor-pointer"
+        >
+          Search
+        </button>
+      </div>
+    </form>
+
+    {error && <p className="text-red-600 mt-4">{error}</p>}
+    {certificate && (
+      <div className="certificate-card">
+        <h3>Certificate Details</h3>
+        <p>
+          <strong>ID:</strong> {certificate.certificateID}
+        </p>
+        <p>
+          <strong>Name:</strong> {certificate.firstName}
+        </p>
+        <button onClick={handleOpen} className="open-button">
+          Open
+        </button>
+      </div>
+    )}
+  </div>
+</div>
   );
 };
 
