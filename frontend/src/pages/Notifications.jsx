@@ -5,18 +5,22 @@ import { motion, AnimatePresence } from "framer-motion";
 
 const Notifications = () => {
   const [notifications, setNotifications] = useState([]);
+  const [selectedNationalId, setSelectedNationalId] = useState([]);
   const [unreadCount, setUnreadCount] = useState(0);
   const [isOpen, setIsOpen] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const dropdownRef = useRef(null);
 
+  const apiUrl = import.meta.env.VITE_ADMIN_ROUTE 
+  const nationalIdUrl = import.meta.env.VITE_NATIONAL_ID_ROUTE 
   // Fetch notifications
   useEffect(() => {
     const fetchNotifications = async () => {
       try {
-        const { data } = await axios.get(`${import.meta.env.VITE_ADMIN_ROUTE}/notifications`);
+        const { data } = await axios.get(`${apiUrl}/notifications`);
         setNotifications(data);
-        setUnreadCount(data.filter(n => !n.read).length);
+        setUnreadCount(data.filter((n) => !n.read).length);
       } catch (err) {
         console.error("Fetch error:", err);
       } finally {
@@ -42,17 +46,37 @@ const Notifications = () => {
   }, []);
 
   const markAsRead = useCallback((id) => {
-    setNotifications(prev => 
-      prev.map(note => 
-        note._id === id ? { ...note, read: true } : note
-      )
+    setNotifications((prev) =>
+      prev.map((note) => (note._id === id ? { ...note, read: true } : note))
     );
-    setUnreadCount(prev => prev - 1);
+    setUnreadCount((prev) => prev - 1);
   }, []);
 
   const markAllAsRead = () => {
-    setNotifications(prev => prev.map(note => ({ ...note, read: true })));
+    setNotifications((prev) => prev.map((note) => ({ ...note, read: true })));
     setUnreadCount(0);
+  };
+
+  // Fetch national ID when a notification is clicked
+  const handleNotificationClick = async (notification) => {
+    try {
+      // Destructure required fields from the notification object
+      const { firstName, middleName, lastName, gender } = notification;
+  
+      // Log the parameters to ensure they are being passed correctly
+      console.log("Sending params:", { firstName, middleName, lastName, gender });
+  
+      // Make the API request
+      const response = await axios.get(`${nationalIdUrl}/search/name`, {
+        params: { firstName, middleName, lastName, gender },
+      });
+  
+      // Set the fetched national ID
+      setSelectedNationalId(response.data);
+    } catch (err) {
+      console.error("Error fetching national ID:", err);
+      setSelectedNationalId("Error fetching national ID");
+    }
   };
 
   return (
@@ -137,7 +161,10 @@ const Notifications = () => {
                     className={`p-4 border-b border-gray-100 dark:border-gray-700 cursor-pointer transition-colors ${
                       !note.read ? "bg-blue-50 dark:bg-gray-700" : "hover:bg-gray-50 dark:hover:bg-gray-750"
                     }`}
-                    onClick={() => markAsRead(note._id)}
+                    onClick={() => {
+                      markAsRead(note._id);
+                      handleNotificationClick(note);
+                    }}
                   >
                     <div className="flex items-start">
                       <div
@@ -167,6 +194,17 @@ const Notifications = () => {
                 ))
               )}
             </div>
+
+            {selectedNationalId && (
+              <div className="p-4 bg-blue-50 dark:bg-blue-900 rounded-md mt-4">
+                <h3 className="text-lg font-bold text-blue-700 dark:text-blue-300">National ID</h3>
+                <p className="text-gray-800 dark:text-gray-200">{selectedNationalId.firstName} {selectedNationalId.middleName} {selectedNationalId.lastName}</p>
+                <p className="text-gray-800 dark:text-gray-200"></p>
+                <p className="text-gray-800 dark:text-gray-200"></p>
+                <p className="text-gray-800 dark:text-gray-200">{selectedNationalId.gender}</p>
+                <p className="text-gray-800 dark:text-gray-200">{selectedNationalId.nationalidnumber}</p>
+              </div>
+            )}
           </motion.div>
         )}
       </AnimatePresence>
