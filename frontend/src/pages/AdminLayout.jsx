@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import AdminSidebar from "./AdminSidebar";
 import ThemeToogler from "./ThemeToogler";
+import Notifications from "./Notifications";
 import { Menu } from "lucide-react";
 import axios from "axios";
 import Swal from "sweetalert2";
@@ -52,6 +53,10 @@ const AdminLayout = ({ children }) => {
         </div>
         <div className="flex items-center gap-4">
           <ThemeToogler />
+          <div className="grid gap-6">
+      {/* other admin widgets */}
+      <Notifications />
+    </div>
           <button
             onClick={handleAdminLogout}
             className="bg-red-500 hover:bg-red-600 text-white py-1 px-3 rounded"
