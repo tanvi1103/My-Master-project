@@ -4,6 +4,8 @@ const crypto = require("crypto");
 const Admin = require("../models/Admin");
 const Student = require("../models/Student");
 const Certificate = require("../models/Certificate");
+const Notification = require('../models/Notification');
+
 const XLSX = require("xlsx");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
@@ -294,6 +296,22 @@ const getSingleCertificate = async (req, res) => {
 };
 
 // ========================
+// Get notification
+// ========================
+const getNotification = async (req, res) => {
+  try {
+    const notifications = await Notification.find({}).sort({ createdAt: -1 });
+    if (!notifications.length) {
+      return res.status(404).json({ message: "No notifications found" });
+    }
+    res.status(200).json(notifications);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Something went wrong" });
+  }
+};
+
+// ========================
 // Update Single Certificate
 // ========================
 const updateSingleCertificate = async (req, res) => {
@@ -401,4 +419,5 @@ module.exports = {
   updateSingleCertificate,
   deleteSingleCertificate,
   addStudentCredentials,
+  getNotification,
 };
