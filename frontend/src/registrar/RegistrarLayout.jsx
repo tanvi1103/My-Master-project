@@ -9,6 +9,7 @@ import {
   FiSun,
   FiMoon,
 } from "react-icons/fi";
+import { Link } from "react-router-dom";
 
 const RegistrarLayout = ({ children }) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -116,13 +117,13 @@ const RegistrarLayout = ({ children }) => {
                   </a>
                 </li>
                 <li>
-                  <a
-                    href="#"
+                  <Link
+                    to={"/registrar/studentsearch"}
                     className="flex items-center px-4 py-3 rounded-lg text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
                   >
                     <FiUsers className="mr-3" />
                     <span>Students</span>
-                  </a>
+                  </Link>
                 </li>
                 <li>
                   <a
