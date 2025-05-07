@@ -3,6 +3,7 @@ const Certificate = require("../models/Certificate");
 const QRCode = require("qrcode");
 const fs = require("fs");
 const path = require("path");
+const Admin = require("../models/Admin");
 exports.getCertificateByName = async (req, res) => {
   try {
     const {
@@ -45,7 +46,7 @@ exports.getCertificateByName = async (req, res) => {
     if (!certificate) {
       console.log("No certificate found for the given student and domain");
       return res.status(404).json({ message: "Certificate not found" });
-    }
+    } 
 
     console.log("Certificate found:", certificate);
     res.json(certificate);
