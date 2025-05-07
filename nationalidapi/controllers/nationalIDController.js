@@ -253,3 +253,32 @@ export const searchNationalIDs = async (req, res) => {
     });
   }
 };
+
+// get single national ID by first name, middle name, last name and gender
+
+export const getNationalIDByName = async (req, res) => {
+  const { firstName, middleName, lastName, gender } = req.query;
+
+  try {
+    const nationalID = await NationalID.findOne({
+      firstName: { $regex: new RegExp(`^${firstName}$`, "i") }, // Case-insensitive match
+      middleName: { $regex: new RegExp(`^${middleName}$`, "i") }, // Case-insensitive match
+      lastName: { $regex: new RegExp(`^${lastName}$`, "i") }, // Case-insensitive match
+      gender: { $regex: new RegExp(`^${gender}$`, "i") } // Case-insensitive match
+    });
+
+    if (!nationalID) {
+      return res.status(404).json({
+        success: false,
+        error: "National ID not found"
+      });
+    }
+    res.status(200).json(nationalID)
+  }
+  catch (error) {
+    res.status(500).json({
+      success: false,
+      error: error.message
+    });
+  }
+}
