@@ -44,28 +44,32 @@ exports.getCertificateByName = async (req, res) => {
       $expr: { $eq: [{ $year: "$endDate" }, endYear] },
     });
 
-    if (!certificate) {
-      const admin = await Admin.findOne({ email: process.env.ADMIN_EMAIL });
-      if (admin) {
-        await Notification.create({
-          adminId: admin._id,
-          message: `Verification failed for: ${firstName} ${middleName} ${lastName}`,
-          type: "error",
-        });
-      }
-      return res.status(404).json({ message: "Certificate not found" });
-    }
-    
     const admin = await Admin.findOne({ email: process.env.ADMIN_EMAIL });
-    if (admin) {
+
+    if (!certificate && admin) {
       await Notification.create({
         adminId: admin._id,
-        message: `Verification success: ${firstName} ${middleName} ${lastName} has been verified.`,
-        type: "success",
+        firstName: firstName,
+        middleName: middleName,
+        lastName: lastName,
+        gender: gender,
+        message: `Verification failed for: ${firstName} ${middleName} ${lastName}`,
+        type: "error",
       });
+      return res.status(404).json({ message: "Certificate not found" });
     }
+
+    await Notification.create({
+      adminId: admin._id,
+      firstName: firstName,
+      middleName: middleName,
+      lastName: lastName,
+      gender: gender,
+      message: `Verification success: ${firstName} ${middleName} ${lastName} has been verified.`,
+      type: "success",
+    });
     console.log("Certificate found:", certificate);
-    res.json(certificate);
+    return res.status(200).json({ message: "Certificate found", certificate });
   } catch (error) {
     console.error("Error fetching certificate:", error);
     res.status(500).json({ message: "Server error" });
