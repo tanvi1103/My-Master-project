@@ -1,1 +1,0 @@
-const Certificate = require('../models/Certificat

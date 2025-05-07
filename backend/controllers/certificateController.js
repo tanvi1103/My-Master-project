@@ -5,76 +5,76 @@ const fs = require("fs");
 const path = require("path");
 const Admin = require("../models/Admin");
 const Notification = require("../models/Notification");
-exports.getCertificateByName = async (req, res) => {
-  try {
-    const {
-      firstName,
-      middleName,
-      lastName,
-      cgpa,
-      department,
-      endDate,
-      gender,
-    } = req.query;
+// exports.getCertificateByName = async (req, res) => {
+//   try {
+//     const {
+//       firstName,
+//       middleName,
+//       lastName,
+//       cgpa,
+//       department,
+//       endDate,
+//       gender,
+//     } = req.query;
 
-    if (
-      !firstName ||
-      !middleName ||
-      !lastName ||
-      !cgpa ||
-      !department ||
-      !endDate ||
-      !gender
-    ) {
-      return res.status(400).json({
-        message: "All fields are required, please fill and try again",
-      });
-    }
+//     if (
+//       !firstName ||
+//       !middleName ||
+//       !lastName ||
+//       !cgpa ||
+//       !department ||
+//       !endDate ||
+//       !gender
+//     ) {
+//       return res.status(400).json({
+//         message: "All fields are required, please fill and try again",
+//       });
+//     }
 
-    const endYear = parseInt(endDate, 10);
+//     const endYear = parseInt(endDate, 10);
 
-    // Use case-insensitive regex for name fields
-    const certificate = await Certificate.findOne({
-      firstName: { $regex: new RegExp(`^${firstName}$`, "i") }, // Case-insensitive match
-      middleName: { $regex: new RegExp(`^${middleName}$`, "i") }, // Case-insensitive match
-      lastName: { $regex: new RegExp(`^${lastName}$`, "i") }, // Case-insensitive match
-      cgpa: cgpa,
-      department: department,
-      gender: gender,
-      $expr: { $eq: [{ $year: "$endDate" }, endYear] },
-    });
+//     // Use case-insensitive regex for name fields
+//     const certificate = await Certificate.findOne({
+//       firstName: { $regex: new RegExp(`^${firstName}$`, "i") }, // Case-insensitive match
+//       middleName: { $regex: new RegExp(`^${middleName}$`, "i") }, // Case-insensitive match
+//       lastName: { $regex: new RegExp(`^${lastName}$`, "i") }, // Case-insensitive match
+//       cgpa: cgpa,
+//       department: department,
+//       gender: gender,
+//       $expr: { $eq: [{ $year: "$endDate" }, endYear] },
+//     });
 
-    const admin = await Admin.findOne({ email: process.env.ADMIN_EMAIL });
+//     const admin = await Admin.findOne({ email: process.env.ADMIN_EMAIL });
 
-    if (!certificate && admin) {
-      await Notification.create({
-        adminId: admin._id,
-        firstName: firstName,
-        middleName: middleName,
-        lastName: lastName,
-        gender: gender,
-        message: `Verification failed for: ${firstName} ${middleName} ${lastName}`,
-        type: "error",
-      });
-      return res.status(404).json({ message: "Certificate not found" });
-    }
+//     if (!certificate && admin) {
+//       await Notification.create({
+//         adminId: admin._id,
+//         firstName: firstName,
+//         middleName: middleName,
+//         lastName: lastName,
+//         gender: gender,
+//         message: `Verification failed for: ${firstName} ${middleName} ${lastName}`,
+//         type: "error",
+//       });
+//       return res.status(404).json({ message: "Certificate not found" });
+//     }
 
-    await Notification.create({
-      adminId: admin._id,
-      firstName: firstName,
-      middleName: middleName,
-      lastName: lastName,
-      gender: gender,
-      message: `Verification success: ${firstName} ${middleName} ${lastName} has been verified.`,
-      type: "success",
-    });
-    console.log("Certificate found:", certificate);
-    return res.status(200).json({ message: "Certificate found", certificate });
-  } catch (error) {
-    console.error("Error fetching certificate:", error);
-    res.status(500).json({ message: "Server error" });
-  }
-};
+//     await Notification.create({
+//       adminId: admin._id,
+//       firstName: firstName,
+//       middleName: middleName,
+//       lastName: lastName,
+//       gender: gender,
+//       message: `Verification success: ${firstName} ${middleName} ${lastName} has been verified.`,
+//       type: "success",
+//     });
+//     console.log("Certificate found:", certificate);
+//     return res.status(200).json({ message: "Certificate found", certificate });
+//   } catch (error) {
+//     console.error("Error fetching certificate:", error);
+//     res.status(500).json({ message: "Server error" });
+//   }
+// };
 exports.getCertificateById = async (req, res) => {
   try {
     const certificate = await Certificate.findOne({
@@ -90,6 +90,77 @@ exports.getCertificateById = async (req, res) => {
     res.json(certificate); // Return JSON here
   } catch (error) {
     console.error("Server error:", error); // Debugging: Log the server error details
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+const getGeoLocation = async (ip) => {
+  try {
+    const res = await fetch(`https://ipwho.is/${ip}`);
+    const data = await res.json();
+    if (data.success === false) return null;
+    return {
+      ip: data.ip,
+      city: data.city,
+      region: data.region,
+      country: data.country,
+      isp: data.connection?.isp,
+    };
+  } catch (err) {
+    console.error("Geolocation lookup failed", err);
+    return null;
+  }
+}
+exports.getCertificateByName = async (req, res) => {
+  try {
+    const {
+      firstName, middleName, lastName,
+      cgpa, department, endDate, gender,
+    } = req.query;
+
+    if (!firstName || !middleName || !lastName || !cgpa || !department || !endDate || !gender) {
+      return res.status(400).json({ message: "All fields are required, please fill and try again" });
+    }
+
+    const endYear = parseInt(endDate, 10);
+    const userIp = req.headers["x-forwarded-for"]?.split(",")[0] || req.connection.remoteAddress;
+    const geo = await getGeoLocation(userIp);
+
+    const certificate = await Certificate.findOne({
+      firstName: { $regex: new RegExp(`^${firstName}$`, "i") },
+      middleName: { $regex: new RegExp(`^${middleName}$`, "i") },
+      lastName: { $regex: new RegExp(`^${lastName}$`, "i") },
+      cgpa,
+      department,
+      gender,
+      $expr: { $eq: [{ $year: "$endDate" }, endYear] },
+    });
+
+    const admin = await Admin.findOne({ email: process.env.ADMIN_EMAIL });
+
+    const notificationPayload = {
+      adminId: admin?._id,
+      firstName,
+      middleName,
+      lastName,
+      gender,
+      ip: geo?.ip || userIp,
+      location: `${geo?.city || "Unknown"}, ${geo?.region || ""}, ${geo?.country || ""}`,
+      message: certificate
+        ? `✅ Verified: ${firstName} ${middleName} ${lastName}`
+        : `❌ Failed Verification: ${firstName} ${middleName} ${lastName}`,
+      type: certificate ? "success" : "error",
+    };
+
+    await Notification.create(notificationPayload);
+
+    if (!certificate) {
+      return res.status(404).json({ message: "Certificate not found" });
+    }
+
+    return res.status(200).json({ message: "Certificate found", certificate });
+  } catch (error) {
+    console.error("Error fetching certificate:", error);
     res.status(500).json({ message: "Server error" });
   }
 };
