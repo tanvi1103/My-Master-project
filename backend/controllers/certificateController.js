@@ -118,28 +118,53 @@ exports.getCertificateByName = async (req, res) => {
       cgpa, department, endDate, gender,
     } = req.query;
 
+    console.log("Query Parameters:", req.query);
+
+    // Validate required fields
     if (!firstName || !middleName || !lastName || !cgpa || !department || !endDate || !gender) {
       return res.status(400).json({ message: "All fields are required, please fill and try again" });
     }
 
+    // Validate graduation year
+    if (isNaN(parseInt(endDate, 10))) {
+      return res.status(400).json({ message: "Invalid graduation year" });
+    }
     const endYear = parseInt(endDate, 10);
-    const userIp = req.headers["x-forwarded-for"]?.split(",")[0] || req.connection.remoteAddress;
-    const geo = await getGeoLocation(userIp);
 
+    // Validate CGPA
+    const parsedCgpa = parseFloat(cgpa);
+    if (isNaN(parsedCgpa) || parsedCgpa < 1.75 || parsedCgpa > 4.0) {
+      return res.status(400).json({ message: "CGPA must be between 1.75 and 4.00" });
+    }
+
+    // Get IP and geo location
+    const userIp = req.headers["x-forwarded-for"]?.split(",")[0] || req.connection.remoteAddress;
+    let geo = {};
+    try {
+      geo = await getGeoLocation(userIp);
+    } catch (geoError) {
+      console.error("Geo location failed:", geoError);
+    }
+
+    // Find certificate with case-insensitive search
     const certificate = await Certificate.findOne({
-      firstName: { $regex: new RegExp(`^${firstName}$`, "i") },
-      middleName: { $regex: new RegExp(`^${middleName}$`, "i") },
-      lastName: { $regex: new RegExp(`^${lastName}$`, "i") },
-      cgpa,
-      department,
-      gender,
-      $expr: { $eq: [{ $year: "$endDate" }, endYear] },
+      firstName: { $regex: new RegExp(`^${firstName.trim()}$`, "i") },
+      middleName: { $regex: new RegExp(`^${middleName.trim()}$`, "i") },
+      lastName: { $regex: new RegExp(`^${lastName.trim()}$`, "i") },
+      cgpa: parsedCgpa,
+      department: { $regex: new RegExp(`^${department.trim()}$`, "i") },
+      gender: { $regex: new RegExp(`^${gender.trim()}$`, "i") },
+      $expr: { $eq: [{ $year: "$endDate" }, endYear] }, // Or string match alternative
     });
 
-    const admin = await Admin.findOne({ email: process.env.ADMIN_EMAIL });
+    console.log("Certificate Found:", certificate);
 
-    const notificationPayload = {
-      adminId: admin?._id,
+    // Get admin with fallback
+    const admin = await Admin.findOne({ email: process.env.ADMIN_EMAIL }) || {};
+
+    // Create notification
+    await Notification.create({
+      adminId: admin._id,
       firstName,
       middleName,
       lastName,
@@ -150,13 +175,12 @@ exports.getCertificateByName = async (req, res) => {
         ? `✅ Verified: ${firstName} ${middleName} ${lastName}`
         : `❌ Failed Verification: ${firstName} ${middleName} ${lastName}`,
       type: certificate ? "success" : "error",
-    };
-
-    await Notification.create(notificationPayload);
+    });
 
     if (!certificate) {
       return res.status(404).json({ 
-        message: `No certificate found for: ${firstName} ${middleName} ${lastName} in ${department} department, please input correct details and try again!` });
+        message: `No certificate found for: ${firstName} ${middleName} ${lastName} in ${department} department` 
+      });
     }
 
     return res.status(200).json({ message: "Certificate found", certificate });
