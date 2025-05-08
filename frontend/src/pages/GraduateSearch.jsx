@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 const departments = [
@@ -49,6 +49,8 @@ const GraduateSearch = () => {
   const navigate = useNavigate();
   const [certificate, setCertificate] = useState(null);
   const [error, setError] = useState("");
+  const [nationalId, setNationalId] = useState("");
+  const [isFetching, setIsFetching] = useState(false);
   const [formData, setFormData] = useState({
     firstName: "",
     middleName: "",
@@ -59,186 +61,287 @@ const GraduateSearch = () => {
     endDate: "",
   });
 
-  const handleChange = (e) => {
-    setFormData((prev) => ({
+  const [personalDetails, setPersonalDetails] = useState({
+    firstName: "",
+    middleName: "",
+    lastName: "",
+    gender: "",
+  });
+  const [academicDetails, setAcademicDetails] = useState({
+    cgpa: "",
+    department: "",
+    endDate: "",
+  });
+  const nationalidurl = import.meta.env.VITE_NATIONAL_ID_ROUTE;
+  useEffect(() => {
+    const fetchPersonalDetails = async () => {
+      if (nationalId.length >= 10) {
+        // Basic validation for national ID length
+        setIsFetching(true);
+        setError("");
+        try {
+          // Replace with your actual National ID API endpoint
+          const { data } = await axios.get(
+            `http://localhost:7000/api/national-ids/nationalIdNumber`,
+            {
+              params: { nationalIdNumber: nationalId },
+            }
+          );
+
+          if (data.success && data.nationalID) {
+            setPersonalDetails({
+              firstName: data.nationalID.firstName || "",
+              middleName: data.nationalID.middleName || "",
+              lastName: data.nationalID.lastName || "",
+              gender: data.nationalID.gender || "",
+            });
+          } else {
+            setError(data.error || "No record found with this national ID");
+          }
+        } catch (err) {
+          setError(
+            err.response?.data?.message ||
+              "No record found with this national ID"
+          );
+        } finally {
+          setIsFetching(false);
+        }
+      } else if (nationalId.length > 0 && nationalId.length !== 16) {
+        setError("National ID must be 16 digits");
+      }
+    };
+
+    const debounceTimer = setTimeout(fetchPersonalDetails, 500);
+    return () => clearTimeout(debounceTimer);
+  }, [nationalId]);
+
+  const handleAcademicChange = (e) => {
+    setAcademicDetails((prev) => ({
       ...prev,
       [e.target.name]: e.target.value,
     }));
   };
 
+  const handleNationalIdChange = (e) => {
+    const value = e.target.value.replace(/\D/g, ""); // Only allow numbers
+    setNationalId(value);
+    if (value.length !== 16) {
+      setError(value.length > 0 ? "National ID must be 16 digits" : "");
+    } else {
+      setError("");
+    }
+  };
+
+  const [isSearching, setIsSearching] = useState(false);
+
   const handleSearch = async (e) => {
     e.preventDefault();
     setError("");
     setCertificate(null);
-    console.log("Searching with:", formData);
+    setIsSearching(true);
+
     try {
+      const searchParams = {
+        ...personalDetails,
+        ...academicDetails,
+      };
+      console.log("Search Params:", searchParams);
       const { data } = await axios.get(
         "http://localhost:5000/api/certificates/name",
-        { params: formData }
+        {
+          params: searchParams,
+        }
       );
-
-      if (!data) {
-        setError("No certificate found for the given details.");
-        return;
-      }
-
-      console.log(data);
       setCertificate(data);
     } catch (err) {
       setError(err.response?.data?.message || "Something went wrong");
+    } finally {
+      setIsSearching(false);
     }
   };
+
   const handleOpen = () => {
     if (certificate) {
       navigate(`/certificate/${certificate.certificateID}`);
     }
   };
+
   return (
-<div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 px-4 py-12 overflow-x-hidden">
-  <div className="w-full max-w-full md:max-w-7xl bg-white dark:bg-gray-800 rounded-xl shadow-lg p-4 md:p-8">
-    <h2 className="text-2xl md:text-4xl font-bold text-center text-gray-900 dark:text-white mb-6">
-      Search Graduate
-    </h2>
-    <form
-      onSubmit={handleSearch}
-      className="flex flex-col gap-8 w-full max-w-full md:max-w-4xl mx-auto py-4 px-4 md:px-6 bg-white dark:bg-gray-800 rounded-lg shadow-md text-lg md:text-2xl"
-    >
-      <input
-        type="text"
-        name="firstName"
-        placeholder="First Name"
-        value={formData.firstName}
-        onChange={(e) => {
-          const value = e.target.value;
-          if (/^[a-zA-Z]*$/.test(value)) {
-            handleChange(e);
-          }
-        }}
-        className="p-3 rounded border border-gray-300 dark:border-gray-600 dark:bg-gray-700 text-gray-900 dark:text-white"
-        required
-      />
-      <input
-        type="text"
-        name="middleName"
-        placeholder="Middle Name"
-        value={formData.middleName}
-        onChange={(e) => {
-          const value = e.target.value;
-          if (/^[a-zA-Z]*$/.test(value)) {
-            handleChange(e);
-          }
-        }}
-        className="p-3 rounded border border-gray-300 dark:border-gray-600 dark:bg-gray-700 text-gray-900 dark:text-white"
-      />
-      <input
-        type="text"
-        name="lastName"
-        placeholder="Last Name"
-        value={formData.lastName}
-        onChange={(e) => {
-          const value = e.target.value;
-          if (/^[a-zA-Z]*$/.test(value)) {
-            handleChange(e);
-          }
-        }}
-        className="p-3 rounded border border-gray-300 dark:border-gray-600 dark:bg-gray-700 text-gray-900 dark:text-white"
-        required
-      />
-      <input
-        type="number"
-        name="cgpa"
-        placeholder="CGPA (1.75 - 4.00)"
-        value={formData.cgpa}
-        onChange={(e) => {
-          const value = e.target.value;
-          if (value === "" || (parseFloat(value) >= 1.75 && parseFloat(value) <= 4.0)) {
-            handleChange(e);
-          }
-        }}
-        step="0.01"
-        className="p-3 rounded border border-gray-300 dark:border-gray-600 dark:bg-gray-700 text-gray-900 dark:text-white"
-        required
-      />
-      {formData.cgpa && (formData.cgpa < 2 || formData.cgpa > 4.0) && (
-        <p className="text-red-600">CGPA must be between 2.00 and 4.00</p>
-      )}
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 px-4 py-12 overflow-x-hidden">
+      <div className="w-full max-w-full md:max-w-7xl bg-white dark:bg-gray-800 rounded-xl shadow-lg p-4 md:p-8">
+        <h2 className="text-2xl md:text-4xl font-bold text-center text-gray-900 dark:text-white mb-6">
+          Search Graduate
+        </h2>
 
-      <div className="flex flex-col md:flex-row gap-4">
-        <select
-          name="gender"
-          value={formData.gender}
-          onChange={handleChange}
-          className="w-full p-3 rounded border border-gray-300 dark:border-gray-600 dark:bg-gray-700 text-gray-900 dark:text-white"
-        >
-          <option value="">Select Gender</option>
-          <option value="Male">Male</option>
-          <option value="Female">Female</option>
-        </select>
-        <select
-          name="department"
-          value={formData.department}
-          onChange={handleChange}
-          className="w-full p-3 rounded border border-gray-300 dark:border-gray-600 dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-        >
-          <option value="">Select Department</option>
-          {departments
-            .sort((a, b) => a.localeCompare(b))
-            .map((dept, index) => (
-              <option key={index} value={dept}>
-                {dept}
-              </option>
-            ))}
-        </select>
+        {/* National ID Search Field */}
+        <div className="mb-6">
+          <label
+            htmlFor="nationalId"
+            className="block text-lg font-medium text-gray-700 dark:text-gray-300 mb-2"
+          >
+            Search by National ID (16 digits)
+          </label>
+          <input
+            type="text"
+            id="nationalId"
+            name="nationalId"
+            placeholder="Enter 16-digit National ID"
+            value={nationalId}
+            onChange={handleNationalIdChange}
+            className="w-full p-3 rounded border border-gray-300 dark:border-gray-600 dark:bg-gray-700 text-gray-900 dark:text-white"
+            maxLength={16}
+          />
+          {isFetching && (
+            <p className="mt-2 text-blue-500">Searching national records...</p>
+          )}
+          {error && nationalId.length !== 16 && (
+            <p className="mt-2 text-red-500">{error}</p>
+          )}
+        </div>
 
-        <select
-          name="endDate"
-          value={formData.endDate}
-          onChange={handleChange}
-          className="w-full p-3 rounded border border-gray-300 dark:border-gray-600 dark:bg-gray-700 text-gray-900 dark:text-white"
-          required
-        >
-          <option value="">Select End Date</option>
-          <option value="2021">2021</option>
-          <option value="2022">2022</option>
-          <option value="2023">2023</option>
-          <option value="2024">2024</option>
-          <option value="2025">2025</option>
-        </select>
+        {/* Personal Details (from National ID) */}
+        {personalDetails.firstName && (
+          <div className="mb-6 p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
+            <h3 className="text-lg font-semibold mb-3 text-gray-800 dark:text-gray-200">
+              Personal Details (from National ID)
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                  First Name
+                </label>
+                <input
+                  type="text"
+                  value={personalDetails.firstName}
+                  readOnly
+                  className="mt-1 p-2 w-full bg-gray-100 dark:bg-gray-600 rounded border border-gray-300 dark:border-gray-500 text-gray-900 dark:text-white"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                  Middle Name
+                </label>
+                <input
+                  type="text"
+                  value={personalDetails.middleName}
+                  readOnly
+                  className="mt-1 p-2 w-full bg-gray-100 dark:bg-gray-600 rounded border border-gray-300 dark:border-gray-500 text-gray-900 dark:text-white"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                  Last Name
+                </label>
+                <input
+                  type="text"
+                  value={personalDetails.lastName}
+                  readOnly
+                  className="mt-1 p-2 w-full bg-gray-100 dark:bg-gray-600 rounded border border-gray-300 dark:border-gray-500 text-gray-900 dark:text-white"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                  Gender
+                </label>
+                <input
+                  type="text"
+                  value={personalDetails.gender}
+                  readOnly
+                  className="mt-1 p-2 w-full bg-gray-100 dark:bg-gray-600 rounded border border-gray-300 dark:border-gray-500 text-gray-900 dark:text-white"
+                />
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Academic Details (for certificate search) */}
+        {personalDetails.firstName && (
+          <form onSubmit={handleSearch} className="flex flex-col gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                  CGPA
+                </label>
+                <input
+                  type="number"
+                  name="cgpa"
+                  value={academicDetails.cgpa}
+                  onChange={handleAcademicChange}
+                  min="2.00"
+                  max="4.00"
+                  step="0.01"
+                  className="mt-1 p-2 w-full rounded border border-gray-300 dark:border-gray-600 dark:bg-gray-700 text-gray-900 dark:text-white"
+                  required
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                  Department
+                </label>
+                <select
+                  name="department"
+                  value={academicDetails.department}
+                  onChange={handleAcademicChange}
+                  className="mt-1 p-2 w-full rounded border border-gray-300 dark:border-gray-600 dark:bg-gray-700 text-gray-900 dark:text-white"
+                  required
+                >
+                  <option value="">Select Department</option>
+                  {departments.sort((a, b)=>a.localeCompare(b)).map((dept, index) => (
+                    <option key={index} value={dept}>
+                      {dept}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                  Graduation Year
+                </label>
+                <select
+                  name="endDate"
+                  value={academicDetails.endDate}
+                  onChange={handleAcademicChange}
+                  className="mt-1 p-2 w-full rounded border border-gray-300 dark:border-gray-600 dark:bg-gray-700 text-gray-900 dark:text-white"
+                  required
+                >
+                  <option value="">Select Year</option>
+                  <option value="2021">2021</option>
+                  <option value="2022">2022</option>
+                  <option value="2023">2023</option>
+                  <option value="2024">2024</option>
+                  <option value="2025">2025</option>
+                </select>
+              </div>
+            </div>
+
+            <button
+              type="submit"
+              className="mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition"
+              disabled={!personalDetails.firstName || isSearching}
+            >
+              {isSearching ? "Searching..." : "Search Certificate"}
+            </button>
+          </form>
+        )}
+
+        {error && nationalId.length === 16 && (
+          <p className="mt-4 text-red-600">{error}</p>
+        )}
+
+        {certificate && (
+          <div className="mt-6 p-4 bg-gray-100 dark:bg-gray-700 rounded-lg">
+            <h3 className="text-lg font-semibold mb-2">Certificate Found</h3>
+            <p>Certificate ID: {certificate.certificateID}</p>
+            <button
+              onClick={handleOpen}
+              className="mt-3 px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition"
+            >
+              View Certificate
+            </button>
+          </div>
+        )}
       </div>
-      <div className="flex justify-center mt-4">
-        <button
-          type="submit"
-          className="w-full px-6 py-3 bg-blue-600 text-white rounded hover:bg-blue-700 transition cursor-pointer"
-        >
-          Search
-        </button>
-      </div>
-    </form>
-
-    {error && <p className="text-red-600 mt-4">{error}</p>}
-    {certificate && (
- <div className="certificate-card bg-gray-100 dark:bg-gray-800 rounded-lg shadow-md p-6 md:p-8 text-gray-900 dark:text-white">
- <h3 className="text-xl md:text-2xl font-bold mb-4 text-blue-600 dark:text-blue-400">
-   Certificate Details
- </h3>
- <div className="space-y-2">
-   <p className="text-lg">
-     <strong className="font-semibold">ID:</strong> {certificate.certificateID}
-   </p>
-   <p className="text-lg">
-     <strong className="font-semibold">Name:</strong> {certificate.firstName}
-   </p>
- </div>
- <button
-   onClick={handleOpen}
-   className="cursor-pointer mt-6 w-full md:w-auto px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 transition duration-300"
- >
-   Open Certificate
- </button>
-</div>
-    )}
-  </div>
-</div>
+    </div>
   );
 };
 
