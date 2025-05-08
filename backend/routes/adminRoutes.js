@@ -10,6 +10,8 @@ const {
   logoutAdmin,
   uploadFile,
   getNotification,
+  deleteNotification,
+  markNotificationAsRead,
 } = require("../controllers/adminController");
 
 const router = express.Router();
@@ -22,6 +24,8 @@ router.post("/upload", authenticateToken, uploadFile); // Ensure this matches yo
 
 router.get("/certificates", getAllCertificates);
 router.get("/notifications", getNotification);
+router.delete("/notifications/:id", deleteNotification);
+router.put("/notifications/:id/read",  markNotificationAsRead);
 router.get("/certificates/:certificateID", getSingleCertificate);
 router.delete("/certificates/:certificateID", authenticateToken, deleteSingleCertificate);
 router.put("/certificates/:certificateID/edit", authenticateToken, updateSingleCertificate);

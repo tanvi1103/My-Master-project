@@ -165,6 +165,8 @@ exports.getCertificateByName = async (req, res) => {
   }
 };
 
+
+
 exports.generateCertificatePDF = async (req, res) => {
   try {
     const certificate = await Certificate.findOne({

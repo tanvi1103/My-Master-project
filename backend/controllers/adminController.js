@@ -311,6 +311,50 @@ const getNotification = async (req, res) => {
   }
 };
 
+const markNotificationAsRead = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    // Find the notification and update its isRead field to true
+    const updatedNotification = await Notification.findByIdAndUpdate(
+      id,
+      { isRead: true },
+      { new: true } // Return the updated document
+    );
+
+    if (!updatedNotification) {
+      return res.status(404).json({ message: "Notification not found" });
+    }
+
+    res.status(200).json({ message: "Notification marked as read", notification: updatedNotification });
+  } catch (error) {
+    console.error("Error marking notification as read:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+
+// ========================
+// Delete notification
+// ========================
+const deleteNotification = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    // Find and delete the notification
+    const deletedNotification = await Notification.findByIdAndDelete(id);
+
+    if (!deletedNotification) {
+      return res.status(404).json({ message: "Notification not found" });
+    }
+
+    res.status(200).json({ message: "Notification deleted successfully" });
+  } catch (error) {
+    console.error("Error deleting notification:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
 // ========================
 // Update Single Certificate
 // ========================
@@ -420,4 +464,6 @@ module.exports = {
   deleteSingleCertificate,
   addStudentCredentials,
   getNotification,
+  deleteNotification,
+  markNotificationAsRead,
 };
