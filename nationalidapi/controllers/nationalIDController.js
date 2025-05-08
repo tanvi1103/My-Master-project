@@ -282,3 +282,35 @@ export const getNationalIDByName = async (req, res) => {
     });
   }
 }
+
+export const getNationalIdByFIN = async (req, res)=>{
+  const {nationalIdNumber} = req.query;
+  if(!nationalIdNumber){
+    return res.status(400).json({
+      success: false,
+      message: 'Please provide a national ID number'
+    });
+  }
+  if(nationalIdNumber.length !== 16){
+    return res.status(400).json({
+      success: false,
+      message: 'Please provide a valid national ID number'
+    });
+  }
+  try {
+    const nationalID = await NationalID.findOne({nationalIdNumber});
+    if (!nationalID) {
+      return res.status(404).json({
+        success: false,
+        error: "National ID not found"
+      });
+    }
+    res.status(200).json({success: true, nationalID})
+  }
+  catch (error) {
+    res.status(500).json({
+      success: false,
+      error: error.message
+    });
+  }
+}
