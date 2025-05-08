@@ -155,7 +155,8 @@ exports.getCertificateByName = async (req, res) => {
     await Notification.create(notificationPayload);
 
     if (!certificate) {
-      return res.status(404).json({ message: "Certificate not found" });
+      return res.status(404).json({ 
+        message: `No certificate found for: ${firstName} ${middleName} ${lastName} in ${department} department, please input correct details and try again!` });
     }
 
     return res.status(200).json({ message: "Certificate found", certificate });
