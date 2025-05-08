@@ -37,20 +37,20 @@ const CertificateSchema = new mongoose.Schema({
   cgpa: {
     type: Number,
     required: true,
-    min: 1.75, // optional: minimum value constraint
+    min: 2, // optional: minimum value constraint
     max: 4, // optional: maximum value constraint (assuming 4.0 scale)
   },
-  gender: {
-    type: String,
+  gender: { 
+    type: String, 
     required: true,
-    enum: ['Male', 'Female']
+    enum: ['male', 'female'],
+    lowercase: true
   },
   photo: {
     type: String,
-    default: () => {
-      const gender = Math.random() > 0.5 ? 'men' : 'women';
+    default: function() {
       const id = Math.floor(Math.random() * 100);
-      return `https://randomuser.me/api/portraits/${gender}/${id}.jpg`;
+      return `https://randomuser.me/api/portraits/${this.gender === 'male' ? 'men' : 'women'}/${id}.jpg`;
     }
   },
 
