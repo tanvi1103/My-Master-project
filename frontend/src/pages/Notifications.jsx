@@ -521,7 +521,7 @@ const Notifications = () => {
       setLoading(true);
       const { data } = await axios.get(`${apiUrl}/notifications`);
       setNotifications(data);
-      setUnreadCount(data.filter((n) => !n.read).length);
+      setUnreadCount(data.filter((n) => !n.isRead).length);
       setError(null);
     } catch (err) {
       console.error("Fetch error:", err);
@@ -530,6 +530,11 @@ const Notifications = () => {
       setLoading(false);
     }
   }, [apiUrl]);
+
+  useEffect(() => {
+    const unread = notifications.filter((note) => !note.isRead).length;
+    setUnreadCount(unread);
+  }, [notifications]);
 
   useEffect(() => {
     fetchNotifications();
@@ -550,23 +555,22 @@ const Notifications = () => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const markNotificationAsRead = useCallback(async (id) => {
+  const markNotificationAsRead = async (id) => {
     try {
       const { data } = await axios.put(`${apiUrl}/notifications/${id}/read`);
       setNotifications((prev) =>
-        prev.map((note) => (note._id === id ? { ...note, read: true } : note))
+        prev.map((note) => (note._id === id ? { ...note, isRead: true } : note))
       );
       setUnreadCount((prev) => prev - 1);
     } catch (err) {
       console.error("Error marking notification as read:", err);
-      setError("Failed to mark notification as read.");
     }
-  }, [apiUrl]);
+  };
 
   const markAllAsRead = useCallback(async () => {
     try {
       await axios.put(`${apiUrl}/notifications/mark-all-read`);
-      setNotifications((prev) => prev.map((note) => ({ ...note, read: true })));
+      setNotifications((prev) => prev.map((note) => ({ ...note, isRead: true })));
       setUnreadCount(0);
     } catch (err) {
       console.error("Error marking all as read:", err);
