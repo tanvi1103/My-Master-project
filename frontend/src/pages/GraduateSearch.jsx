@@ -77,6 +77,11 @@ const GraduateSearch = () => {
         { params: formData }
       );
 
+      if (!data) {
+        setError("No certificate found for the given details.");
+        return;
+      }
+
       console.log(data);
       setCertificate(data);
     } catch (err) {
@@ -154,8 +159,8 @@ const GraduateSearch = () => {
         className="p-3 rounded border border-gray-300 dark:border-gray-600 dark:bg-gray-700 text-gray-900 dark:text-white"
         required
       />
-      {formData.cgpa && (formData.cgpa < 1.75 || formData.cgpa > 4.0) && (
-        <p className="text-red-600">CGPA must be between 1.75 and 4.00</p>
+      {formData.cgpa && (formData.cgpa < 2 || formData.cgpa > 4.0) && (
+        <p className="text-red-600">CGPA must be between 2.00 and 4.00</p>
       )}
 
       <div className="flex flex-col md:flex-row gap-4">
