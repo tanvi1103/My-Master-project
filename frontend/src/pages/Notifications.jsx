@@ -500,7 +500,7 @@
 
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import axios from "axios";
-import { BellIcon, XMarkIcon, CheckIcon } from "@heroicons/react/24/outline";
+import { BellIcon, XMarkIcon, CheckIcon, IdentificationIcon, UserIcon, HashtagIcon } from "@heroicons/react/24/outline";
 import { motion, AnimatePresence } from "framer-motion";
 
 const Notifications = () => {
@@ -753,24 +753,142 @@ const Notifications = () => {
             </div>
 
             {selectedNationalId && (
-              <div className="p-4 bg-blue-50 dark:bg-blue-900 rounded-md m-4 border border-blue-100 dark:border-blue-800">
-                <h3 className="text-lg font-bold text-blue-700 dark:text-blue-300 mb-2">
-                  National ID Details
-                </h3>
-                <div className="space-y-1">
-                  <p className="text-gray-800 dark:text-gray-200">
-                    <span className="font-semibold">Name:</span> {selectedNationalId.firstName} {selectedNationalId.middleName}{" "}
-                    {selectedNationalId.lastName}
+  <motion.div
+    initial={{ opacity: 0, scale: 0.95 }}
+    animate={{ opacity: 1, scale: 1 }}
+    exit={{ opacity: 0, scale: 0.95 }}
+    transition={{ duration: 0.2 }}
+    className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50"
+    onClick={() => setSelectedNationalId(null)}
+  >
+    <motion.div 
+      className="w-full max-w-md mx-4"
+      onClick={(e) => e.stopPropagation()}
+    >
+      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-2xl overflow-hidden border-2 border-yellow-500">
+        {/* Ethiopian National ID Header */}
+        <div className="bg-yellow-500 py-3 px-4 flex items-center">
+          <svg className="h-8 w-8 text-white mr-2" fill="currentColor" viewBox="0 0 20 20">
+            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clipRule="evenodd" />
+          </svg>
+          <h2 className="text-xl font-bold text-white">ETHIOPIAN NATIONAL ID CARD</h2>
+        </div>
+
+        {/* ID Card Content */}
+        <div className="p-6">
+          <div className="flex items-start space-x-6 mb-6">
+            {/* Profile Image Placeholder */}
+            <div className="flex-shrink-0">
+              <div className="h-24 w-24 rounded-full bg-blue-100 dark:bg-blue-900 overflow-hidden border-2 border-yellow-500 flex items-center justify-center">
+                {selectedNationalId.photo ? (
+                  <img 
+                    src={selectedNationalId.photo} 
+                    alt="Profile" 
+                    className="h-full w-full object-cover"
+                  />
+                ) : (
+                  <UserIcon className="h-12 w-12 text-yellow-600 dark:text-yellow-400" />
+                )}
+              </div>
+            </div>
+
+            {/* Personal Info */}
+            <div className="flex-1">
+              <h3 className="text-2xl font-bold text-gray-800 dark:text-white mb-1">
+                {selectedNationalId.firstName} {selectedNationalId.middleName} {selectedNationalId.lastName}
+              </h3>
+              
+              <div className="grid grid-cols-2 gap-2 mt-2">
+                <div>
+                  <p className="text-xs font-medium text-gray-500 dark:text-gray-400">ID NUMBER</p>
+                  <p className="text-lg font-mono font-bold text-gray-800 dark:text-gray-200">
+                    {selectedNationalId.nationalIdNumber}
                   </p>
-                  <p className="text-gray-800 dark:text-gray-200">
-                    <span className="font-semibold">Gender:</span> {selectedNationalId.gender}
-                  </p>
-                  <p className="text-gray-800 dark:text-gray-200">
-                    <span className="font-semibold">ID Number:</span> {selectedNationalId.nationalidnumber}
+                </div>
+                
+                <div>
+                  <p className="text-xs font-medium text-gray-500 dark:text-gray-400">GENDER</p>
+                  <p className="text-lg font-semibold text-gray-800 dark:text-gray-200 capitalize">
+                    {selectedNationalId.gender}
                   </p>
                 </div>
               </div>
-            )}
+            </div>
+          </div>
+
+          {/* Contact Info */}
+          <div className="bg-yellow-50 dark:bg-gray-700 p-4 rounded-lg mb-4">
+            <h4 className="text-sm font-bold text-yellow-700 dark:text-yellow-400 mb-2">CONTACT INFORMATION</h4>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <p className="text-xs font-medium text-gray-500 dark:text-gray-400">PHONE NUMBER</p>
+                <p className="text-base font-semibold text-gray-800 dark:text-gray-200">
+                  {selectedNationalId.phone_no || 'N/A'}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Address Section */}
+          <div className="border-t border-gray-200 dark:border-gray-700 pt-4">
+            <h4 className="text-sm font-bold text-yellow-700 dark:text-yellow-400 mb-2">ADDRESS</h4>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <p className="text-xs font-medium text-gray-500 dark:text-gray-400">COUNTRY</p>
+                <p className="text-base font-semibold text-gray-800 dark:text-gray-200">
+                  {selectedNationalId.country || 'Ethiopia'}
+                </p>
+              </div>
+              <div>
+                <p className="text-xs font-medium text-gray-500 dark:text-gray-400">REGION</p>
+                <p className="text-base font-semibold text-gray-800 dark:text-gray-200">
+                  {selectedNationalId.region || 'N/A'}
+                </p>
+              </div>
+              <div>
+                <p className="text-xs font-medium text-gray-500 dark:text-gray-400">ZONE</p>
+                <p className="text-base font-semibold text-gray-800 dark:text-gray-200">
+                  {selectedNationalId.zone || 'N/A'}
+                </p>
+              </div>
+              <div>
+                <p className="text-xs font-medium text-gray-500 dark:text-gray-400">CITY</p>
+                <p className="text-base font-semibold text-gray-800 dark:text-gray-200">
+                  {selectedNationalId.city || 'N/A'}
+                </p>
+              </div>
+              <div>
+                <p className="text-xs font-medium text-gray-500 dark:text-gray-400">WOREDA</p>
+                <p className="text-base font-semibold text-gray-800 dark:text-gray-200">
+                  {selectedNationalId.woreda || 'N/A'}
+                </p>
+              </div>
+              <div>
+                <p className="text-xs font-medium text-gray-500 dark:text-gray-400">KEBELE</p>
+                <p className="text-base font-semibold text-gray-800 dark:text-gray-200">
+                  {selectedNationalId.kebele || 'N/A'}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Footer */}
+          <div className="mt-6 pt-4 border-t border-gray-200 dark:border-gray-700 flex justify-between items-center">
+            <div className="text-xs text-gray-500 dark:text-gray-400">
+              Issued by: Ethiopian National ID Program
+            </div>
+            <button
+              onClick={() => setSelectedNationalId(null)}
+              className="px-4 py-2 bg-yellow-500 hover:bg-yellow-600 text-white rounded-md text-sm font-medium transition-colors"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      </div>
+    </motion.div>
+  </motion.div>
+)}
           </motion.div>
         )}
       </AnimatePresence>
