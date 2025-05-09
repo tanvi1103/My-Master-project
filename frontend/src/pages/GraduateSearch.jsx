@@ -39,7 +39,7 @@ const departments = [
   "Special Needs and Inclusive Education Department",
   "Sociology Department",
   "Psychology Department",
-  "Law Department",
+  "Law",
   "Curriculum and Instruction Department",
   "Social Anthropology Department",
   "Political Science and International Relations Department",
@@ -152,6 +152,9 @@ const GraduateSearch = () => {
           params: searchParams,
         }
       );
+      console.log("Search Result:", data);
+
+
       setCertificate(data);
     } catch (err) {
       setError(err.response?.data?.message || "Something went wrong");
@@ -160,9 +163,12 @@ const GraduateSearch = () => {
     }
   };
 
-  const handleOpen = () => {
+  const handleOpen = async () => {
     if (certificate) {
-      navigate(`/certificate/${certificate.certificateID}`);
+      console.log("Certificate ID:", certificate.certificateID
+);
+
+     await navigate(`/certificate/${certificate.certificateID}`);
     }
   };
 
@@ -331,7 +337,7 @@ const GraduateSearch = () => {
         {certificate && (
           <div className="mt-6 p-4 bg-gray-100 dark:bg-gray-700 rounded-lg">
             <h3 className="text-lg font-semibold mb-2">Certificate Found</h3>
-            <p>Certificate ID: {certificate.certificateID}</p>
+            <p>Full Name: {certificate.firstName} {certificate.middleName} {certificate.lastName}</p>
             <button
               onClick={handleOpen}
               className="mt-3 px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition"
