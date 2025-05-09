@@ -3,6 +3,7 @@ const cors = require("cors");
 const cookieParser = require("cookie-parser");
 const connectDB = require("./config/db");
 const adminroutes = require("./routes/adminRoutes");
+const authRoutes = require("./routes/authRoutes"); // Import the auth routes
 const uploadroutes = require("./routes/uploadRoutes"); // Import the upload routes
 const certificateRoutes = require("./routes/certificateRoutes"); // Import the certificate routes
 const app = express();
@@ -35,6 +36,22 @@ app.use(express.urlencoded({ extended: true }));
 app.use("/api/admin", adminroutes);
 app.use ("/api/upload", uploadroutes); // Ensure this matches your backend route
 app.use("/api/certificates", certificateRoutes)
+app.use("/api/auth", authRoutes);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   connectDB();
