@@ -20,6 +20,7 @@ import SingleGraduateForm from "./pages/SingleGraduateForm";
 import RegistrarDashboard from "./registrar/RegistrarDashboard ";
 import RegistrarLayout from "./registrar/RegistrarLayout";
 import StudentsPage from "./registrar/StudentsPage";
+import UserSignup from "./pages/UserSignup";
 
 axios.defaults.withCredentials = true;
 
@@ -29,6 +30,7 @@ const App = () => {
       <Toaster position="top-center" reverseOrder={false} />
       <Routes>
         <Route path="/" element={<LandingPage />} />
+        <Route path="/userSignup" element={<UserSignup />} />
         <Route path="/search" element={<GraduateSearch />} />
         <Route path="/certificate/:id" element={<CertificateDetail />} />
         <Route path="/admin/login" element={<AdminLogin />} />
