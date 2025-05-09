@@ -183,7 +183,7 @@ exports.getCertificateByName = async (req, res) => {
       });
     }
 
-    return res.status(200).json({ message: "Certificate found", certificate });
+    return res.status(200).json(certificate);
   } catch (error) {
     console.error("Error fetching certificate:", error);
     res.status(500).json({ message: "Server error" });
