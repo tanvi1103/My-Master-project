@@ -85,10 +85,10 @@ const RegistrarLayout = ({ children }) => {
             <div className="hidden md:flex items-center space-x-2">
               <div className="w-8 h-8 rounded-full bg-blue-100 dark:bg-blue-900 flex items-center justify-center">
                 <span className="text-blue-600 dark:text-blue-300 font-medium">
-                  JD
+                  ET
                 </span>
               </div>
-              <span className="text-gray-700 dark:text-gray-200">John Doe</span>
+              <span className="text-gray-700 dark:text-gray-200">Ebirahim Tufa</span>
             </div>
           </div>
         </div>
