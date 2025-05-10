@@ -3,17 +3,17 @@ const dotenv = require('dotenv');
 dotenv.config();
 
 const transporter = nodemailer.createTransport({
-  service: process.env.EMAIL_SERVICE,
+  service: 'gmail',
   auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASSWORD
+    user: 'madishamadiso00@gmail.com',
+    pass: 'dpvd xwgr sxlw gptp',
   }
 });
 
 exports.sendVerificationEmail = async (email, code) => {
   try {
     const mailOptions = {
-      from: `"Your App Name" <${process.env.EMAIL_USER}>`,
+      from: `"Your App Name" <madishamadiso00@gmail.com}>`,
       to: email,
       subject: 'Email Verification',
       html: `

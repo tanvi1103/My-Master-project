@@ -1,5 +1,6 @@
 const express = require("express");
 const cors = require("cors");
+const smsroutes = require("./routes/smsroutes"); // Import the SMS routes
 const cookieParser = require("cookie-parser");
 const connectDB = require("./config/db");
 const adminroutes = require("./routes/adminRoutes");
@@ -34,6 +35,7 @@ app.use(limiter);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use("/api/admin", adminroutes);
+app.use("/api/sms", smsroutes)
 app.use ("/api/upload", uploadroutes); // Ensure this matches your backend route
 app.use("/api/certificates", certificateRoutes)
 app.use("/api/auth", authRoutes);
