@@ -9,7 +9,7 @@ const userSchema = new mongoose.Schema({
     trim: true,
     validate: {
       validator: function(v) {
-        return /^\d{16}$/.test(v);
+        return /^\d{16}$/.test(v); // Matches exactly 16 digits
       },
       message: props => `${props.value} is not a valid 16-digit National ID!`
     }
@@ -39,7 +39,7 @@ const userSchema = new mongoose.Schema({
     required: true,
     validate: {
       validator: function(v) {
-        return /^\d{10,15}$/.test(v);
+        return /^\d{1,15}$/.test(v); // Matches 1 to 15 digits
       },
       message: props => `${props.value} is not a valid phone number!`
     }
@@ -52,7 +52,7 @@ const userSchema = new mongoose.Schema({
     lowercase: true,
     validate: {
       validator: function(v) {
-        return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
+        return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v); // Matches valid email format
       },
       message: props => `${props.value} is not a valid email!`
     }
@@ -70,6 +70,14 @@ const userSchema = new mongoose.Schema({
     type: String,
     default: null
   },
+  passwordResetCode: {
+    type: String,
+    default: null
+  },
+  passwordResetExpires: {
+    type: Date,
+    default: null
+  },
   createdAt: {
     type: Date,
     default: Date.now
@@ -79,7 +87,11 @@ const userSchema = new mongoose.Schema({
 // Hash password before saving
 userSchema.pre('save', async function(next) {
   if (!this.isModified('password')) return next();
-  
+
+  // Check if the password is already hashed
+  const isAlreadyHashed = /^\$2[ayb]\$.{56}$/.test(this.password); // Regex to check bcrypt hash
+  if (isAlreadyHashed) return next();
+
   try {
     const salt = await bcrypt.genSalt(10);
     this.password = await bcrypt.hash(this.password, salt);
@@ -92,6 +104,15 @@ userSchema.pre('save', async function(next) {
 // Method to compare passwords
 userSchema.methods.comparePassword = async function(candidatePassword) {
   return await bcrypt.compare(candidatePassword, this.password);
+};
+
+// Method to reset password
+userSchema.methods.resetPassword = async function(newPassword) {
+  const salt = await bcrypt.genSalt(10);
+  this.password = await bcrypt.hash(newPassword, salt);
+  this.passwordResetCode = null; // Clear reset code
+  this.passwordResetExpires = null; // Clear expiration timestamp
+  await this.save(); // Save the updated user object
 };
 
 const User = mongoose.model('User', userSchema);
