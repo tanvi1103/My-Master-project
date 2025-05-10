@@ -11,7 +11,7 @@ const LandingPage = () => {
       </p>
       <div className="flex space-x-4">
         <Link
-          to="/search"
+          to="/login"
           className="px-6 py-3 bg-blue-600 text-white rounded-lg shadow hover:bg-blue-700 transition"
         >
           Search Graduate
