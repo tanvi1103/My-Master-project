@@ -16,9 +16,13 @@ import EditGraduate from './pages/EditCertificate';
 import axios from 'axios';
 import BulkGraduateUpload from "./pages/BulkGraduateUpload";
 import SingleGraduateForm from "./pages/SingleGraduateForm";
+import UserSignup from "./pages/UserSignup";
 
 import RegistrarDashboard from "./registrar/RegistrarDashboard ";
-import RegistrarLayout from "./registrar/RegistrarLayout"; co
+import RegistrarLayout from "./registrar/RegistrarLayout"; 
+import StudentsPage from "./registrar/StudentsPage";
+import UserLogin from "./pages/UserLogin";
+import ForgotPassword from "./pages/ResetPassword";
 axios.defaults.withCredentials = true;
 
 const App = () => {
@@ -27,7 +31,9 @@ const App = () => {
       <Toaster position="top-center" reverseOrder={false} />
       <Routes>
         <Route path="/" element={<LandingPage />} />
-        <Route path="/userSignup" element={<UserSignup />} />
+        <Route path="/signup" element={<UserSignup />} />
+        <Route path="/login" element={<UserLogin />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/search" element={<GraduateSearch />} />
         <Route path="/certificate/:id" element={<CertificateDetail />} />
         <Route path="/admin/login" element={<AdminLogin />} />
