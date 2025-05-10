@@ -18,10 +18,7 @@ import BulkGraduateUpload from "./pages/BulkGraduateUpload";
 import SingleGraduateForm from "./pages/SingleGraduateForm";
 
 import RegistrarDashboard from "./registrar/RegistrarDashboard ";
-import RegistrarLayout from "./registrar/RegistrarLayout";
-import StudentsPage from "./registrar/StudentsPage";
-import UserSignup from "./pages/UserSignup";
-
+import RegistrarLayout from "./registrar/RegistrarLayout"; co
 axios.defaults.withCredentials = true;
 
 const App = () => {
