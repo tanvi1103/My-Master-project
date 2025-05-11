@@ -5,6 +5,8 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import Swal from "sweetalert2";
 
+axios.defaults.withCredentials = true;
+
 const AdminLogin = () => {
   const [adminCredentials, setAdminCredentials] = useState({
     email: "",
