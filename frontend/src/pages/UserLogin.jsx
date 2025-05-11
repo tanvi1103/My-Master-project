@@ -39,6 +39,8 @@ const UserLogin = () => {
         [loginMethod]: loginMethod === "email" ? formData.email : formData.nationalIdNumber,
         password: formData.password
       });
+      localStorage.setItem("token", data.token);
+
 
       console.log(data);
 
@@ -74,7 +76,7 @@ const UserLogin = () => {
       });
 
       if (data.success) {
-        navigate("/search");
+        navigate("/chat");
       } else {
         setError(data.error || "Invalid verification code");
       }
