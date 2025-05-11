@@ -6,10 +6,12 @@ import { Menu } from "lucide-react";
 import axios from "axios";
 import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
-
+import ChatIcon from "../chat/ChatIcon";
 const AdminLayout = ({ children }) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const sidebarRef = useRef();
+   const [showChat, setShowChat] = useState(false);
+  const [unreadCount, setUnreadCount] = useState(0);
   const navigate = useNavigate();
 
   // Click outside to close sidebar (mobile)
@@ -53,6 +55,10 @@ const AdminLayout = ({ children }) => {
         </div>
         <div className="flex items-center gap-4">
           <ThemeToogler />
+              <ChatIcon 
+      unreadCount={unreadCount}
+      onClick={() => setShowChat(!showChat)}
+    />
           <div className="grid gap-6">
       {/* other admin widgets */}
       <Notifications />
@@ -78,6 +84,12 @@ const AdminLayout = ({ children }) => {
       {/* Main content */}
       <main className="flex-1 md:ml-64 overflow-auto p-6 md:p-8 mt-16 max-w-7xl mx-auto">
   {children}
+
+   {showChat && (
+    <div className="fixed bottom-4 right-4 w-96 bg-white dark:bg-gray-800 rounded-lg shadow-xl z-50">
+      <AdminChat onClose={() => setShowChat(false)} />
+    </div>
+  )}
 </main>
     </div>
   );
