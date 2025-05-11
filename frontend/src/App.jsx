@@ -23,6 +23,10 @@ import RegistrarLayout from "./registrar/RegistrarLayout";
 import StudentsPage from "./registrar/StudentsPage";
 import UserLogin from "./pages/UserLogin";
 import ForgotPassword from "./pages/ResetPassword";
+
+
+import ChatPage from './chat/ChatPage';
+
 axios.defaults.withCredentials = true;
 
 const App = () => {
@@ -37,6 +41,7 @@ const App = () => {
         <Route path="/search" element={<GraduateSearch />} />
         <Route path="/certificate/:id" element={<CertificateDetail />} />
         <Route path="/admin/login" element={<AdminLogin />} />
+
 
         {/* registrar routes */}
         <Route path="/registrar" element={
@@ -103,6 +108,14 @@ const App = () => {
           element={
             <AdminLayout>
               <AdminDashboard />
+            </AdminLayout>
+          }
+        />
+        <Route
+          path="/chat"
+          element={
+            <AdminLayout>
+              <ChatPage />
             </AdminLayout>
           }
         />
