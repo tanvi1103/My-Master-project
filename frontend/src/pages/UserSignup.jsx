@@ -154,12 +154,13 @@ const UserSignup = () => {
       localStorage.setItem("token", data.token);
 
       if (data.success) {
-        navigate("/search");
+        navigate("/externalUser");
       } else {
         setError(data.error || "Invalid verification code");
+        navigate("/login");
       }
     } catch (err) {
-      setError(err.response?.data?.message || "Verification failed");
+      setError(err.response?.data?.error || "Verification failed");
     } finally {
       setLoading(false);
     }
