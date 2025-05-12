@@ -2,6 +2,7 @@ const multer = require("multer");
 const path = require("path");
 const crypto = require("crypto");
 const Admin = require("../models/Admin");
+const User = require("../models/User");
 const Student = require("../models/Student");
 const Certificate = require("../models/Certificate");
 const Notification = require('../models/Notification');
@@ -59,14 +60,18 @@ const loginAdmin = async (req, res) => {
       { expiresIn: "1h" }
     );
 
-    res.cookie("token", token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "Strict",
-      maxAge: 60 * 60 * 1000,
-    });
+res.cookie('adminToken', token, {
+  httpOnly: true,
+  secure: process.env.NODE_ENV === 'production',
+  sameSite: 'strict',
+  maxAge: 24 * 60 * 60 * 1000 // 1 day
+});
 
-    res.status(200).json({ message: "Login successful" });
+    res.status(200).json({ 
+  message: "Login successful", 
+  token 
+});
+
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Something went wrong" });
@@ -267,7 +272,7 @@ const uploadFile = async (req, res) => {
 const getAllCertificates = async (req, res) => {
   try {
     const certificates = await Certificate.find();
-    if (!certificates.length) {
+    if (!certificates.length=== 0) {
       return res.status(404).json({ message: "No certificates found" });
     }
     res.status(200).json(certificates);
