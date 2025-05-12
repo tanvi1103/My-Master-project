@@ -1,7 +1,7 @@
 const express = require('express');
 const multer = require('multer');
 const { uploadExcelFile } = require('../controllers/uploadController'); 
-const authenticateToken = require('../middleware/authMiddleware');
+const { authenticateUser} = require('../middleware/authMiddleware');
 
 const router = express.Router();
 
@@ -32,6 +32,6 @@ const upload = multer({
 });
 
 
-router.post('/', authenticateToken, upload.single('file'), uploadExcelFile);
+router.post('/', authenticateUser, upload.single('file'), uploadExcelFile);
 
 module.exports = router;
