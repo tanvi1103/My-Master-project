@@ -1,5 +1,5 @@
 const express = require("express");
-const authenticateToken = require("../middleware/authMiddleware");
+const {authenticateUser, roleMiddleware, verifyAdminToken} = require("../middleware/authMiddleware");
 const {
   loginAdmin,
   getAllCertificates,
@@ -19,15 +19,15 @@ const router = express.Router();
 router.post("/login", loginAdmin);
 router.get('/logout', logoutAdmin);
 
-router.post("/addStudents", authenticateToken, addStudentCredentials);
-router.post("/upload", authenticateToken, uploadFile); // Ensure this matches your backend route
+router.post("/addStudents", authenticateUser, addStudentCredentials);
+router.post("/upload", authenticateUser, uploadFile); // Ensure this matches your backend route
 
-router.get("/certificates", getAllCertificates);
+router.get("/certificates", authenticateUser, getAllCertificates);
 router.get("/notifications", getNotification);
 router.delete("/notifications/:id", deleteNotification);
 router.put("/notifications/:id/read",  markNotificationAsRead);
 router.get("/certificates/:certificateID", getSingleCertificate);
-router.delete("/certificates/:certificateID", authenticateToken, deleteSingleCertificate);
-router.put("/certificates/:certificateID/edit", authenticateToken, updateSingleCertificate);
+router.delete("/certificates/:certificateID", authenticateUser, deleteSingleCertificate);
+router.put("/certificates/:certificateID/edit", authenticateUser, updateSingleCertificate);
 
 module.exports = router;
