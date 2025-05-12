@@ -1,5 +1,4 @@
 const mongoose = require('mongoose');
-const { rotate } = require('pdfkit');
 
 const adminSchema = new mongoose.Schema({
   email: { 
