@@ -23,17 +23,20 @@ import RegistrarLayout from "./registrar/RegistrarLayout";
 import StudentsPage from "./registrar/StudentsPage";
 import UserLogin from "./pages/UserLogin";
 import ForgotPassword from "./pages/ResetPassword";
+import UserLayout from "./user/UserLayout";
 
 
-import ChatPage from './chat/ChatPage';
 
 axios.defaults.withCredentials = true;
 
 const App = () => {
+
+
   return (
     <ThemeProvider>
       <Toaster position="top-center" reverseOrder={false} />
       <Routes>
+        <Route path="/externalUser" element={<UserLayout />} />
         <Route path="/" element={<LandingPage />} />
         <Route path="/signup" element={<UserSignup />} />
         <Route path="/login" element={<UserLogin />} />
@@ -111,14 +114,7 @@ const App = () => {
             </AdminLayout>
           }
         />
-        <Route
-          path="/chat"
-          element={
-            <AdminLayout>
-              <ChatPage />
-            </AdminLayout>
-          }
-        />
+
 
         <Route
           path="/admin/add-graduate"
