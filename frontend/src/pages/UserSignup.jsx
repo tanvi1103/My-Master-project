@@ -89,6 +89,7 @@ const UserSignup = () => {
         }
       });
 
+
       if (data.success) {
         setStep(3);
         setError("");
@@ -125,7 +126,6 @@ const UserSignup = () => {
         email: formData.email,
         password: formData.password
       });
-
       if (data.success) {
         setStep(4);
         setError("");
@@ -151,6 +151,7 @@ const UserSignup = () => {
         email: formData.email,
         code: verificationCode
       });
+      localStorage.setItem("token", data.token);
 
       if (data.success) {
         navigate("/search");
