@@ -15,6 +15,7 @@ exports.register = async (req, res) => {
       phone,
       email,
       password,
+      role
     } = req.body;
 
     // Check if user already exists
@@ -37,6 +38,10 @@ exports.register = async (req, res) => {
       100000 + Math.random() * 900000
     ).toString();
 
+        // Validate role (only admin can create other admins/registrars)
+    if (role && role !== 'user' && req.user?.role !== 'admin') {
+      return res.status(403).json({ error: 'Not authorized to create this role' });
+    }
     // Create new user
     const newUser = new User({
       nationalIdNumber,
@@ -48,6 +53,7 @@ exports.register = async (req, res) => {
       email,
       password,
       verificationCode,
+      role: role || 'user', // Default to 'user' if no role is provided
     });
 
     await newUser.save();
@@ -187,6 +193,8 @@ exports.login = async (req, res) => {
         nationalIdNumber: user.nationalIdNumber,
         firstName: user.firstName,
         lastName: user.lastName,
+        phone: user.phone,
+        role: user.role,
       },
     });
   } catch (error) {
@@ -198,7 +206,6 @@ exports.login = async (req, res) => {
   }
 };
 
-// Verify login with email code
 
 // Forgot password - send reset code.
 exports.forgotPassword = async (req, res) => {
