@@ -50,13 +50,13 @@ const UserLogin = () => {
           setVerificationStep(true);
         } else {
           // If no verification needed, proceed to dashboard
-          navigate("/search");
+          navigate("/externalUser");
         }
       } else {
         setError(data.error || "Login failed");
       }
     } catch (err) {
-      setError(err.response?.data?.message || "Login error");
+      setError(err.response?.data?.error || "Login error");
     } finally {
       setLoading(false);
     }
@@ -76,7 +76,7 @@ const UserLogin = () => {
       });
 
       if (data.success) {
-        navigate("/chat");
+        navigate("/externalUser");
       } else {
         setError(data.error || "Invalid verification code");
       }
