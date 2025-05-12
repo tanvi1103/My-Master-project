@@ -1,5 +1,5 @@
-const mongoose = require('mongoose');
-const bcrypt = require('bcrypt');
+const mongoose = require("mongoose");
+const bcrypt = require("bcrypt");
 
 const userSchema = new mongoose.Schema({
   nationalIdNumber: {
@@ -8,41 +8,41 @@ const userSchema = new mongoose.Schema({
     unique: true,
     trim: true,
     validate: {
-      validator: function(v) {
+      validator: function (v) {
         return /^\d{16}$/.test(v); // Matches exactly 16 digits
       },
-      message: props => `${props.value} is not a valid 16-digit National ID!`
-    }
+      message: (props) => `${props.value} is not a valid 16-digit National ID!`,
+    },
   },
   firstName: {
     type: String,
     required: true,
-    trim: true
+    trim: true,
   },
   middleName: {
     type: String,
-    trim: true
+    trim: true,
   },
   lastName: {
     type: String,
     required: true,
-    trim: true
+    trim: true,
   },
   gender: {
     type: String,
     required: true,
-    enum: ['male', 'female', 'other'],
-    lowercase: true
+    enum: ["male", "female", "other"],
+    lowercase: true,
   },
   phone: {
     type: String,
     required: true,
     validate: {
-      validator: function(v) {
+      validator: function (v) {
         return /^\d{1,15}$/.test(v); // Matches 1 to 15 digits
       },
-      message: props => `${props.value} is not a valid phone number!`
-    }
+      message: (props) => `${props.value} is not a valid phone number!`,
+    },
   },
   email: {
     type: String,
@@ -51,42 +51,54 @@ const userSchema = new mongoose.Schema({
     trim: true,
     lowercase: true,
     validate: {
-      validator: function(v) {
+      validator: function (v) {
         return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v); // Matches valid email format
       },
-      message: props => `${props.value} is not a valid email!`
-    }
+      message: (props) => `${props.value} is not a valid email!`,
+    },
   },
   password: {
     type: String,
     required: true,
-    minlength: 8
+    minlength: 8,
   },
   isVerified: {
     type: Boolean,
-    default: false
+    default: false,
   },
   verificationCode: {
     type: String,
-    default: null
+    default: null,
   },
   passwordResetCode: {
     type: String,
-    default: null
+    default: null,
   },
   passwordResetExpires: {
     type: Date,
-    default: null
+    default: null,
+  },
+  role: {
+     type: String, 
+     enum: ["admin", "registrar", "user"], 
+     default: "user" 
+    },
+      photo: {
+    type: String,
+    default: function() {
+      const id = Math.floor(Math.random() * 100);
+      return `https://randomuser.me/api/portraits/${this.gender === 'male' ? 'men' : 'women'}/${id}.jpg`;
+    }
   },
   createdAt: {
     type: Date,
-    default: Date.now
-  }
+    default: Date.now,
+  },
 });
 
 // Hash password before saving
-userSchema.pre('save', async function(next) {
-  if (!this.isModified('password')) return next();
+userSchema.pre("save", async function (next) {
+  if (!this.isModified("password")) return next();
 
   // Check if the password is already hashed
   const isAlreadyHashed = /^\$2[ayb]\$.{56}$/.test(this.password); // Regex to check bcrypt hash
@@ -102,12 +114,12 @@ userSchema.pre('save', async function(next) {
 });
 
 // Method to compare passwords
-userSchema.methods.comparePassword = async function(candidatePassword) {
+userSchema.methods.comparePassword = async function (candidatePassword) {
   return await bcrypt.compare(candidatePassword, this.password);
 };
 
 // Method to reset password
-userSchema.methods.resetPassword = async function(newPassword) {
+userSchema.methods.resetPassword = async function (newPassword) {
   const salt = await bcrypt.genSalt(10);
   this.password = await bcrypt.hash(newPassword, salt);
   this.passwordResetCode = null; // Clear reset code
@@ -115,5 +127,5 @@ userSchema.methods.resetPassword = async function(newPassword) {
   await this.save(); // Save the updated user object
 };
 
-const User = mongoose.model('User', userSchema);
+const User = mongoose.model("User", userSchema);
 module.exports = User;
