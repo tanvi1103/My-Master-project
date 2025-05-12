@@ -168,7 +168,7 @@ const GraduateSearch = () => {
       console.log("Certificate ID:", certificate.certificateID
 );
 
-     await navigate(`/certificate/${certificate.certificateID}`);
+     await navigate(`/externalUser/certificate/${certificate.certificateID}`);
     }
   };
 
