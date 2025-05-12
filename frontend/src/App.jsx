@@ -36,15 +36,32 @@ const App = () => {
     <ThemeProvider>
       <Toaster position="top-center" reverseOrder={false} />
       <Routes>
-        <Route path="/externalUser" element={<UserLayout />} />
+        {/* <Route path="/externalUser" element={<UserLayout />} /> */}
         <Route path="/" element={<LandingPage />} />
         <Route path="/signup" element={<UserSignup />} />
         <Route path="/login" element={<UserLogin />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/search" element={<GraduateSearch />} />
-        <Route path="/certificate/:id" element={<CertificateDetail />} />
+        {/* <Route path="/certificate/:id" element={<CertificateDetail />} /> */}
         <Route path="/admin/login" element={<AdminLogin />} />
 
+{/* External user routes */}
+        <Route path="/externalUser" element={
+          <UserLayout>
+            <div className="space-y-4">
+              <h3 className="text-lg font-semibold text-gray-800 dark:text-white">Welcome To The Bonga University Graduate Verification System!</h3>
+              <p className="text-gray-600 dark:text-gray-300">
+                Here's an overview of your recent activities and important notifications.
+              </p>
+              <GraduateSearch />
+            </div>
+          </UserLayout>
+        } />
+        <Route path="/externalUser/certificate/:id" element={
+          <UserLayout>
+            <CertificateDetail />
+          </UserLayout>
+        } />
 
         {/* registrar routes */}
         <Route path="/registrar" element={
@@ -58,7 +75,7 @@ const App = () => {
               </div>
             </RegistrarLayout>
         } />
-
+``
         <Route path="/registrar/verifyunverified" element={
               <RegistrarLayout>
               <div className="space-y-4">
