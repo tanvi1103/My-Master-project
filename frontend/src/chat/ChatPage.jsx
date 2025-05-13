@@ -276,11 +276,17 @@ const ChatPage = ({ currentUser }) => {
   useEffect(() => {
     socketRef.current = io("http://localhost:5000", {
       auth: {
-        token: localStorage.getItem("token"),
+        token: localStorage.getItem("adminToken"),
       },
       reconnectionAttempts: 5,
       reconnectionDelay: 1000,
     });
+
+          socketRef.current.on('receive-message', (message) => {
+        if (message.sender._id === selectedUser?._id || message.recipient._id === currentUser._id) {
+          setMessages(prev => [...prev, message]);
+        }
+      });
 
     const handleMessage = (message) => {
       setMessages(prev => {
