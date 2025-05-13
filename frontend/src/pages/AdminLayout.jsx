@@ -262,6 +262,16 @@ const AdminLayout = ({ children }) => {
               </span>
             )}
           </button>
+          {
+            <div className="hidden md:flex items-center gap-2">
+              <span className="text-gray-700 dark:text-gray-300">{currentUser.firstName}</span>
+              <img
+                src={currentUser.photo || "/default-avatar.png"}
+                alt="Profile"
+                className="w-8 h-8 rounded-full border border-gray-300 dark:border-gray-700"
+              />
+            </div>
+          }
           
           <button
             onClick={handleAdminLogout}
