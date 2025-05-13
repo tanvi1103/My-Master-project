@@ -1,8 +1,18 @@
-import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import { Menu, X, Sun, Moon, Bell, User, GraduationCap, Home, FileText, ShieldCheck } from 'lucide-react';
+import React, { useState, useEffect, useRef } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { Menu, X, Sun, Moon, Bell, User, GraduationCap, Home, FileText, ShieldCheck, MessageSquare, ChevronDown } from 'lucide-react';
+import UserChatPage from './UserChatPage';
+import axios from 'axios';
 
 const UserLayout = ({ children }) => {
+    const [chatMinimized, setChatMinimized] = useState(false);
+    const sidebarRef = useRef();
+      const [currentUser, setCurrentUser] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const chatRef = useRef();
+  const navigate = useNavigate();
+  const [showChat, setShowChat] = useState(false);
+  const [unreadCount, setUnreadCount] = useState(0);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [darkMode, setDarkMode] = useState(() => {
     return localStorage.getItem('theme') === 'dark';
@@ -19,6 +29,41 @@ const UserLayout = ({ children }) => {
     }
   }, [darkMode]);
 
+    useEffect(() => {
+      const handleClickOutside = (event) => {
+        if (sidebarRef.current && !sidebarRef.current.contains(event.target)) {
+          setSidebarOpen(false);
+        }
+        if (chatRef.current && !chatRef.current.contains(event.target) && 
+            !event.target.closest('.chat-trigger')) {
+          setShowChat(false);
+        }
+      };
+  
+      document.addEventListener("mousedown", handleClickOutside);
+      return () => document.removeEventListener("mousedown", handleClickOutside);
+    }, []);
+
+  // Fetch current user data
+  useEffect(() => {
+    const fetchCurrentUser = async () => {
+      try {
+        const res = await axios.get('http://localhost:5000/api/auth/me', {
+          headers: { 
+            Authorization: `Bearer ${localStorage.getItem('token')}` 
+          }
+        });
+        setCurrentUser(res.data);
+      } catch (err) {
+        console.error('Error fetching current user:', err);
+        const timer = setTimeout(() => {
+          navigate('/login');
+        }, 2000);
+        return () => clearTimeout(timer);
+      }
+    };
+    fetchCurrentUser();
+  }, []);
   // Sidebar navigation items
   const navItems = [
     { name: 'Dashboard', icon: Home, path: '/dashboard' },
@@ -66,6 +111,17 @@ const UserLayout = ({ children }) => {
                 <Bell className="w-5 h-5" />
                 <span className="sr-only">View notifications</span>
               </button>
+          <button 
+            onClick={() => setShowChat(!showChat)}
+            className="chat-trigger relative p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-colors"
+          >
+            <MessageSquare className="w-6 h-6 text-gray-600 dark:text-gray-300" />
+            {unreadCount > 0 && (
+              <span className="absolute top-0 right-0 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                {unreadCount}
+              </span>
+            )}
+          </button>
 
               <div className="ml-4 relative">
                 <button className="flex items-center text-sm text-gray-800 dark:text-white focus:outline-none">
@@ -73,6 +129,11 @@ const UserLayout = ({ children }) => {
                   <span className="ml-2">John Doe</span>
                 </button>
               </div>
+               <button
+            className="px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg transition-colors shadow-sm"
+          >
+            Logout
+          </button>
             </div>
           </div>
         </div>
@@ -116,6 +177,35 @@ const UserLayout = ({ children }) => {
           {children}
         </div>
       </main>
+
+            {showChat && (
+              <div
+                ref={chatRef}
+                className="fixed bottom-4 right-4 z-50 w-full max-w-2xl h-[70vh] bg-white dark:bg-gray-800 rounded-xl shadow-2xl flex flex-col border dark:border-gray-700"
+              >
+                <div className="flex items-center justify-between p-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-t-xl">
+                  <h3 className="font-semibold text-lg">BUGCVS help chat</h3>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => setChatMinimized(!chatMinimized)}
+                      className="p-1 hover:bg-black/10 rounded-md"
+                    >
+                      <ChevronDown className="w-5 h-5" />
+                    </button>
+                    <button
+                      onClick={() => setShowChat(false)}
+                      className="p-1 hover:bg-black/10 rounded-md"
+                    >
+                      <X className="w-5 h-5" />
+                    </button>
+                  </div>
+                </div>
+                
+                <div className={`flex-1 overflow-hidden transition-all duration-300 ${chatMinimized ? 'h-0' : 'h-full'}`}>
+                  <UserChatPage currentUser={currentUser} />
+                </div>
+              </div>
+            )}
 
       {/* Footer */}
       <footer className="bg-white dark:bg-gray-800 border-t dark:border-gray-700">

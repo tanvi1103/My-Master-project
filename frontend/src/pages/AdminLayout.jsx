@@ -187,6 +187,8 @@ const AdminLayout = ({ children }) => {
       await axios.get("http://localhost:5000/api/admin/logout", { 
         withCredentials: true 
       });
+          localStorage.removeItem('adminToken');
+      setCurrentUser(null); // Clear current user state
       Swal.fire("Success", "🎉 Admin Logout Successful!", "success");
       navigate("/admin/login");
     } catch (error) {
@@ -205,13 +207,28 @@ const AdminLayout = ({ children }) => {
         setCurrentUser(res.data);
       } catch (err) {
         console.error('Error fetching current user:', err);
+        const timer = setTimeout(() => {
+          navigate('/admin/login');
+        }, 2000);
+        return () => clearTimeout(timer);
       }
     };
     fetchCurrentUser();
   }, []);
 
   if (!currentUser) {
-    return <div>Loading...</div>;
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900">
+        <div className="text-center p-8">
+          <p className="text-lg text-gray-700 dark:text-gray-300 mb-4">
+            You need to be logged in to view this certificate
+          </p>
+          <p className="text-gray-500 dark:text-gray-400">
+            Redirecting to login page...
+          </p>
+        </div>
+      </div>
+    );
   }
 
   return (
@@ -274,7 +291,7 @@ const AdminLayout = ({ children }) => {
       {showChat && (
         <div
           ref={chatRef}
-          className="fixed bottom-4 right-4 z-50 w-full max-w-md h-[70vh] bg-white dark:bg-gray-800 rounded-xl shadow-2xl flex flex-col border dark:border-gray-700"
+          className="fixed bottom-4 right-4 z-50 w-full max-w-2xl h-[70vh] bg-white dark:bg-gray-800 rounded-xl shadow-2xl flex flex-col border dark:border-gray-700"
         >
           <div className="flex items-center justify-between p-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-t-xl">
             <h3 className="font-semibold text-lg">Admin Chat</h3>

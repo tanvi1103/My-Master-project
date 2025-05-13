@@ -336,53 +336,56 @@ const [messages, setMessages] = useState([]);
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
-  const handleSendMessage = async () => {
-    if (!newMessage.trim() || !selectedUser) return;
 
-    const tempId = Date.now().toString();
-    const tempMessage = {
-      _id: tempId,
-      sender: currentUser,
-      recipient: selectedUser,
-      content: newMessage,
-      createdAt: new Date(),
-      read: false,
-      isTemp: true, // Add a flag for temporary messages
-    };
-
-    // Optimistically add the message
-    setMessages((prev) => [...prev, tempMessage]);
-    setNewMessage("");
-
-    try {
-      // Socket emit
-      socketRef.current.emit("send-message", {
-        recipientId: selectedUser._id,
-        content: newMessage,
-      });
-
-      // HTTP send
-      const payload = {
-  "recipientId": selectedUser._id,
-  "recipientType": selectedUser.role === "admin" ? "Admin" : "User",
-  "content": newMessage
-};
-
-      const res = await axios.post(`${chatapi}/send`, payload, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("adminToken")}`,
-        },
-      });
-
-      // Replace temp message with server response
-      setMessages((prev) => prev.map((m) => (m._id === tempId ? res.data : m)));
-    } catch (err) {
-      console.error("Error sending message:", err);
-      // Remove the temp message if send fails
-      setMessages((prev) => prev.filter((m) => m._id !== tempId));
-    }
+  // Add this to prevent duplicate messages
+useEffect(() => {
+  const handleMessage = (message) => {
+    setMessages(prev => {
+      // Check if message already exists
+      if (!prev.some(m => m._id === message._id)) {
+        return [...prev, message];
+      }
+      return prev;
+    });
   };
 
+  socketRef.current.on("receive-message", handleMessage);
+  return () => {
+    socketRef.current.off("receive-message", handleMessage);
+  };
+}, []);
+const handleSendMessage = async () => {
+  if (!newMessage.trim() || !selectedUser) return;
+
+  const tempId = Date.now().toString();
+  const tempMessage = {
+    _id: tempId,
+    sender: currentUser,
+    recipient: selectedUser,
+    content: newMessage,
+    createdAt: new Date(),
+    read: false,
+    isTemp: true,
+  };
+
+  // Optimistically add the message
+  setMessages((prev) => [...prev, tempMessage]);
+  setNewMessage("");
+
+  try {
+    // Only send via Socket.IO - let the server handle persistence
+    socketRef.current.emit("send-message", {
+      recipientId: selectedUser._id,
+      content: newMessage,
+      tempId // Include the temporary ID
+    });
+
+    // Remove the HTTP POST request since the server will handle saving
+  } catch (err) {
+    console.error("Error sending message:", err);
+    setMessages((prev) => prev.filter((m) => m._id !== tempId));
+  }
+};
   const handleTyping = (isTyping) => {
     if (!selectedUser) return;
     socketRef.current.emit("typing", {
@@ -394,7 +397,7 @@ const [messages, setMessages] = useState([]);
  return (
     <div className="flex h-full bg-white dark:bg-gray-800">
       {/* Sidebar */}
-      <div className="w-1/3 border-r dark:border-gray-700 flex flex-col">
+      <div className="w-2/5 border-r dark:border-gray-700 flex flex-col">
         <div className="p-4 border-b dark:border-gray-700">
           <h2 className="text-lg font-semibold dark:text-gray-200">
             {currentUser.role === "admin" ? "Contacts" : "Chats"}
@@ -437,7 +440,7 @@ const [messages, setMessages] = useState([]);
             </div>
 
             <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-gray-50 dark:bg-gray-900">
-              {messages.map((message) => (
+              {messages.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt)).map((message) => (
                 <div
                   key={message._id}
                   className={`flex ${message.sender._id === currentUser._id ? "justify-end" : "justify-start"}`}
