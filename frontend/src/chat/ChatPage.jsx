@@ -355,30 +355,44 @@ useEffect(() => {
   };
 }, []);
 const handleSendMessage = async () => {
-  if (!newMessage.trim() || !selectedUser) return;
+   if (!newMessage.trim() || !selectedUser) return;
 
-  const tempId = Date.now().toString();
-  const tempMessage = {
-    _id: tempId,
-    sender: currentUser,
-    recipient: selectedUser,
-    content: newMessage,
-    createdAt: new Date(),
-    read: false,
-    isTemp: true,
-  };
-
-  // Optimistically add the message
-  setMessages((prev) => [...prev, tempMessage]);
-  setNewMessage("");
-
-  try {
-    // Only send via Socket.IO - let the server handle persistence
-    socketRef.current.emit("send-message", {
-      recipientId: selectedUser._id,
+    const tempId = Date.now().toString();
+    const tempMessage = {
+      _id: tempId,
+      sender: currentUser,
+      recipient: selectedUser,
       content: newMessage,
-      tempId // Include the temporary ID
-    });
+      createdAt: new Date(),
+      read: false,
+      isTemp: true, // Add a flag for temporary messages
+    };
+
+    // Optimistically add the message
+    setMessages((prev) => [...prev, tempMessage]);
+    setNewMessage("");
+
+    try {
+      // Socket emit
+      socketRef.current.emit("send-message", {
+        recipientId: selectedUser._id,
+        content: newMessage,
+      });
+
+      // HTTP send
+      const payload = {
+  "recipientId": selectedUser._id,
+  "recipientType": "User",
+  "content": newMessage
+}
+const res = await axios.post(`${chatapi}/send`, payload, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("adminToken")}`,
+        },
+      });
+
+      // Replace temp message with server response
+      setMessages((prev) => prev.map((m) => (m._id === tempId ? res.data : m)));
 
     // Remove the HTTP POST request since the server will handle saving
   } catch (err) {
@@ -386,6 +400,8 @@ const handleSendMessage = async () => {
     setMessages((prev) => prev.filter((m) => m._id !== tempId));
   }
 };
+
+
   const handleTyping = (isTyping) => {
     if (!selectedUser) return;
     socketRef.current.emit("typing", {
