@@ -5,6 +5,7 @@ const {authenticateUser, roleMiddleware} = require('../middleware/authMiddleware
 
 router.use(authenticateUser);
 
+router.get('/user/get-admin', chatController.getAssignedAdmin);
 router.get('/conversation/:userId', chatController.getConversation);
 router.get('/unread-count', chatController.getUnreadCount);
 router.post('/messages/read', chatController.markAsRead);

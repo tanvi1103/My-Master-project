@@ -87,7 +87,9 @@ const logoutAdmin = (req, res) => {
     secure: process.env.NODE_ENV === "production",
     sameSite: "Strict",
   });
-  res.status(200).json({ message: "Logged out successfully" });
+  res.status(200).json({ message: "Logged out successfully",
+    clearLocalStorage: true 
+   });
 };
 
 // ========================

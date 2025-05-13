@@ -10,6 +10,16 @@ const adminSchema = new mongoose.Schema({
     type: String, 
     required: true 
   },
+  firstName: {
+    type: String,
+    required: true,
+    default: 'Registrar'
+  },
+  lastName: {
+    type: String,
+    required: true,
+    default: 'Chat'
+  },
   notifications: [
     {
       message: String,
@@ -22,9 +32,18 @@ const adminSchema = new mongoose.Schema({
     enum: ['admin', 'registrar'], 
     default: 'admin' 
   },
-});
+  isAvailable: {
+    type: Boolean,
+    default: true
+  },
+  lastAssigned: {
+    type: Date,
+    default: Date.now
+  },
+  activeChats: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User'
+  }]
+}, { timestamps: true });
 
 module.exports = mongoose.model('Admin', adminSchema);
-
-
-

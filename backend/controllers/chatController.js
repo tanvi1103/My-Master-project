@@ -171,3 +171,44 @@ exports.getChatUsers = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
+
+
+exports.getAssignedAdmin = async (req, res) => {
+  try {
+    // Find available admins (excluding registrars if needed)
+    const admin = await Admin.findOne({ 
+      isAvailable: true,
+      role: 'admin' // Only assign to admins, not registrars
+    }).sort({ lastAssigned: 1 });
+    
+    if (!admin) {
+      return res.status(404).json({ 
+        success: false,
+        message: 'No admin available at the moment' 
+      });
+    }
+
+    // Update admin's last assigned time and add user to active chats
+    admin.lastAssigned = new Date();
+    admin.activeChats.push(req.user._id);
+    await admin.save();
+
+    res.json({
+      success: true,
+      admin: {
+        _id: admin._id,
+        firstName: admin.firstName,
+        lastName: admin.lastName,
+        email: admin.email,
+        role: admin.role
+      }
+    });
+
+  } catch (error) {
+    console.error('Error assigning admin:', error);
+    res.status(500).json({ 
+      success: false,
+      message: 'Error assigning support admin' 
+    });
+  }
+};
