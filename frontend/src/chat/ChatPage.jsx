@@ -249,22 +249,28 @@
 // export default ChatPage;
 
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import axios from "axios";
 import io from "socket.io-client";
 import { Send, Smile, Image, X, MessageSquare } from "lucide-react";
+import PropTypes from 'prop-types';
+import { useMemo } from "react";
 
-const chatapi = import.meta.env.VITE_CHAT_ROUTE
+const chatapi = import.meta.env.VITE_CHAT_ROUTE;
+
 const ChatPage = ({ currentUser }) => {
-const [messages, setMessages] = useState([]);
+  const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
   const [selectedUser, setSelectedUser] = useState(null);
   const [users, setUsers] = useState([]);
   const [admins, setAdmins] = useState([]);
   const [isTyping, setIsTyping] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
+  
   const socketRef = useRef(null);
   const messagesEndRef = useRef(null);
-
+  const typingTimeoutRef = useRef(null);
 
   // Initialize socket connection
   useEffect(() => {
@@ -272,21 +278,30 @@ const [messages, setMessages] = useState([]);
       auth: {
         token: localStorage.getItem("token"),
       },
+      reconnectionAttempts: 5,
+      reconnectionDelay: 1000,
     });
 
-    // Set up event listeners
-    socketRef.current.on("receive-message", (message) => {
-      setMessages((prev) => [...prev, message]);
-    });
+    const handleMessage = (message) => {
+      setMessages(prev => {
+        if (!prev.some(m => m._id === message._id)) {
+          return [...prev, message];
+        }
+        return prev;
+      });
+    };
 
-    socketRef.current.on("typing", ({ isTyping }) => {
-      setIsTyping(isTyping);
+    socketRef.current.on("receive-message", handleMessage);
+    socketRef.current.on("typing", ({ isTyping }) => setIsTyping(isTyping));
+    socketRef.current.on("connect_error", (err) => {
+      console.error("Socket connection error:", err);
+      setError("Connection error. Please refresh.");
     });
 
     return () => {
-      if (socketRef.current) {
-        socketRef.current.disconnect();
-      }
+      socketRef.current.off("receive-message", handleMessage);
+      socketRef.current.disconnect();
+      clearTimeout(typingTimeoutRef.current);
     };
   }, []);
 
@@ -294,6 +309,7 @@ const [messages, setMessages] = useState([]);
   useEffect(() => {
     const fetchUsers = async () => {
       try {
+        setIsLoading(true);
         const res = await axios.get(`${chatapi}/admin/all-users`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("adminToken")}`,
@@ -303,59 +319,81 @@ const [messages, setMessages] = useState([]);
         setAdmins(res.data.admins);
       } catch (err) {
         console.error("Error fetching users:", err);
+        setError("Failed to load contacts");
+      } finally {
+        setIsLoading(false);
       }
     };
 
     fetchUsers();
   }, []);
 
-  // Load conversation when user is selected
+  // // Load conversation when user is selected
+  // useEffect(() => {
+  //   const fetchConversation = async () => {
+  //     if (!selectedUser) return;
+
+  //     try {
+  //       setIsLoading(true);
+  //       const res = await axios.get(
+  //         `${chatapi}/conversation/${selectedUser._id}`,
+  //         {
+  //           headers: {
+  //             Authorization: `Bearer ${localStorage.getItem("adminToken")}`,
+  //           },
+  //         }
+  //       );
+  //       setMessages(res.data);
+  //     } catch (err) {
+  //       console.error("Error fetching conversation:", err);
+  //       setError("Failed to load conversation");
+  //     } finally {
+  //       setIsLoading(false);
+  //     }
+  //   };
+  //     fetchConversation();
+  // }, [selectedUser]);
+
   useEffect(() => {
-    const fetchConversation = async () => {
-      if (!selectedUser) return;
+  const fetchConversation = async () => {
+    if (!selectedUser) return;
 
-      try {
-        const res = await axios.get(
-          `${chatapi}/conversation/${selectedUser._id}`,
-          {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("adminToken")}`,
-            },
-          }
-        );
-        setMessages(res.data);
-      } catch (err) {
-        console.error("Error fetching conversation:", err);
-      }
-    };
+    try {
+      setIsLoading(true);
+      const res = await axios.get(
+        `${chatapi}/conversation/${selectedUser._id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("adminToken")}`,
+          },
+        }
+      );
+      setMessages(res.data);
+    } catch (err) {
+      console.error("Error fetching conversation:", err);
+      setError("Failed to load conversation");
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
-    fetchConversation();
-  }, [selectedUser]);
+  // Initial fetch
+  fetchConversation();
+
+  // Set up interval for refreshing
+  const refreshInterval = setInterval(fetchConversation, 10000);
+
+  // Clean up interval when component unmounts or selectedUser changes
+  return () => clearInterval(refreshInterval);
+}, [selectedUser]);
 
   // Auto-scroll to bottom
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-  // Add this to prevent duplicate messages
-useEffect(() => {
-  const handleMessage = (message) => {
-    setMessages(prev => {
-      // Check if message already exists
-      if (!prev.some(m => m._id === message._id)) {
-        return [...prev, message];
-      }
-      return prev;
-    });
-  };
-
-  socketRef.current.on("receive-message", handleMessage);
-  return () => {
-    socketRef.current.off("receive-message", handleMessage);
-  };
-}, []);
-const handleSendMessage = async () => {
-   if (!newMessage.trim() || !selectedUser) return;
+  const handleSendMessage = async () => {
+    if (!newMessage.trim() || !selectedUser) return;
 
     const tempId = Date.now().toString();
     const tempMessage = {
@@ -365,52 +403,73 @@ const handleSendMessage = async () => {
       content: newMessage,
       createdAt: new Date(),
       read: false,
-      isTemp: true, // Add a flag for temporary messages
+      isTemp: true,
     };
 
-    // Optimistically add the message
     setMessages((prev) => [...prev, tempMessage]);
     setNewMessage("");
+    handleTyping(false); // Clear typing indicator
 
     try {
-      // Socket emit
       socketRef.current.emit("send-message", {
         recipientId: selectedUser._id,
         content: newMessage,
       });
 
-      // HTTP send
       const payload = {
-  "recipientId": selectedUser._id,
-  "recipientType": "User",
-  "content": newMessage
-}
-const res = await axios.post(`${chatapi}/send`, payload, {
+        recipientId: selectedUser._id,
+        recipientType: "User",
+        content: newMessage
+      };
+
+      const res = await axios.post(`${chatapi}/send`, payload, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("adminToken")}`,
         },
       });
 
-      // Replace temp message with server response
-      setMessages((prev) => prev.map((m) => (m._id === tempId ? res.data : m)));
-
-    // Remove the HTTP POST request since the server will handle saving
-  } catch (err) {
-    console.error("Error sending message:", err);
-    setMessages((prev) => prev.filter((m) => m._id !== tempId));
-  }
-};
-
-
-  const handleTyping = (isTyping) => {
-    if (!selectedUser) return;
-    socketRef.current.emit("typing", {
-      recipientId: selectedUser._id,
-      isTyping,
-    });
+      setMessages((prev) => prev.map((m) => 
+        m._id === tempId ? { ...res.data, isTemp: false } : m
+      ));
+    } catch (err) {
+      console.error("Error sending message:", err);
+      setMessages((prev) => prev.filter((m) => m._id !== tempId));
+      setError("Failed to send message");
+    }
   };
 
- return (
+  const handleTyping = useCallback((isTyping) => {
+    if (!selectedUser) return;
+    
+    clearTimeout(typingTimeoutRef.current);
+    
+    if (isTyping) {
+      socketRef.current.emit("typing", {
+        recipientId: selectedUser._id,
+        isTyping: true,
+      });
+      
+      typingTimeoutRef.current = setTimeout(() => {
+        socketRef.current.emit("typing", {
+          recipientId: selectedUser._id,
+          isTyping: false,
+        });
+        setIsTyping(false);
+      }, 2000);
+    } else {
+      socketRef.current.emit("typing", {
+        recipientId: selectedUser._id,
+        isTyping: false,
+      });
+      setIsTyping(false);
+    }
+  }, [selectedUser]);
+
+  const sortedMessages = useMemo(() => {
+    return [...messages].sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+  }, [messages]);
+
+  return (
     <div className="flex h-full bg-white dark:bg-gray-800">
       {/* Sidebar */}
       <div className="w-2/5 border-r dark:border-gray-700 flex flex-col">
@@ -442,6 +501,13 @@ const res = await axios.post(`${chatapi}/send`, payload, {
 
       {/* Chat Area */}
       <div className="flex-1 flex flex-col">
+                {error && (
+          <div className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4">
+            <p>{error}</p>
+          </div>
+        )}
+        
+ 
         {selectedUser ? (
           <>
             <div className="p-4 border-b dark:border-gray-700 flex items-center justify-between bg-gray-50 dark:bg-gray-700">
@@ -525,6 +591,15 @@ const res = await axios.post(`${chatapi}/send`, payload, {
       </div>
     </div>
   );
+};
+
+ChatPage.propTypes = {
+  currentUser: PropTypes.shape({
+    _id: PropTypes.string.isRequired,
+    firstName: PropTypes.string,
+    lastName: PropTypes.string,
+    role: PropTypes.string.isRequired,
+  }).isRequired,
 };
 
 export default ChatPage;
