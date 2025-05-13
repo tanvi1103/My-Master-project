@@ -40,6 +40,20 @@ const adminSchema = new mongoose.Schema({
     type: Date,
     default: Date.now
   },
+  gender: { 
+    type: String, 
+    required: true,
+    enum: ['male', 'female'],
+    lowercase: true,
+    default: 'male'
+  },
+  photo: {
+    type: String,
+    default: function() {
+      const id = Math.floor(Math.random() * 100);
+      return `https://randomuser.me/api/portraits/${this.gender === 'male' ? 'men' : 'women'}/${id}.jpg`;
+    }
+  },
   activeChats: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User'
