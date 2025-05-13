@@ -518,6 +518,7 @@ const ChatPage = ({ currentUser }) => {
           <>
             <div className="p-4 border-b dark:border-gray-700 flex items-center justify-between bg-gray-50 dark:bg-gray-700">
               <div>
+                
                 <p className="font-medium dark:text-gray-200">
                   {selectedUser.firstName} {selectedUser.lastName}
                 </p>
