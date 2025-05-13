@@ -126,7 +126,12 @@ const UserLayout = ({ children }) => {
               <div className="ml-4 relative">
                 <button className="flex items-center text-sm text-gray-800 dark:text-white focus:outline-none">
                   <User className="w-6 h-6 text-gray-500 dark:text-gray-400" />
-                  <span className="ml-2">John Doe</span>
+                  <img
+                    src={currentUser?.photo || 'https://via.placeholder.com/150'}
+                    alt="User Avatar"
+                    className="w-8 h-8 rounded-full ml-2"
+                  />
+                  <span className="ml-2">{currentUser?.firstName + " " + currentUser?.lastName}</span>
                 </button>
               </div>
                <button
