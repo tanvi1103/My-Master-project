@@ -4,7 +4,7 @@ import Swal from 'sweetalert2'; // 👈 import at the top
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-const ViewUpdateGraduates = () => {
+const ViewUpdateGraduates = ({currentUser}) => {
   const [graduates, setGraduates] = useState([]);
   const token = localStorage.getItem("adminToken");
   const navigate = useNavigate();
