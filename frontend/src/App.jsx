@@ -27,6 +27,8 @@ import UserLayout from "./user/UserLayout";
 import RegistrarLogin from "./registrar/RegistrarLogin";
 import { useState } from "react";
 import { useEffect } from "react";
+import ViewAllGraduate from "./registrar/ViewAllGraguate";
+import RegistrarEditGraduate from "./registrar/RegistrarEditGraduate";
 
 
 
@@ -131,11 +133,19 @@ const App = () => {
 
               <div className="space-y-4">
                 <h3 className="text-lg font-semibold text-gray-800 dark:text-white">Welcome back!</h3>
-                <ViewUpdateGraduates />
+                <ViewAllGraduate />
                 {/* Add your dashboard content here */}
               </div>
             </RegistrarLayout>
         } />
+        <Route
+          path="/registrar/edit-graduate/:certificateID"
+          element={
+            <RegistrarLayout>
+              <RegistrarEditGraduate />
+            </RegistrarLayout>
+          }
+        />
 
         <Route path="/registrar/studentRecords" element={
                            <RegistrarLayout currentUser={currentUser}>
