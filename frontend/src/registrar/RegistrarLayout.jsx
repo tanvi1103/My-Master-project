@@ -11,8 +11,18 @@ import {
 } from "react-icons/fi";
 import { Link } from "react-router-dom";
 
-const RegistrarLayout = ({ children }) => {
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
+
+const RegistrarLayout = ({ children, currentUser }) => {
+
+
+  const navigate = useNavigate();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const authurl = import.meta.env.VITE_AUTH_ROUTE;
+
+
   const [darkMode, setDarkMode] = useState(() => {
     // Check user's preferred color scheme
     return (
@@ -63,6 +73,7 @@ const RegistrarLayout = ({ children }) => {
               {sidebarOpen ? <FiX size={24} /> : <FiMenu size={24} />}
             </button>
             <div className="flex items-center">
+              
               <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-white font-bold">
                 R
               </div>
@@ -81,15 +92,41 @@ const RegistrarLayout = ({ children }) => {
             >
               {darkMode ? <FiSun size={20} /> : <FiMoon size={20} />}
             </button>
+            {/* User profile */}
+            {currentUser && currentUser.role==="registrar" ? (
+              <div className="flex items-center space-x-2">
+                <div className="w-8 h-8 rounded-full bg-blue-100 dark:bg-blue-900 flex items-center justify-center">
+                  <span className="text-blue-600 dark:text-white font-bold">
+                    {currentUser.firstName.charAt(0)}
+                  </span>
+                </div>
+                <div></div>
+                  <p className="text-sm font-medium text-gray-700 dark:text-gray-200">
+                    {currentUser.firstName} {currentUser.lastName}
+                  </p>
+                  <p className="text-xs text-gray-500 dark:text-gray-400">
+                    Registrar
+                  </p>
+                </div>
+            ):(
+              <div className="flex items-center space-x-2">
+                <div className="w-8 h-8 rounded-full bg-blue-100 dark:bg-blue-900 flex items-center justify-center">
+                  <span className="text-blue-600 dark:text-white font-bold">
+                    U
+                  </span>
+                </div>
+                <p className="text-sm font-medium text-gray-700 dark:text-gray-200">
+                  User
+                </p>
+                <p className="text-xs text-gray-500 dark:text-gray-400">
+                  User Role
+                </p>
+              </div> 
+            )
 
-            <div className="hidden md:flex items-center space-x-2">
-              <div className="w-8 h-8 rounded-full bg-blue-100 dark:bg-blue-900 flex items-center justify-center">
-                <span className="text-blue-600 dark:text-blue-300 font-medium">
-                  ET
-                </span>
-              </div>
-              <span className="text-gray-700 dark:text-gray-200">Ebirahim Tufa</span>
-            </div>
+            }
+
+      
           </div>
         </div>
       </header>
@@ -108,17 +145,17 @@ const RegistrarLayout = ({ children }) => {
             <nav className="flex-1 px-4 py-6 overflow-hidden">
               <ul className="space-y-2">
                 <li>
-                  <a
-                    href="#"
+                  <Link
+                    to={"/registrar"}
                     className="flex items-center px-4 py-3 rounded-lg bg-blue-100 dark:bg-gray-700 text-blue-600 dark:text-blue-300"
                   >
                     <FiHome className="mr-3" />
                     <span>Dashboard</span>
-                  </a>
+                  </Link>
                 </li>
                 <li>
                   <Link
-                    to={"/registrar/studentsearch"}
+                    to={"/registrar/studentRecords"}
                     className="flex items-center px-4 py-3 rounded-lg text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
                   >
                     <FiUsers className="mr-3" />
@@ -151,12 +188,15 @@ const RegistrarLayout = ({ children }) => {
               <div className="flex items-center">
                 <div className="w-10 h-10 rounded-full bg-blue-100 dark:bg-blue-900 flex items-center justify-center">
                   <span className="text-blue-600 dark:text-blue-300 font-medium">
-                    JD
+                    <img
+                      src={currentUser?.photo}
+                      alt="User Avatar"
+                      className="w-full h-full rounded-full" />
                   </span>
                 </div>
                 <div className="ml-3">
                   <p className="text-sm font-medium text-gray-700 dark:text-gray-200">
-                    John Doe
+                    {currentUser?.firstName} {currentUser?.lastName}
                   </p>
                   <p className="text-xs text-gray-500 dark:text-gray-400">
                     Registrar
@@ -168,7 +208,8 @@ const RegistrarLayout = ({ children }) => {
         </aside>
 
         {/* Main content */}
-        <main className="flex-1 overflow-auto  bg-gray-50 dark:bg-gray-900 p-4 md:p-6 ">
+        <main 
+        className="flex-1 overflow-auto  bg-gray-50 dark:bg-gray-900 p-4 md:p-6 ">
           {/* Overlay for mobile sidebar */}
           {sidebarOpen && (
             <div
