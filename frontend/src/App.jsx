@@ -24,12 +24,36 @@ import StudentsPage from "./registrar/StudentsPage";
 import UserLogin from "./pages/UserLogin";
 import ForgotPassword from "./pages/ResetPassword";
 import UserLayout from "./user/UserLayout";
+import RegistrarLogin from "./registrar/RegistrarLogin";
+import { useState } from "react";
+import { useEffect } from "react";
 
 
 
 axios.defaults.withCredentials = true;
 
 const App = () => {
+  const [currentUser, setCurrentUser] = useState(null);
+
+      useEffect(() => {
+      const fetchCurrentUser = async () => {
+        try {
+          const res = await axios.get('http://localhost:5000/api/auth/me', {
+            headers: { 
+              Authorization: `Bearer ${localStorage.getItem('token')}` 
+            }
+          });
+          setCurrentUser(res.data);
+        } catch (err) {
+          console.error('Error fetching current user:', err);
+          const timer = setTimeout(() => {
+            navigate('/registrar/login');
+          }, 2000);
+          return () => clearTimeout(timer);
+        }
+      };
+      fetchCurrentUser();
+    }, []);
 
 
   return (
@@ -44,6 +68,7 @@ const App = () => {
         <Route path="/search" element={<GraduateSearch />} />
         {/* <Route path="/certificate/:id" element={<CertificateDetail />} /> */}
         <Route path="/admin/login" element={<AdminLogin />} />
+        <Route path="/registrar/login" element={<RegistrarLogin />} />
 
 {/* External user routes */}
         <Route path="/externalUser" element={
@@ -65,7 +90,7 @@ const App = () => {
 
         {/* registrar routes */}
         <Route path="/registrar" element={
-              <RegistrarLayout>
+              <RegistrarLayout currentUser={currentUser}>
               <div className="space-y-4">
                 <h3 className="text-lg font-semibold text-gray-800 dark:text-white">Welcome back!</h3>
                 <p className="text-gray-600 dark:text-gray-300">
@@ -77,7 +102,7 @@ const App = () => {
         } />
 ``
         <Route path="/registrar/verifyunverified" element={
-              <RegistrarLayout>
+              <RegistrarLayout currentUser={currentUser}>
               <div className="space-y-4">
                 <h3 className="text-lg font-semibold text-gray-800 dark:text-white">Welcome back!</h3>
                 <p className="text-gray-600 dark:text-gray-300">
@@ -89,7 +114,8 @@ const App = () => {
         } />
 
         <Route path="/registrar/viewverified" element={
-              <RegistrarLayout>
+              <RegistrarLayout currentUser={currentUser}>
+
               <div className="space-y-4">
                 <h3 className="text-lg font-semibold text-gray-800 dark:text-white">Welcome back!</h3>
                 <p className="text-gray-600 dark:text-gray-300">
@@ -101,7 +127,8 @@ const App = () => {
         } />
 
         <Route path="/registrar/viewallcertificates" element={
-              <RegistrarLayout>
+              <RegistrarLayout currentUser={currentUser}>
+
               <div className="space-y-4">
                 <h3 className="text-lg font-semibold text-gray-800 dark:text-white">Welcome back!</h3>
                 <ViewUpdateGraduates />
@@ -110,8 +137,9 @@ const App = () => {
             </RegistrarLayout>
         } />
 
-        <Route path="/registrar/studentsearch" element={
-              <RegistrarLayout>
+        <Route path="/registrar/studentRecords" element={
+                           <RegistrarLayout currentUser={currentUser}>
+
               <div className="space-y-4">
                 <h3 className="text-lg font-semibold text-gray-800 dark:text-white">Welcome back!</h3>
                 <StudentsPage />
