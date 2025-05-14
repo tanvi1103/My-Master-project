@@ -35,10 +35,17 @@ const UserLogin = () => {
 
     setLoading(true);
     try {
-      const { data } = await axios.post(`${authurl}/login`, {
-        [loginMethod]: loginMethod === "email" ? formData.email : formData.nationalIdNumber,
-        password: formData.password
-      });
+         const payload = {
+      password: formData.password
+    };
+
+        // Use the correct property name based on login method
+    if (loginMethod === "email") {
+      payload.email = formData.email;
+    } else {
+      payload.nationalIdNumber = formData.nationalIdNumber;
+    }
+      const { data } = await axios.post(`${authurl}/login`,payload);
       localStorage.setItem("token", data.token);
 
 
@@ -62,30 +69,30 @@ const UserLogin = () => {
     }
   };
 
-  const handleVerifyLogin = async () => {
-    if (!verificationCode || verificationCode.length !== 6) {
-      setError("Please enter a valid 6-digit code");
-      return;
-    }
+const handleVerifyLogin = async () => {
+  if (!verificationCode || verificationCode.length !== 6) {
+    setError("Please enter a valid 6-digit code");
+    return;
+  }
 
-    setLoading(true);
-    try {
-      const { data } = await axios.post(`${authurl}/verify-email`, {
-        [loginMethod]: loginMethod === "email" ? formData.email : formData.nationalIdNumber,
-        code: verificationCode
-      });
+  setLoading(true);
+  try {
+    const { data } = await axios.post(`${authurl}/verify-email`, {
+      [loginMethod]: loginMethod === "email" ? formData.email : formData.nationalIdNumber,
+      code: verificationCode
+    });
 
-      if (data.success) {
-        navigate("/externalUser");
-      } else {
-        setError(data.error || "Invalid verification code");
-      }
-    } catch (err) {
-      setError(err.response?.data?.error || "Verification failed");
-    } finally {
-      setLoading(false);
+    if (data.success) {
+      navigate("/externalUser");
+    } else {
+      setError(data.error || "Invalid verification code");
     }
-  };
+  } catch (err) {
+    setError(err.response?.data?.error || "Verification failed");
+  } finally {
+    setLoading(false);
+  }
+};
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 px-4 py-12">
