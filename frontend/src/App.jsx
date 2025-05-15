@@ -1,6 +1,6 @@
 import React from "react";
 
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
 import LandingPage from "./pages/LandingPage";
 import GraduateSearch from "./pages/GraduateSearch";
@@ -29,6 +29,9 @@ import { useState } from "react";
 import { useEffect } from "react";
 import ViewAllGraduate from "./registrar/ViewAllGraguate";
 import RegistrarEditGraduate from "./registrar/RegistrarEditGraduate";
+import SettingsPage from "./registrar/SettingsPage";
+import ProfilePage from "./registrar/ProfilePage";
+import UserAddingPage from "./admin/UserAdding";
 
 
 
@@ -36,6 +39,7 @@ axios.defaults.withCredentials = true;
 
 const App = () => {
   const [currentUser, setCurrentUser] = useState(null);
+  const navigate = useNavigate();
 
       useEffect(() => {
       const fetchCurrentUser = async () => {
@@ -48,10 +52,6 @@ const App = () => {
           setCurrentUser(res.data);
         } catch (err) {
           console.error('Error fetching current user:', err);
-          const timer = setTimeout(() => {
-            navigate('/registrar/login');
-          }, 2000);
-          return () => clearTimeout(timer);
         }
       };
       fetchCurrentUser();
@@ -159,6 +159,28 @@ const App = () => {
         } />
 
 
+        <Route path="/registrar/settings" element={
+                           <RegistrarLayout currentUser={currentUser}>
+
+              <div className="space-y-4">
+                <h3 className="text-lg font-semibold text-gray-800 dark:text-white">You can modify your account settings here!</h3>
+                <SettingsPage />
+                {/* Add your dashboard content here */}
+              </div>
+            </RegistrarLayout>
+        } />
+        <Route path="/registrar/profile" element={
+                           <RegistrarLayout currentUser={currentUser}>
+
+              <div className="space-y-4">
+                <h3 className="text-lg font-semibold text-gray-800 dark:text-white">You can modify your Profile picture and Phone number only!</h3>
+                <ProfilePage />
+                {/* Add your dashboard content here */}
+              </div>
+            </RegistrarLayout>
+        } />
+
+
 
        {/* admin routes */}
         <Route
@@ -201,6 +223,14 @@ const App = () => {
           element={
             <AdminLayout>
               <ViewUpdateGraduates />
+            </AdminLayout>
+          }
+        />
+        <Route
+          path="/admin/addingUser"
+          element={
+            <AdminLayout>
+              <UserAddingPage />
             </AdminLayout>
           }
         />
