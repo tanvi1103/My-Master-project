@@ -64,6 +64,7 @@ const initialStudentState = {
   department: "",
   college: "",
   program: "",
+  programType: "",
   gstatus: "",
   startDate: "",
   endDate: "",
@@ -137,6 +138,9 @@ const AddStudentCredentials = () => {
         break;
       case "program":
         if (!value) return "Program is required";
+        break;
+      case "programType":
+        if (!value) return "Program type is required";
         break;
       case "gstatus":
         if (!value) return "Status is required";
@@ -459,6 +463,30 @@ const AddStudentCredentials = () => {
                   </select>
                 </div>
 
+                {/* Program type */}
+                                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                    Program Type*
+                  </label>
+                  <select
+                    name="programType"
+                    className={`w-full px-4 py-3 rounded-lg border ${
+                      currentField === "programType" && currentError ? "border-red-500" : "border-gray-300 dark:border-gray-600"
+                    } bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent`}
+                    value={student.programType}
+                    onChange={handleChange}
+                    onFocus={() => handleFieldFocus("programType")}
+                    onBlur={() => validateField("programType", student.programType)}
+                  >
+                  <option value="">Select program Type</option>
+                  <option value="regular">Regular</option>
+                  <option value="weekend">Weekend</option>
+                  <option value="summer">Summer</option>
+                  <option value="distance">Distance</option>
+                  <option value="night">Night</option>
+                  </select>
+                </div>
+
                 <div>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                     Graduate Status *
@@ -474,9 +502,9 @@ const AddStudentCredentials = () => {
                     onBlur={() => validateField("gstatus", student.gstatus)}
                   >
                     <option value="">Select Status</option>
-                    <option value="Graduated">Graduated</option>
-                    <option value="Pending">Pending</option>
-                    <option value="Suspended">Suspended</option>
+                    <option value="verified">Verified</option>
+                    <option value="pending">Pending</option>
+                    <option value="suspended">Suspended</option>
                   </select>
                 </div>
 
@@ -532,8 +560,8 @@ const AddStudentCredentials = () => {
                     onBlur={() => validateField("gender", student.gender)}
                   >
                     <option value="">Select Gender</option>
-                    <option value="Male">Male</option>
-                    <option value="Female">Female</option>
+                    <option value="male">Male</option>
+                    <option value="female">Female</option>
                   </select>
                 </div>
               </div>
