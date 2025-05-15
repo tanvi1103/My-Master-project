@@ -12,12 +12,15 @@ const {
   getNotification,
   deleteNotification,
   markNotificationAsRead,
+  createUserByAdmin,
 } = require("../controllers/adminController");
 
 const router = express.Router();
 
 router.post("/login", loginAdmin);
 router.get('/logout', logoutAdmin);
+
+router.post("/createUser", authenticateUser, roleMiddleware(["admin"]), createUserByAdmin);
 
 router.post("/addStudents", authenticateUser, addStudentCredentials);
 router.post("/upload", authenticateUser, uploadFile); // Ensure this matches your backend route
