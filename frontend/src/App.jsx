@@ -32,6 +32,7 @@ import RegistrarEditGraduate from "./registrar/RegistrarEditGraduate";
 import SettingsPage from "./registrar/SettingsPage";
 import ProfilePage from "./registrar/ProfilePage";
 import UserAddingPage from "./admin/UserAdding";
+import RegistrarDashBoard from "./registrar/RegistrarDashBoard";
 
 
 
@@ -41,21 +42,7 @@ const App = () => {
   const [currentUser, setCurrentUser] = useState(null);
   const navigate = useNavigate();
 
-      useEffect(() => {
-      const fetchCurrentUser = async () => {
-        try {
-          const res = await axios.get('http://localhost:5000/api/auth/me', {
-            headers: { 
-              Authorization: `Bearer ${localStorage.getItem('token')}` 
-            }
-          });
-          setCurrentUser(res.data);
-        } catch (err) {
-          console.error('Error fetching current user:', err);
-        }
-      };
-      fetchCurrentUser();
-    }, []);
+
 
 
   return (
@@ -99,6 +86,7 @@ const App = () => {
                   Here's an overview of your recent activities and important notifications.
                 </p>
                 {/* Add your dashboard content here */}
+                <RegistrarDashBoard />
               </div>
             </RegistrarLayout>
         } />

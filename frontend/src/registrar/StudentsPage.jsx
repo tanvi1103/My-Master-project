@@ -12,6 +12,7 @@ import {
   FiChevronRight,
   FiX,
 } from "react-icons/fi";
+import { useNavigate } from "react-router-dom";
 
 const api = `http://localhost:5000/api/admin`;
 const StudentsPage = () => {
@@ -55,7 +56,14 @@ const StudentsPage = () => {
     useEffect(() => {
       const fetchCertificates = async () => {
         try {
-          const response = await axios.get(`${api}/certificates`); // Replace with your backend endpoint
+          const token = localStorage.getItem("token");
+          const response = await axios.get(`${api}/certificates`,
+            {
+              headers: {
+                Authorization: `Bearer ${token}`, // Ensure the token is sent
+              },
+            }
+          ); // Replace with your backend endpoint
           console.log(response.data); // Log the response data for debugging
           setCertificates(response.data); // Assuming the backend returns an array of certificates
           setIsLoading(false);
@@ -80,8 +88,22 @@ const StudentsPage = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedCertificate, setSelectedCertificate] = useState(null);
   const certificatesPerPage = 5;
+  const navigate = useNavigate();
 
-  const [editFormData, setEditFormData] = useState([]);
+  const [editFormData, setEditFormData] = useState({
+    certificateID: '',
+    firstName: '',
+    middleName: '',
+    lastName: '',
+    college: '',
+    department: '',
+    gender: '',
+    gstatus: '',
+    cgpa: '',
+    program: '',
+    startDate: '',
+    endDate: '',
+  });
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
   // college options
@@ -146,22 +168,9 @@ const StudentsPage = () => {
     // Add other colleges and departments
   };
 
-  const handleEditClick = (certificate) => {
-    setSelectedCertificate(certificate);
-    setEditFormData({
-      firstName: certificate.firstName,
-      middleName: certificate.middleName,
-      lastName: certificate.lastName,
-      college: certificate.college,
-      department: certificate.department,
-      program: certificate.program,
-      gstatus: certificate.gstatus,
-      cgpa: certificate.cgpa,
-      gender: certificate.gender,
-      startDate: certificate.startDate,
-      endDate: certificate.endDate,
-    });
-    setIsEditModalOpen(true);
+  const handleEditClick = (certificateID) => {
+    navigate(`/registrar/edit-graduate/${certificateID}`);
+
   };
 
   // Handle form input changes
@@ -178,10 +187,11 @@ const StudentsPage = () => {
     e.preventDefault();
     
     // Validate CGPA
-    if (editFormData.cgpa < 1.75 || editFormData.cgpa > 4.0) {
-      alert("CGPA must be between 1.75 and 4.0");
+    if (editFormData.cgpa < 2.0 || editFormData.cgpa > 4.0) {
+      alert("CGPA must be between 2.0 and 4.0");
       return;
     }
+    
 
     const updatedCertificates = certificates.map((cert) =>
       cert.certificateID === selectedCertificate.certificateID
@@ -191,6 +201,10 @@ const StudentsPage = () => {
     setCertificates(updatedCertificates);
     setIsEditModalOpen(false);
   };
+
+
+
+
   // Get full name
   const getFullName = (certificate) => {
     return `${certificate.firstName} ${certificate.middleName} ${certificate.lastName}`;
@@ -224,7 +238,7 @@ const StudentsPage = () => {
       selectedCollege === "All" || cert.college === selectedCollege;
     const matchesDepartment =
       selectedDepartment === "All" || cert.department === selectedDepartment;
-    const isValidCGPA = cert.cgpa >= 1.75 && cert.cgpa <= 4.0;
+    const isValidCGPA = cert.cgpa >= 2.0 && cert.cgpa <= 4.0;
     return (
       isValidCGPA &&
       matchesSearch &&
@@ -315,7 +329,7 @@ const StudentsPage = () => {
               onChange={(e) => setSelectedStatus(e.target.value)}
             >
               <option value="All">All Statuses</option>
-              <option value="Verified">Verified</option>
+              <option value="verified">Verified</option>
               <option value="Pending">Pending</option>
             </select>
           </div>
@@ -495,7 +509,7 @@ const StudentsPage = () => {
                         <button
                           className="p-2 text-yellow-600 hover:text-yellow-900 dark:text-yellow-400 dark:hover:text-yellow-300 bg-yellow-50 dark:bg-yellow-900/30 rounded-lg hover:bg-yellow-100 dark:hover:bg-yellow-900/50 transition-colors"
                           title="Edit"
-                          onClick={() => handleEditClick(cert)}
+                          onClick={() => handleEditClick(cert.certificateID)}
                         >
                           <FiEdit2 className="h-5 w-5" />
                         </button>
@@ -912,7 +926,7 @@ const StudentsPage = () => {
                         className="w-full rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-700 text-gray-700 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent p-2"
                         required
                       >
-                        <option value="Verified">Verified</option>
+                        <option value="verified">Verified</option>
                         <option value="Pending">Pending</option>
                       </select>
                     </div>

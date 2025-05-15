@@ -29,7 +29,7 @@ const ViewAllGraduate = () => {
             background: "#1f2937",
             color: "#fff",
           });
-          navigate("/admin/login"); // Redirect to login page
+          navigate("/registrar/login"); // Redirect to login page
         } else {
           console.error("Error fetching graduates:", error);
         }

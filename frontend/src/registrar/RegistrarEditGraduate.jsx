@@ -182,7 +182,7 @@ const RegistrarEditGraduate = () => {
             {renderSelect('college', ['Engineering', 'Business', 'Health Science'])}
             {renderSelect('department', ['Computer Science', 'Mechanical Engineering', 'Accounting'])}
             {renderSelect('gender', ['Male', 'Female'])}
-            {renderSelect('gstatus', ['Verified', 'Pending', 'Suspended'])}
+            {renderSelect('gstatus', ['verified', 'pending', 'suspended'])}
             {renderSelect('program', ['BSc', 'MSc', 'PhD'])}
           </div>
 
