@@ -101,7 +101,7 @@ const handleVerifyLogin = async () => {
     <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 px-4 py-12">
       <div className="w-full max-w-md bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 md:p-8">
         <h2 className="text-2xl font-bold text-center text-gray-900 dark:text-white mb-6">
-          User Login
+          Registrar Login Page
         </h2>
 
         {/* Error Message */}
@@ -206,15 +206,7 @@ const handleVerifyLogin = async () => {
               </button>
             </div>
 
-            <div className="mt-4 text-center text-sm text-gray-600 dark:text-gray-400">
-              Don't have an account?{' '}
-              <Link 
-                to="/signup" 
-                className="font-medium text-blue-600 hover:text-blue-500 dark:text-blue-400 dark:hover:text-blue-300"
-              >
-                Sign up
-              </Link>
-            </div>
+
           </>
         ) : (
           <>
