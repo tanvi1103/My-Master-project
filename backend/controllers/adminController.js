@@ -423,6 +423,7 @@ const addStudentCredentials = async (req, res) => {
       gender,
       cgpa,
       program,
+      programType,
       gstatus,
       startDate,
       endDate,
@@ -445,6 +446,7 @@ const addStudentCredentials = async (req, res) => {
       gender,
       cgpa,
       program,
+      programType,
       gstatus,
       startDate,
       endDate,
@@ -458,10 +460,78 @@ const addStudentCredentials = async (req, res) => {
   }
 };
 
+// 
+// add new account 
+// 
+const createUserByAdmin = async (req, res) => {
+  try {
+    const {
+      nationalIdNumber,
+      firstName,
+      middleName,
+      lastName,
+      gender,
+      phone,
+      email,
+      password,
+      role
+    } = req.body;
+
+    // Ensure the logged-in user is an admin
+    if (req.user?.role !== 'admin') {
+      return res.status(403).json({ success: false, error: 'Unauthorized access' });
+    }
+
+    // Check for existing user by national ID or email
+    const existingUser = await User.findOne({
+      $or: [{ nationalIdNumber }, { email }],
+    });
+
+    if (existingUser) {
+      return res.status(400).json({
+        success: false,
+        error:
+          existingUser.nationalIdNumber === nationalIdNumber
+            ? "National ID already registered"
+            : "Email already in use",
+      });
+    }
+
+    // Create user without email verification
+    const newUser = new User({
+      nationalIdNumber,
+      firstName,
+      middleName,
+      lastName,
+      gender,
+      phone,
+      email,
+      password,
+      role: role || 'user', // Default to user
+      isVerified: true // Optional: mark as verified if your schema includes it
+    });
+
+    await newUser.save();
+
+    res.status(201).json({
+      success: true,
+      message: "User created successfully by admin.",
+    });
+  } catch (error) {
+   console.error("Admin user creation error:", error.message, error.stack);
+
+    res.status(500).json({
+      success: false,
+      error: "Failed to create user. Please try again.",
+    });
+  }
+};
+
 // ========================
 // Export Controllers
 // ========================
 module.exports = {
+  createUserByAdmin,
   loginAdmin,
   logoutAdmin,
   uploadFile,
