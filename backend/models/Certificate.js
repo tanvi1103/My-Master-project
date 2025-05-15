@@ -28,11 +28,21 @@ const CertificateSchema = new mongoose.Schema({
   },
   program: {
     type: String,
+    enum: ['BSc', 'MSc', 'PhD'],
     required: true,
+    default: 'BSc'
+  },
+    programType: {
+    type: String,
+    enum: ['regular', 'weekend', 'extension', 'summer', 'distance', 'night'],
+    required: true,
+    default: 'Regular'
   },
   gstatus: {
     type: String,
+    enum: ['verified', 'pending', 'suspended'],
     required: true,
+    default: 'pending'
   },
   cgpa: {
     type: Number,
@@ -54,14 +64,15 @@ const CertificateSchema = new mongoose.Schema({
     }
   },
 
-  startDate: {
+ startDate: {
     type: Date,
     required: true,
+    default: Date.now() - 1000 * 60 * 60 * 24 * 365 * 4
+  
   },
-
   endDate: {
     type: Date,
-    required: true,
+    required: true
   },
 });
 
