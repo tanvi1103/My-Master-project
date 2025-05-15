@@ -127,5 +127,8 @@ userSchema.methods.resetPassword = async function (newPassword) {
   await this.save(); // Save the updated user object
 };
 
+
+
+
 const User = mongoose.model("User", userSchema);
 module.exports = User;
