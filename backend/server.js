@@ -79,12 +79,24 @@ const User = require('./models/User');
 
 // Initialize express app
 const app = express();
+const path = require('path');
 const server = http.createServer(app); // Create HTTP server for Socket.IO
 app.use(cookieParser());
 app.use(helmet());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-
+app.use('/uploads', express.static(path.join(__dirname, 'public/uploads'), {
+  setHeaders: (res, path) => {
+    res.setHeader('Cross-Origin-Resource-Policy', 'cross-origin');
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    // Add proper MIME type
+    if (path.endsWith('.jpeg') || path.endsWith('.jpg')) {
+      res.setHeader('Content-Type', 'image/jpeg');
+    } else if (path.endsWith('.png')) {
+      res.setHeader('Content-Type', 'image/png');
+    }
+  },
+}));
 // Socket.IO setup
 const io = new Server(server, {
   cors: {
