@@ -116,6 +116,7 @@ exports.getCertificateByName = async (req, res) => {
     const {
       firstName, middleName, lastName,
       cgpa, department, endDate, gender,
+      programType, program,
     } = req.query;
 
     console.log("Query Parameters:", req.query);
@@ -133,8 +134,8 @@ exports.getCertificateByName = async (req, res) => {
 
     // Validate CGPA
     const parsedCgpa = parseFloat(cgpa);
-    if (isNaN(parsedCgpa) || parsedCgpa < 1.75 || parsedCgpa > 4.0) {
-      return res.status(400).json({ message: "CGPA must be between 1.75 and 4.00" });
+    if (isNaN(parsedCgpa) || parsedCgpa < 2.0 || parsedCgpa > 4.0) {
+      return res.status(400).json({ message: "CGPA must be between 2.0 and 4.00" });
     }
 
     // Get IP and geo location
@@ -155,6 +156,8 @@ exports.getCertificateByName = async (req, res) => {
       department: { $regex: new RegExp(`^${department.trim()}$`, "i") },
       gender: { $regex: new RegExp(`^${gender.trim()}$`, "i") },
       $expr: { $eq: [{ $year: "$endDate" }, endYear] }, // Or string match alternative
+      programType: { $regex: new RegExp(`^${programType.trim()}$`, "i") },
+      program: { $regex: new RegExp(`^${program.trim()}$`, "i") },
     });
 
     console.log("Certificate Found:", certificate);
@@ -202,6 +205,8 @@ exports.generateCertificatePDF = async (req, res) => {
 
     const fullName = `${certificate.firstName} ${certificate.middleName} ${certificate.lastName}`;
     const department = `Bachelor of Science in ${certificate.department}`;
+    const program = certificate.program;
+    const programType = certificate.programType;
 
     const doc = new PDFDocument({
       size: "A4",
