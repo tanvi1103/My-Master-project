@@ -33,7 +33,8 @@ const uploadExcelFile = async (req, res, next) => {
           I: 'startDate',
           J: 'endDate',
           K: 'program',
-          L: 'gstatus'      
+          L: 'gstatus' , 
+          M: 'programType',   
         }
       }]
     });
@@ -52,7 +53,7 @@ const uploadExcelFile = async (req, res, next) => {
     // Validate required fields
     const requiredFields = ['certificateID', 'firstName', 'middleName', 'lastName', 'department', 
                           'college', 'cgpa', 'startDate', 'endDate', 
-                          'gender', 'program', 'gstatus'];
+                          'gender', 'program', 'gstatus', 'programType'];
     
     const missingFields = requiredFields.filter(field => 
       !certificates[0][field]
@@ -136,6 +137,7 @@ const uploadExcelFile = async (req, res, next) => {
           startDate,
           endDate,
           program: cert.program.trim(),
+          programType: cert.programType.trim(),
           gstatus: cert.gstatus.trim()
         });
       } catch (error) {
