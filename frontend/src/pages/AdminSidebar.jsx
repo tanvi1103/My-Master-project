@@ -1,5 +1,8 @@
 import React from "react";
 import { FaCloudUploadAlt, FaGraduationCap, FaPlus } from "react-icons/fa";
+import { MdPersonAddAlt } from 'react-icons/md';
+// <MdPersonAddAlt />
+
 import { Link } from "react-router-dom";
 
 const AdminSidebar = () => {
@@ -33,10 +36,10 @@ const AdminSidebar = () => {
         </Link>
 
         <Link
-          to="/admin/add-graduate/file"
+          to="/admin/addingUser"
           className="flex items-center gap-3 px-3 py-2 rounded hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-800 dark:text-white transition"
         >
-          <FaCloudUploadAlt />Create New User
+          <MdPersonAddAlt  />Create New User
         </Link>
       </nav>
     </aside>
