@@ -99,21 +99,65 @@ const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 const Admin = require('../models/Admin');
 
+
+// const authenticateUser = async (req, res, next) => {
+//   try {
+//     const token = req.cookies.token || 
+//                  req.headers.authorization?.split(' ')[1];
+    
+//     if (!token) {
+//       return res.status(401).json({ message: 'No token provided' });
+//     }
+
+//     const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    
+//     // Try to find user in both collections
+//     let user = await User.findById(decoded.id || decoded.userId);
+//     let modelType = 'User';
+    
+//     if (!user) {
+//       user = await Admin.findById(decoded.id || decoded.userId);
+//       modelType = 'Admin';
+//     }
+
+//     if (!user) {
+//       return res.status(401).json({ message: 'User not found' });
+//     }
+
+//     // Attach the complete user document with additional metadata
+//     req.user = {
+//       ...user.toObject(), // Convert Mongoose doc to plain object
+//       _id: user._id,
+//       modelType,
+//       role: user.role || 'user'
+//     };
+
+//     next();
+//   } catch (error) {
+//     console.error('Authentication error:', error);
+//     return res.status(401).json({ message: 'Invalid token' });
+//   }
+// };
+
+
 const authenticateUser = async (req, res, next) => {
   try {
-    const token = req.cookies.token || 
-                 req.headers.authorization?.split(' ')[1];
-    
-    if (!token) {
-      return res.status(401).json({ message: 'No token provided' });
+    const authHeader = req.headers.authorization;
+    const token = req.cookies.token ||
+                 (authHeader && authHeader.startsWith('Bearer ') && authHeader.split(' ')[1]);
+
+    // Debug log
+    console.log('Extracted token:', token);
+
+    if (!token || typeof token !== 'string' || token.split('.').length !== 3) {
+      return res.status(401).json({ message: 'Malformed or missing token' });
     }
 
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    
-    // Try to find user in both collections
+
     let user = await User.findById(decoded.id || decoded.userId);
     let modelType = 'User';
-    
+
     if (!user) {
       user = await Admin.findById(decoded.id || decoded.userId);
       modelType = 'Admin';
@@ -123,13 +167,9 @@ const authenticateUser = async (req, res, next) => {
       return res.status(401).json({ message: 'User not found' });
     }
 
-    // Attach the complete user document with additional metadata
-    req.user = {
-      ...user.toObject(), // Convert Mongoose doc to plain object
-      _id: user._id,
-      modelType,
-      role: user.role || 'user'
-    };
+    req.user = user;
+    req.user.modelType = modelType;
+    req.user.role = user.role || 'user';
 
     next();
   } catch (error) {
@@ -137,11 +177,17 @@ const authenticateUser = async (req, res, next) => {
     return res.status(401).json({ message: 'Invalid token' });
   }
 };
+
+
 const roleMiddleware = (roles) => (req, res, next) => {
   if (!req.user || !roles.includes(req.user.role)) {
     return res.status(403).json({ message: 'Forbidden' });
   }
   next();
 };
+
+// ✅ GOOD: You must fetch full Mongoose user document
+
+
 
 module.exports = { authenticateUser, roleMiddleware };
