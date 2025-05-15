@@ -59,6 +59,8 @@ const GraduateSearch = () => {
     department: "",
     gender: "",
     endDate: "",
+    programType: "",
+    program: "",
   });
 
   const [personalDetails, setPersonalDetails] = useState({
@@ -71,6 +73,8 @@ const GraduateSearch = () => {
     cgpa: "",
     department: "",
     endDate: "",
+    programType: "",
+    program: "",
   });
   const nationalidurl = import.meta.env.VITE_NATIONAL_ID_ROUTE;
   useEffect(() => {
@@ -299,6 +303,48 @@ const GraduateSearch = () => {
                   ))}
                 </select>
               </div>
+
+              {/* program */}
+
+                            <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                  Program
+                </label>
+                <select
+                  name="program"
+                  value={academicDetails.program}
+                  onChange={handleAcademicChange}
+                  className="mt-1 p-2 w-full rounded border border-gray-300 dark:border-gray-600 dark:bg-gray-700 text-gray-900 dark:text-white"
+                  required
+                >
+                  <option value="">Select program</option>
+                  <option value="BSc">BSc</option>
+                  <option value="MSc">MSc</option>
+                  <option value="PhD">PhD</option>
+                </select>
+              </div>
+              {/* program Type*/}
+
+                            <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                  ProgramType
+                </label>
+                <select
+                  name="programType"
+                  value={academicDetails.programType}
+                  onChange={handleAcademicChange}
+                  className="mt-1 p-2 w-full rounded border border-gray-300 dark:border-gray-600 dark:bg-gray-700 text-gray-900 dark:text-white"
+                  required
+                >
+                  <option value="">Select program Type</option>
+                  <option value="regular">Regular</option>
+                  <option value="weekend">Weekend</option>
+                  <option value="summer">Summer</option>
+                  <option value="distance">Distance</option>
+                  <option value="night">Night</option>
+                </select>
+              </div>
+       
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                   Graduation Year
