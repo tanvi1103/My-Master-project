@@ -22,6 +22,7 @@ const UserSignup = () => {
 
   const nationalidurl = import.meta.env.VITE_NATIONAL_ID_ROUTE;
   const authurl = import.meta.env.VITE_AUTH_ROUTE;
+  console.log("authurl", authurl);
 
   useEffect(() => {
     if (formData.nationalIdNumber.length > 0 && formData.nationalIdNumber.length !== 16) {
@@ -116,7 +117,7 @@ const UserSignup = () => {
 
     setLoading(true);
     try {
-      const { data } = await axios.post(`${authurl}/register`, {
+      const { data } = await axios.post(`http://localhost:5000/api/auth/register`, {
         nationalIdNumber: formData.nationalIdNumber,
         firstName: formData.firstName,
         middleName: formData.middleName,
@@ -147,7 +148,7 @@ const UserSignup = () => {
 
     setLoading(true);
     try {
-      const { data } = await axios.post(`${authurl}/verify-email`, {
+      const { data } = await axios.post(`http://localhost:5000/api/auth/verify-email`, {
         email: formData.email,
         code: verificationCode
       });

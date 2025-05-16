@@ -76,13 +76,21 @@ const RegistrarLayout = ({ children }) => {
     fetchCurrentUser();
   }, [navigate]);
 
-  const handleLogout = async () => {
+ const handleLogout = async () => {
     try {
-      await axios.post(`${authurl}/logout`, {}, { withCredentials: true });
-      localStorage.removeItem("token");
+      await axios.get("http://localhost:5000/api/admin/logout", { 
+        withCredentials: true 
+      });
+          localStorage.removeItem('token');
+      setCurrentUser(null); // Clear current user state
+      S
+      Swal.fire("Success", "🎉 Logout Successful!", "success");
+      setTimeout(() => {
+        window.location.reload();
+      }, 1000);
       navigate("/registrar/login");
     } catch (error) {
-      console.error("Logout failed:", error);
+      Swal.fire("Error", "❌ Logout Failed", "error");
     }
   };
 
@@ -139,13 +147,7 @@ const RegistrarLayout = ({ children }) => {
 
           {/* User controls */}
           <div className="flex items-center space-x-4">
-            <button
-              onClick={toggleDarkMode}
-              className="p-2 rounded-full text-gray-700 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
-              aria-label="Toggle dark mode"
-            >
-              {darkMode ? <FiSun size={20} /> : <FiMoon size={20} />}
-            </button>
+
             
             {/* User profile */}
             <div className="flex items-center space-x-4">
@@ -239,26 +241,26 @@ const RegistrarLayout = ({ children }) => {
                     className="flex items-center px-4 py-3 rounded-lg text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
                   >
                     <FiUsers className="mr-3" />
-                    <span>Students</span>
+                    <span>Graduates</span>
                   </Link>
                 </li>
                 <li>
-                  <a
-                    href="#"
+                  <Link
+                    to="/registrar/viewallcertificates"
                     className="flex items-center px-4 py-3 rounded-lg text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
                   >
                     <FiFileText className="mr-3" />
-                    <span>Records</span>
-                  </a>
+                    <span>view all certificates</span>
+                  </Link>
                 </li>
                 <li>
-                  <a
-                    href="#"
+                  <Link
+                    to="/registrar/settings"
                     className="flex items-center px-4 py-3 rounded-lg text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
                   >
                     <FiSettings className="mr-3" />
                     <span>Settings</span>
-                  </a>
+                  </Link>
                 </li>
               </ul>
             </nav>

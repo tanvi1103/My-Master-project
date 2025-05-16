@@ -101,7 +101,7 @@ const AddStudentCredentials = () => {
     } else if (name === "cgpa") {
       // Strict CGPA validation
       const cgpaValue = value.trim();
-      if (cgpaValue === "" || (parseFloat(cgpaValue) >= 1.75 && parseFloat(cgpaValue) <= 4.00)) {
+      if (cgpaValue === "" || (parseFloat(cgpaValue) >= 2.0 && parseFloat(cgpaValue) <= 4.00)) {
         setStudent(prev => ({ ...prev, [name]: value }));
       }
     } else {
@@ -125,7 +125,7 @@ const AddStudentCredentials = () => {
         if (!value.trim()) return "CGPA is required";
         const cgpaNum = parseFloat(value);
         if (isNaN(cgpaNum)) return "Must be a number";
-        if (cgpaNum < 1.75 || cgpaNum > 4.0) return "Must be between 1.75 and 4.00";
+        if (cgpaNum < 2.0 || cgpaNum > 4.0) return "Must be between 1.75 and 4.00";
         break;
       case "college":
         if (!value) return "College is required";
@@ -383,7 +383,7 @@ const AddStudentCredentials = () => {
                     name="cgpa"
                     type="number"
                     step="0.01"
-                    min="1.75"
+                    min="2.0"
                     max="4.00"
                     className={`w-full px-4 py-3 rounded-lg border ${
                       currentField === "cgpa" && currentError ? "border-red-500" : "border-gray-300 dark:border-gray-600"

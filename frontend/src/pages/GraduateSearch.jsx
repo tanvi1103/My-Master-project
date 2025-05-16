@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import FAQSection from "../user/FAQSection";
 const departments = [
   "Mechanical engineering",
   "Civil Engineering",
@@ -177,20 +178,251 @@ const GraduateSearch = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 px-4 py-12 overflow-x-hidden">
-      <div className="w-full max-w-full md:max-w-7xl bg-white dark:bg-gray-800 rounded-xl shadow-lg p-4 md:p-8">
-        <h2 className="text-2xl md:text-4xl font-bold text-center text-gray-900 dark:text-white mb-6">
-          Search Graduate
-        </h2>
+    // <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 px-4 py-12 overflow-x-hidden">
+    //   <div className="w-full max-w-full md:max-w-7xl bg-white dark:bg-gray-800 rounded-xl shadow-lg p-4 md:p-8">
+    //     <h2 className="text-2xl md:text-4xl font-bold text-center text-gray-900 dark:text-white mb-6">
+    //       Search Graduate
+    //     </h2>
 
-        {/* National ID Search Field */}
-        <div className="mb-6">
+    //     {/* National ID Search Field */}
+    //     <div className="mb-6">
+    //       <label
+    //         htmlFor="nationalId"
+    //         className="block text-lg font-medium text-gray-700 dark:text-gray-300 mb-2"
+    //       >
+    //         Search graduate by National ID (16 digits)
+    //       </label>
+    //       <input
+    //         type="text"
+    //         id="nationalId"
+    //         name="nationalId"
+    //         placeholder="Enter 16-digit National ID"
+    //         value={nationalId}
+    //         onChange={handleNationalIdChange}
+    //         className="w-full p-3 rounded border border-gray-300 dark:border-gray-600 dark:bg-gray-700 text-gray-900 dark:text-white"
+    //         maxLength={16}
+    //       />
+    //       {isFetching && (
+    //         <p className="mt-2 text-blue-500">Searching national records...</p>
+    //       )}
+    //       {error && nationalId.length !== 16 && (
+    //         <p className="mt-2 text-red-500">{error}</p>
+    //       )}
+    //     </div>
+
+    //     {/* Personal Details (from National ID) */}
+    //     {personalDetails.firstName && (
+    //       <div className="mb-6 p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
+    //         <h3 className="text-lg font-semibold mb-3 text-gray-800 dark:text-gray-200">
+    //           Personal Details (from National ID)
+    //         </h3>
+    //         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+    //           <div>
+    //             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+    //               First Name
+    //             </label>
+    //             <input
+    //               type="text"
+    //               value={personalDetails.firstName}
+    //               readOnly
+    //               className="mt-1 p-2 w-full bg-gray-100 dark:bg-gray-600 rounded border border-gray-300 dark:border-gray-500 text-gray-900 dark:text-white"
+    //             />
+    //           </div>
+    //           <div>
+    //             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+    //               Middle Name
+    //             </label>
+    //             <input
+    //               type="text"
+    //               value={personalDetails.middleName}
+    //               readOnly
+    //               className="mt-1 p-2 w-full bg-gray-100 dark:bg-gray-600 rounded border border-gray-300 dark:border-gray-500 text-gray-900 dark:text-white"
+    //             />
+    //           </div>
+    //           <div>
+    //             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+    //               Last Name
+    //             </label>
+    //             <input
+    //               type="text"
+    //               value={personalDetails.lastName}
+    //               readOnly
+    //               className="mt-1 p-2 w-full bg-gray-100 dark:bg-gray-600 rounded border border-gray-300 dark:border-gray-500 text-gray-900 dark:text-white"
+    //             />
+    //           </div>
+    //           <div>
+    //             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+    //               Gender
+    //             </label>
+    //             <input
+    //               type="text"
+    //               value={personalDetails.gender}
+    //               readOnly
+    //               className="mt-1 p-2 w-full bg-gray-100 dark:bg-gray-600 rounded border border-gray-300 dark:border-gray-500 text-gray-900 dark:text-white"
+    //             />
+    //           </div>
+    //         </div>
+    //       </div>
+    //     )}
+
+    //     {/* Academic Details (for certificate search) */}
+    //     {personalDetails.firstName && (
+    //       <form onSubmit={handleSearch} className="flex flex-col gap-4">
+    //         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+    //           <div>
+    //             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+    //               CGPA
+    //             </label>
+    //             <input
+    //               type="number"
+    //               name="cgpa"
+    //               value={academicDetails.cgpa}
+    //               onChange={handleAcademicChange}
+    //               min="2.00"
+    //               max="4.00"
+    //               step="0.01"
+    //               className="mt-1 p-2 w-full rounded border border-gray-300 dark:border-gray-600 dark:bg-gray-700 text-gray-900 dark:text-white"
+    //               required
+    //             />
+    //           </div>
+    //           <div>
+    //             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+    //               Department
+    //             </label>
+    //             <select
+    //               name="department"
+    //               value={academicDetails.department}
+    //               onChange={handleAcademicChange}
+    //               className="mt-1 p-2 w-full rounded border border-gray-300 dark:border-gray-600 dark:bg-gray-700 text-gray-900 dark:text-white"
+    //               required
+    //             >
+    //               <option value="">Select Department</option>
+    //               {departments.sort((a, b)=>a.localeCompare(b)).map((dept, index) => (
+    //                 <option key={index} value={dept}>
+    //                   {dept}
+    //                 </option>
+    //               ))}
+    //             </select>
+    //           </div>
+
+    //           {/* program */}
+
+    //                         <div>
+    //             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+    //               Program
+    //             </label>
+    //             <select
+    //               name="program"
+    //               value={academicDetails.program}
+    //               onChange={handleAcademicChange}
+    //               className="mt-1 p-2 w-full rounded border border-gray-300 dark:border-gray-600 dark:bg-gray-700 text-gray-900 dark:text-white"
+    //               required
+    //             >
+    //               <option value="">Select program</option>
+    //               <option value="BSc">BSc</option>
+    //               <option value="MSc">MSc</option>
+    //               <option value="PhD">PhD</option>
+    //             </select>
+    //           </div>
+    //           {/* program Type*/}
+
+    //                         <div>
+    //             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+    //               ProgramType
+    //             </label>
+    //             <select
+    //               name="programType"
+    //               value={academicDetails.programType}
+    //               onChange={handleAcademicChange}
+    //               className="mt-1 p-2 w-full rounded border border-gray-300 dark:border-gray-600 dark:bg-gray-700 text-gray-900 dark:text-white"
+    //               required
+    //             >
+    //               <option value="">Select program Type</option>
+    //               <option value="regular">Regular</option>
+    //               <option value="weekend">Weekend</option>
+    //               <option value="summer">Summer</option>
+    //               <option value="distance">Distance</option>
+    //               <option value="night">Night</option>
+    //             </select>
+    //           </div>
+       
+    //           <div>
+    //             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+    //               Graduation Year
+    //             </label>
+    //             <select
+    //               name="endDate"
+    //               value={academicDetails.endDate}
+    //               onChange={handleAcademicChange}
+    //               className="mt-1 p-2 w-full rounded border border-gray-300 dark:border-gray-600 dark:bg-gray-700 text-gray-900 dark:text-white"
+    //               required
+    //             >
+    //               <option value="">Select Year</option>
+    //               <option value="2021">2021</option>
+    //               <option value="2022">2022</option>
+    //               <option value="2023">2023</option>
+    //               <option value="2024">2024</option>
+    //               <option value="2025">2025</option>
+    //             </select>
+    //           </div>
+    //         </div>
+
+    //         <button
+    //           type="submit"
+    //           className="mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition"
+    //           disabled={!personalDetails.firstName || isSearching}
+    //         >
+    //           {isSearching ? "Searching..." : "Search Certificate"}
+    //         </button>
+    //       </form>
+    //     )}
+
+    //     {error && nationalId.length === 16 && (
+    //       <p className="mt-4 text-red-600">{error}</p>
+    //     )}
+
+    //     {certificate && (
+    //       <div className="mt-6 p-4 bg-gray-100 dark:bg-gray-700 rounded-lg">
+    //         <h3 className="text-lg font-semibold mb-2">Certificate Found</h3>
+    //         <p>Full Name: {certificate.firstName} {certificate.middleName} {certificate.lastName}</p>
+    //         <button
+    //           onClick={handleOpen}
+    //           className="mt-3 px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition"
+    //         >
+    //           View Certificate
+    //         </button>
+    //       </div>
+    //     )}
+    //   </div>
+    // </div>
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-gray-50 dark:from-gray-900 dark:to-gray-800 py-12 px-4 sm:px-6">
+  <div className="max-w-4xl mx-auto bg-white dark:bg-gray-800 rounded-2xl shadow-xl overflow-hidden">
+    {/* Header Section */}
+    <div className="bg-blue-600 dark:bg-blue-800 px-6 py-4">
+      <h2 className="text-2xl md:text-3xl font-bold text-center text-white">
+        Graduate Verification Portal
+      </h2>
+      <p className="text-center text-blue-100 mt-1">
+        Verify academic credentials issued by Bonga University
+      </p>
+    </div>
+
+    <div className="p-6 md:p-8">
+      {/* National ID Search Section */}
+      <div className="mb-8">
+        <div className="flex items-center justify-between mb-3">
           <label
             htmlFor="nationalId"
-            className="block text-lg font-medium text-gray-700 dark:text-gray-300 mb-2"
+            className="block text-lg font-semibold text-gray-800 dark:text-gray-200"
           >
-            Search by National ID (16 digits)
+            Search by National ID
           </label>
+          <span className="text-sm text-gray-500 dark:text-gray-400">
+            Required (16 digits)
+          </span>
+        </div>
+        
+        <div className="relative">
           <input
             type="text"
             id="nationalId"
@@ -198,78 +430,78 @@ const GraduateSearch = () => {
             placeholder="Enter 16-digit National ID"
             value={nationalId}
             onChange={handleNationalIdChange}
-            className="w-full p-3 rounded border border-gray-300 dark:border-gray-600 dark:bg-gray-700 text-gray-900 dark:text-white"
+            className="w-full p-4 rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
             maxLength={16}
           />
           {isFetching && (
-            <p className="mt-2 text-blue-500">Searching national records...</p>
-          )}
-          {error && nationalId.length !== 16 && (
-            <p className="mt-2 text-red-500">{error}</p>
+            <div className="absolute inset-y-0 right-0 flex items-center pr-3">
+              <div className="animate-spin h-5 w-5 text-blue-600" />
+            </div>
           )}
         </div>
+        
+        {error && nationalId.length !== 16 && (
+          <p className="mt-2 text-sm text-red-600 dark:text-red-400 flex items-center">
+            <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            {error}
+          </p>
+        )}
+      </div>
 
-        {/* Personal Details (from National ID) */}
-        {personalDetails.firstName && (
-          <div className="mb-6 p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
-            <h3 className="text-lg font-semibold mb-3 text-gray-800 dark:text-gray-200">
-              Personal Details (from National ID)
+      {/* Personal Details Section */}
+      {personalDetails.firstName && (
+        <div className="mb-8 p-5 bg-blue-50 dark:bg-gray-700 rounded-xl border border-blue-100 dark:border-gray-600">
+          <div className="flex items-center mb-4">
+            <div className="bg-blue-100 dark:bg-blue-900 p-2 rounded-full mr-3">
+              <svg className="w-5 h-5 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+              </svg>
+            </div>
+            <h3 className="text-xl font-semibold text-gray-800 dark:text-gray-200">
+              Personal Information
             </h3>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {[
+              { label: "First Name", value: personalDetails.firstName },
+              { label: "Middle Name", value: personalDetails.middleName },
+              { label: "Last Name", value: personalDetails.lastName },
+              { label: "Gender", value: personalDetails.gender }
+            ].map((field, index) => (
+              <div key={index}>
+                <label className="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">
+                  {field.label}
+                </label>
+                <div className="p-3 bg-white dark:bg-gray-600 rounded-lg border border-gray-200 dark:border-gray-500 text-gray-800 dark:text-gray-100">
+                  {field.value || "N/A"}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Academic Search Form */}
+      {personalDetails.firstName && (
+        <form onSubmit={handleSearch} className="space-y-6">
+          <div className="bg-blue-50 dark:bg-gray-700 rounded-xl p-5 border border-blue-100 dark:border-gray-600">
+            <div className="flex items-center mb-4">
+              <div className="bg-blue-100 dark:bg-blue-900 p-2 rounded-full mr-3">
+                <svg className="w-5 h-5 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                </svg>
+              </div>
+              <h3 className="text-xl font-semibold text-gray-800 dark:text-gray-200">
+                Academic Information
+              </h3>
+            </div>
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                  First Name
-                </label>
-                <input
-                  type="text"
-                  value={personalDetails.firstName}
-                  readOnly
-                  className="mt-1 p-2 w-full bg-gray-100 dark:bg-gray-600 rounded border border-gray-300 dark:border-gray-500 text-gray-900 dark:text-white"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                  Middle Name
-                </label>
-                <input
-                  type="text"
-                  value={personalDetails.middleName}
-                  readOnly
-                  className="mt-1 p-2 w-full bg-gray-100 dark:bg-gray-600 rounded border border-gray-300 dark:border-gray-500 text-gray-900 dark:text-white"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                  Last Name
-                </label>
-                <input
-                  type="text"
-                  value={personalDetails.lastName}
-                  readOnly
-                  className="mt-1 p-2 w-full bg-gray-100 dark:bg-gray-600 rounded border border-gray-300 dark:border-gray-500 text-gray-900 dark:text-white"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                  Gender
-                </label>
-                <input
-                  type="text"
-                  value={personalDetails.gender}
-                  readOnly
-                  className="mt-1 p-2 w-full bg-gray-100 dark:bg-gray-600 rounded border border-gray-300 dark:border-gray-500 text-gray-900 dark:text-white"
-                />
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Academic Details (for certificate search) */}
-        {personalDetails.firstName && (
-          <form onSubmit={handleSearch} className="flex flex-col gap-4">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                <label className="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">
                   CGPA
                 </label>
                 <input
@@ -280,23 +512,24 @@ const GraduateSearch = () => {
                   min="2.00"
                   max="4.00"
                   step="0.01"
-                  className="mt-1 p-2 w-full rounded border border-gray-300 dark:border-gray-600 dark:bg-gray-700 text-gray-900 dark:text-white"
+                  className="w-full p-3 rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-600 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   required
                 />
               </div>
+
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                <label className="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">
                   Department
                 </label>
                 <select
                   name="department"
                   value={academicDetails.department}
                   onChange={handleAcademicChange}
-                  className="mt-1 p-2 w-full rounded border border-gray-300 dark:border-gray-600 dark:bg-gray-700 text-gray-900 dark:text-white"
+                  className="w-full p-3 rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-600 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   required
                 >
                   <option value="">Select Department</option>
-                  {departments.sort((a, b)=>a.localeCompare(b)).map((dept, index) => (
+                  {departments.sort((a, b) => a.localeCompare(b)).map((dept, index) => (
                     <option key={index} value={dept}>
                       {dept}
                     </option>
@@ -304,39 +537,36 @@ const GraduateSearch = () => {
                 </select>
               </div>
 
-              {/* program */}
-
-                            <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+              <div>
+                <label className="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">
                   Program
                 </label>
                 <select
                   name="program"
                   value={academicDetails.program}
                   onChange={handleAcademicChange}
-                  className="mt-1 p-2 w-full rounded border border-gray-300 dark:border-gray-600 dark:bg-gray-700 text-gray-900 dark:text-white"
+                  className="w-full p-3 rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-600 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   required
                 >
-                  <option value="">Select program</option>
-                  <option value="BSc">BSc</option>
-                  <option value="MSc">MSc</option>
-                  <option value="PhD">PhD</option>
+                  <option value="">Select Program</option>
+                  <option value="BSc">Bachelor's Degree (BSc)</option>
+                  <option value="MSc">Master's Degree (MSc)</option>
+                  <option value="PhD">Doctorate (PhD)</option>
                 </select>
               </div>
-              {/* program Type*/}
 
-                            <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                  ProgramType
+              <div>
+                <label className="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">
+                  Program Type
                 </label>
                 <select
                   name="programType"
                   value={academicDetails.programType}
                   onChange={handleAcademicChange}
-                  className="mt-1 p-2 w-full rounded border border-gray-300 dark:border-gray-600 dark:bg-gray-700 text-gray-900 dark:text-white"
+                  className="w-full p-3 rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-600 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   required
                 >
-                  <option value="">Select program Type</option>
+                  <option value="">Select Program Type</option>
                   <option value="regular">Regular</option>
                   <option value="weekend">Weekend</option>
                   <option value="summer">Summer</option>
@@ -344,56 +574,100 @@ const GraduateSearch = () => {
                   <option value="night">Night</option>
                 </select>
               </div>
-       
+
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                <label className="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">
                   Graduation Year
                 </label>
                 <select
                   name="endDate"
                   value={academicDetails.endDate}
                   onChange={handleAcademicChange}
-                  className="mt-1 p-2 w-full rounded border border-gray-300 dark:border-gray-600 dark:bg-gray-700 text-gray-900 dark:text-white"
+                  className="w-full p-3 rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-600 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   required
                 >
                   <option value="">Select Year</option>
-                  <option value="2021">2021</option>
-                  <option value="2022">2022</option>
-                  <option value="2023">2023</option>
-                  <option value="2024">2024</option>
-                  <option value="2025">2025</option>
+                  {Array.from({length: 10}, (_, i) => new Date().getFullYear() - 5 + i)
+                    .map(year => (
+                      <option key={year} value={year}>{year}</option>
+                    ))}
                 </select>
               </div>
             </div>
-
-            <button
-              type="submit"
-              className="mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition"
-              disabled={!personalDetails.firstName || isSearching}
-            >
-              {isSearching ? "Searching..." : "Search Certificate"}
-            </button>
-          </form>
-        )}
-
-        {error && nationalId.length === 16 && (
-          <p className="mt-4 text-red-600">{error}</p>
-        )}
-
-        {certificate && (
-          <div className="mt-6 p-4 bg-gray-100 dark:bg-gray-700 rounded-lg">
-            <h3 className="text-lg font-semibold mb-2">Certificate Found</h3>
-            <p>Full Name: {certificate.firstName} {certificate.middleName} {certificate.lastName}</p>
-            <button
-              onClick={handleOpen}
-              className="mt-3 px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition"
-            >
-              View Certificate
-            </button>
           </div>
-        )}
-      </div>
+
+          <button
+            type="submit"
+            disabled={!personalDetails.firstName || isSearching}
+            className={`w-full py-3 px-6 rounded-xl font-medium text-white transition-all ${isSearching ? 'bg-blue-400' : 'bg-blue-600 hover:bg-blue-700'} flex justify-center items-center`}
+          >
+            {isSearching ? (
+              <>
+                <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                Searching Records...
+              </>
+            ) : (
+              'Search Academic Records'
+            )}
+          </button>
+        </form>
+      )}
+
+      {/* Error Message */}
+      {error && nationalId.length === 16 && (
+        <div className="mt-6 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
+          <div className="flex items-center text-red-600 dark:text-red-400">
+            <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <span className="font-medium">{error}</span>
+          </div>
+        </div>
+      )}
+
+      {/* Certificate Found Section */}
+      {certificate && (
+        <div className="mt-8 p-5 bg-green-50 dark:bg-gray-700 rounded-xl border border-green-200 dark:border-gray-600">
+          <div className="flex items-center mb-3">
+            <div className="bg-green-100 dark:bg-green-900/50 p-2 rounded-full mr-3">
+              <svg className="w-5 h-5 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            </div>
+            <h3 className="text-xl font-semibold text-gray-800 dark:text-gray-200">
+              Certificate Verified
+            </h3>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+            <div>
+              <p className="text-sm text-gray-600 dark:text-gray-400">Graduate Name</p>
+              <p className="font-medium">{certificate.firstName} {certificate.middleName} {certificate.lastName}</p>
+            </div>
+            <div>
+              <p className="text-sm text-gray-600 dark:text-gray-400">Program</p>
+              <p className="font-medium">{certificate.program} in {certificate.department}</p>
+            </div>
+          </div>
+          
+          <button
+            onClick={handleOpen}
+            className="w-full py-3 px-6 bg-green-600 hover:bg-green-700 text-white rounded-xl font-medium transition-colors flex items-center justify-center"
+          >
+            <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+            </svg>
+            View Full Certificate Details
+          </button>
+        </div>
+      )}
     </div>
+  </div>
+</div>
   );
 };
 

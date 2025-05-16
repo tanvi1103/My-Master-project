@@ -12,7 +12,7 @@ const createAdmin = async () => {
     
   const existingAdmin = await Admin.findOne({ email: "madishamadiso00@gmail.com" });
     if (!existingAdmin) {
-      const hashedPassword = await bcrypt.hash("1234", 10);
+      const hashedPassword = await bcrypt.hash("A12345a@", 10);
       const newAdmin = new Admin({
         email: "madishamadiso00@gmail.com",
         password: hashedPassword,

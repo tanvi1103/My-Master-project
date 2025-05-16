@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { FaGraduationCap, FaPlus, FaCloudUploadAlt } from 'react-icons/fa';
+import AdminDashBoard from '../admin/AdminDashBoard';
 
 const AdminDashboard = () => {
   return (
@@ -59,6 +60,7 @@ const AdminDashboard = () => {
           </div>
         </Link>
       </div>
+      <AdminDashBoard />
     </div>
   );
 };

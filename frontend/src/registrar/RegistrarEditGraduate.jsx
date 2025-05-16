@@ -55,7 +55,7 @@ const RegistrarEditGraduate = () => {
 
   // Field-specific validation
   const nameRegex = /^[A-Za-z\s-]+$/;
-  const certificateIDRegex = /^[A-Za-z0-9]+$/;
+ const certificateIDRegex = /^[A-Za-z0-9-]+$/;
   
   const validateForm = () => {
     if (!formData.firstName.trim()) return "First name is required";
@@ -179,8 +179,42 @@ const RegistrarEditGraduate = () => {
 
           {/* Selects */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {renderSelect('college', ['Engineering', 'Business', 'Health Science'])}
-            {renderSelect('department', ['Computer Science', 'Mechanical Engineering', 'Accounting'])}
+            {renderSelect('college', ['Engineering and Technology', 'Business and Economics', 'Agriculture and Natural Resource', 'Social Science and Humanities', 'Health Science', 'Natural and Computational Science'])}
+            {renderSelect('department',  [ "Computer Science",
+    "Mechanical Engineering",
+    "Electrical Engineering",
+    "Civil Engineering", "Accounting and Finance",
+    "Banking and Finance",
+    "Economics",
+    "Marketing Management",
+    "Management",
+    "Public Administration",
+    "Hotel and Tourism Management", "English Language and Literature",
+    "History and Heritage management",
+    "Geography and Environmental studies",
+    "Curriculum and Instruction",
+    "Psychology",
+    "Special Needs and Inclusive Education",
+    "Law",
+    "Sociology",
+    "Civics and Ethical Studies",
+    "Political Science and International Relations",
+  "Mathematics",
+    "Physics",
+    "Chemistry",
+    "Biology",
+    "Statistics",
+    "Geology",
+    "Sports Science", "Animal Science",
+    "Agro economics",
+    "Natural Resource Management",
+    "soil and water conservation",
+    "Horticulture",
+    "Plant Science",
+    "Forestry",
+    "Veterinary Medicine",
+    "Coffee Science and Technology",
+  ])}
             {renderSelect('gender', ['Male', 'Female'])}
             {renderSelect('gstatus', ['verified', 'pending', 'suspended'])}
             {renderSelect('program', ['BSc', 'MSc', 'PhD'])}

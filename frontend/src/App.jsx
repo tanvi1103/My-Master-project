@@ -18,7 +18,6 @@ import BulkGraduateUpload from "./pages/BulkGraduateUpload";
 import SingleGraduateForm from "./pages/SingleGraduateForm";
 import UserSignup from "./pages/UserSignup";
 
-import RegistrarDashboard from "./registrar/RegistrarDashboard ";
 import RegistrarLayout from "./registrar/RegistrarLayout"; 
 import StudentsPage from "./registrar/StudentsPage";
 import UserLogin from "./pages/UserLogin";
@@ -51,13 +50,48 @@ const App = () => {
       <Routes>
         {/* <Route path="/externalUser" element={<UserLayout />} /> */}
         <Route path="/" element={<LandingPage />} />
-        <Route path="/signup" element={<UserSignup />} />
-        <Route path="/login" element={<UserLogin />} />
+        {/* <Route path="/signup" element={<UserSignup />} /> */}
+        {/* <Route path="/login" element={<UserLogin />} /> */}
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/search" element={<GraduateSearch />} />
         {/* <Route path="/certificate/:id" element={<CertificateDetail />} /> */}
-        <Route path="/admin/login" element={<AdminLogin />} />
-        <Route path="/registrar/login" element={<RegistrarLogin />} />
+        {/* <Route path="/admin/login" element={<AdminLogin />} /> */}
+        {/* <Route path="/registrar/login" element={<RegistrarLogin />} /> */}
+
+        {/* Internal user routes */}  
+        <Route path="/login" element={
+          <LandingPage>
+            <UserLogin />
+          </LandingPage>
+        } />
+        {/* Internal user routes */}  
+        <Route path="/signup" element={
+          <LandingPage>
+            <UserSignup />
+          </LandingPage>
+        } />
+        <Route path="/registrar/login" element={
+          <LandingPage>
+            <RegistrarLogin />
+          </LandingPage>
+        } />
+        {/* Internal user routes */}  
+        <Route path="/admin/login" element={
+          <LandingPage>
+            <AdminLogin />
+          </LandingPage>
+        } />
+        <Route path="/login" element={
+          <LandingPage>
+            <UserLogin />
+          </LandingPage>
+        } />
+        {/* Internal user routes */}  
+        <Route path="/signup" element={
+          <LandingPage>
+            <UserSignup />
+          </LandingPage>
+        } />
 
 {/* External user routes */}
         <Route path="/externalUser" element={
@@ -163,6 +197,15 @@ const App = () => {
               <div className="space-y-4">
                 <h3 className="text-lg font-semibold text-gray-800 dark:text-white">You can modify your Profile picture and Phone number only!</h3>
                 <ProfilePage />
+                {/* Add your dashboard content here */}
+              </div>
+            </RegistrarLayout>
+        } />
+        <Route path="/registrar/addgraduate" element={
+                  <RegistrarLayout currentUser={currentUser}>
+
+              <div className="space-y-4">
+                <AddGraduate />
                 {/* Add your dashboard content here */}
               </div>
             </RegistrarLayout>

@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { Menu, X, Sun, Moon, Bell, User, GraduationCap, Home, FileText, ShieldCheck, MessageSquare, ChevronDown } from 'lucide-react';
 import UserChatPage from './UserChatPage';
 import axios from 'axios';
+import { FaFacebook, FaLinkedin, FaMapMarkerAlt, FaTwitter } from 'react-icons/fa';
 
 const UserLayout = ({ children }) => {
     const [chatMinimized, setChatMinimized] = useState(false);
@@ -64,6 +65,46 @@ const UserLayout = ({ children }) => {
     };
     fetchCurrentUser();
   }, []);
+  // Handle logout
+const handleAdminLogout = async () => {
+  try {
+    // 1. First make the logout request to server
+    await axios.get("http://localhost:5000/api/admin/logout", { 
+      withCredentials: true 
+    });
+
+    // 2. Then clear client-side state
+    localStorage.removeItem('token');
+    setCurrentUser(null);
+    
+    // 3. Show success message
+    await Swal.fire({
+      title: "Success", 
+      text: "🎉 Logout Successful!", 
+      icon: "success",
+      timer: 1500,  // Auto close after 1.5 seconds
+      showConfirmButton: false
+    });
+
+    // 4. Navigate to login
+    navigate("/login");
+
+  } catch (error) {
+    console.error("Logout error:", error);
+    
+    // Fallback client-side logout if server fails
+    localStorage.removeItem('token');
+    setCurrentUser(null);
+    
+    await Swal.fire({
+      title: "Error",
+      text: "❌ Logout Failed - You have been signed out locally",
+      icon: "error"
+    });
+    
+    navigate("/login");
+  }
+}
   // Sidebar navigation items
   const navItems = [
     { name: 'Dashboard', icon: Home, path: '/dashboard' },
@@ -89,23 +130,14 @@ const UserLayout = ({ children }) => {
               <Link to="/" className="ml-4 flex items-center">
                 <GraduationCap className="w-8 h-8 text-blue-600 dark:text-blue-400" />
                 <span className="ml-2 text-xl font-bold text-gray-800 dark:text-white">
-                  Bona CredVerify
+                  BUGCVS
                 </span>
               </Link>
             </div>
 
             {/* Right Section */}
             <div className="flex items-center gap-4">
-              <button
-                onClick={() => setDarkMode(!darkMode)}
-                className="p-2 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200"
-              >
-                {darkMode ? (
-                  <Sun className="w-5 h-5" />
-                ) : (
-                  <Moon className="w-5 h-5" />
-                )}
-              </button>
+
 
               <button className="p-2 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200">
                 <Bell className="w-5 h-5" />
@@ -135,6 +167,7 @@ const UserLayout = ({ children }) => {
                 </button>
               </div>
                <button
+            onClick={handleAdminLogout}
             className="px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg transition-colors shadow-sm"
           >
             Logout
@@ -145,36 +178,7 @@ const UserLayout = ({ children }) => {
       </header>
 
       {/* Sidebar */}
-      <aside
-        className={`fixed inset-y-0 left-0 z-30 w-64 bg-white dark:bg-gray-800 shadow-lg transform transition-transform duration-300 ${
-          isSidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'
-        }`}
-      >
-        <div className="flex items-center justify-between h-16 px-4 border-b dark:border-gray-700">
-          <span className="text-lg font-semibold text-gray-800 dark:text-white">
-            Navigation
-          </span>
-          <button
-            onClick={() => setIsSidebarOpen(false)}
-            className="md:hidden p-2 text-gray-500 dark:text-gray-400"
-          >
-            <X className="w-6 h-6" />
-          </button>
-        </div>
-        
-        <nav className="mt-4">
-          {navItems.map((item) => (
-            <Link
-              key={item.name}
-              to={item.path}
-              className="flex items-center px-4 py-3 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
-            >
-              <item.icon className="w-5 h-5 mr-3 text-gray-500 dark:text-gray-400" />
-              {item.name}
-            </Link>
-          ))}
-        </nav>
-      </aside>
+
 
       {/* Main Content */}
       <main className="pt-16 md:ml-64 min-h-screen">
@@ -213,22 +217,82 @@ const UserLayout = ({ children }) => {
             )}
 
       {/* Footer */}
-      <footer className="bg-white dark:bg-gray-800 border-t dark:border-gray-700">
-        <div className="mx-auto px-4 sm:px-6 lg:px-8 py-6">
-          <div className="flex flex-col md:flex-row items-center justify-between">
-            <p className="text-gray-600 dark:text-gray-400 text-sm text-center">
-              © {new Date().getFullYear()} Bona University Credential Verification System. 
-              All rights reserved.
-            </p>
-            <div className="mt-4 md:mt-0 flex space-x-6">
-              <Link to="/privacy" className="text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 text-sm">
-                Privacy Policy
-              </Link>
-              <Link to="/terms" className="text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 text-sm">
-                Terms of Service
-              </Link>
+      <footer className="bg-gray-800 sticky dark:bg-gray-950 text-white py-8 px-6 z-200">
+        <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div>
+            <h3 className="text-xl font-bold mb-4">Bonga University</h3>
+            <p className="mb-2">P.O. Box: 334, Bonga, Ethiopia</p>
+            <p className="mb-2">Email: info@bongau.edu.et</p>
+            <p>Phone: +251 XX XXX XXXX</p>
+          </div>
+          <div>
+            <h3 className="text-xl font-bold mb-4">Quick Links</h3>
+            <ul className="space-y-2">
+              <li>
+                <Link to="/" className="hover:text-blue-400">
+                  Home
+                </Link>
+              </li>
+              <li>
+                <Link to="/verify" className="hover:text-blue-400">
+                  Verify Documents
+                </Link>
+              </li>
+              <li>
+                <Link to="/about" className="hover:text-blue-400">
+                  About Us
+                </Link>
+              </li>
+              <li>
+                <Link to="/contact" className="hover:text-blue-400">
+                  Contact
+                </Link>
+              </li>
+            </ul>
+          </div>
+          <div>
+            <h3 className="text-xl font-bold mb-4">Find Us</h3>
+            <div className="mb-4">
+              <a
+                href="https://www.google.com/maps/place/Bonga+University"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center hover:text-blue-400"
+              >
+                <FaMapMarkerAlt className="mr-2" />
+                View on Google Maps
+              </a>
+            </div>
+            <div className="flex space-x-4">
+              <a
+                href="https://facebook.com/bongau"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <FaFacebook size={24} className="hover:text-blue-400" />
+              </a>
+              <a
+                href="https://twitter.com/bongau"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <FaTwitter size={24} className="hover:text-blue-400" />
+              </a>
+              <a
+                href="https://linkedin.com/school/bonga-university"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <FaLinkedin size={24} className="hover:text-blue-400" />
+              </a>
             </div>
           </div>
+        </div>
+        <div className="max-w-7xl mx-auto mt-8 pt-4 border-t border-gray-700 text-center">
+          <p>
+            &copy; {new Date().getFullYear()} Bonga University. All rights
+            reserved.
+          </p>
         </div>
       </footer>
     </div>
