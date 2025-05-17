@@ -39,7 +39,7 @@ axios.defaults.withCredentials = true;
 
 const App = () => {
   const [currentUser, setCurrentUser] = useState(null);
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
 
 
 
