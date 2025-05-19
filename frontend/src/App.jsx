@@ -1,7 +1,7 @@
 import React from "react";
 
 import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate } from "react-router-dom";
-// import { Toaster } from "react-hot-toast";
+import { Toaster } from "react-hot-toast";
 import LandingPage from "./pages/LandingPage";
 import GraduateSearch from "./pages/GraduateSearch";
 import AdminLogin from "./pages/AdminLogin";
@@ -46,7 +46,7 @@ const App = () => {
 
   return (
     <ThemeProvider>
-      {/* <Toaster position="top-center" reverseOrder={false} /> */}
+      <Toaster position="top-center" reverseOrder={false} />
       <Routes>
         {/* <Route path="/externalUser" element={<UserLayout />} /> */}
         <Route path="/" element={<LandingPage />} />
