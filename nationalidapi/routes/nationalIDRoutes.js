@@ -1,7 +1,7 @@
 // routes/nationalIDRoutes.js
 import express from 'express';
 import multer from 'multer';
-import { createNationalID, getNationalIdByFIN, getNationalIDByName, searchNationalIDs, uploadNationalIDsExcel } from '../controllers/nationalIDController.js';
+import { createNationalID, getAllNationalId, getNationalIdByFIN, getNationalIDByName, searchNationalIDs, uploadNationalIDsExcel } from '../controllers/nationalIDController.js';
 const router = express.Router();
 
 const storage = multer.diskStorage({
@@ -30,6 +30,7 @@ const upload = multer({
 });
 
 router.post('/', createNationalID);
+router.get('/', getAllNationalId)
 router.get('/search', searchNationalIDs);
 router.get('/:nationalIdNumber', getNationalIdByFIN)
 router.get('/search/name', getNationalIDByName); // Search by name (first, middle, last)
