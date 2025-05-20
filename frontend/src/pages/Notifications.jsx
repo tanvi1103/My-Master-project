@@ -513,13 +513,16 @@ const Notifications = () => {
   const dropdownRef = useRef(null);
 
   const apiUrl = import.meta.env.VITE_ADMIN_ROUTE;
+
   const nationalIdUrl = import.meta.env.VITE_NATIONAL_ID_ROUTE;
+
 
   // Fetch notifications
   const fetchNotifications = useCallback(async () => {
     try {
       setLoading(true);
-      const { data } = await axios.get(`${apiUrl}/notifications`);
+      const { data } = await axios.get(`http://localhost:5000/api/admin/notifications`);
+      console.log("Fetched notifications:", data);
       setNotifications(data);
       setUnreadCount(data.filter((n) => !n.isRead).length);
       setError(null);
