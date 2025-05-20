@@ -256,7 +256,7 @@ import { Send, Smile, Image, X, MessageSquare } from "lucide-react";
 import PropTypes from 'prop-types';
 import { useMemo } from "react";
 
-const chatapi = import.meta.env.VITE_CHAT_ROUTE;
+const chatapi = 'http://localhost:5000/api/chat';
 
 const ChatPage = ({ currentUser }) => {
   const [messages, setMessages] = useState([]);
