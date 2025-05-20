@@ -314,3 +314,17 @@ export const getNationalIdByFIN = async (req, res)=>{
     });
   }
 }
+
+// get all national id in the database
+
+export const getAllNationalId = async (req, res)=>{
+  const AllNationalId = await NationalID.find();
+  if (!AllNationalId) {
+    return res.status(404).json({
+      success: false,
+      error: "National ID not found"
+    });
+  }
+  res.status(200).json(AllNationalId)
+
+}
