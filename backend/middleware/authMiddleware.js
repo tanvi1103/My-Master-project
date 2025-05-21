@@ -95,9 +95,9 @@
 
 
 // Middleware for verifying regular user token
-const jwt = require('jsonwebtoken');
-const User = require('../models/User');
-const Admin = require('../models/Admin');
+// const jwt = require('jsonwebtoken');
+// const User = require('../models/User');
+// const Admin = require('../models/Admin');
 
 
 // const authenticateUser = async (req, res, next) => {
@@ -140,6 +140,9 @@ const Admin = require('../models/Admin');
 // };
 
 
+const jwt = require('jsonwebtoken');
+const User = require('../models/User');
+const Admin = require('../models/Admin');
 const authenticateUser = async (req, res, next) => {
   try {
     const authHeader = req.headers.authorization;
