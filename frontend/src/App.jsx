@@ -32,6 +32,7 @@ import SettingsPage from "./registrar/SettingsPage";
 import ProfilePage from "./registrar/ProfilePage";
 import UserAddingPage from "./admin/UserAdding";
 import RegistrarDashBoard from "./registrar/RegistrarDashBoard";
+import RegistrarAddGraduate from "./registrar/RegistrarAddGraduate";
 
 
 
@@ -206,7 +207,7 @@ const App = () => {
                   <RegistrarLayout currentUser={currentUser}>
 
               <div className="space-y-4">
-                <AddGraduate />
+                <RegistrarAddGraduate />
                 {/* Add your dashboard content here */}
               </div>
             </RegistrarLayout>
