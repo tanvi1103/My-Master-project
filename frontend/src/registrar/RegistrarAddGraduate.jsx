@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import SingleGraduateForm from "./SingleGraduateForm";
 import BulkGraduateUpload from "./BulkGraduateUpload";
 
-const AddGraduate = () => {
+const RegistrarAddGraduate = () => {
   const [mode, setMode] = useState("single"); // 'single' or 'file'
 
   const handleModeChange = (newMode) => {
@@ -44,4 +44,4 @@ const AddGraduate = () => {
   );
 };
 
-export default AddGraduate;
+export default RegistrarAddGraduate;
