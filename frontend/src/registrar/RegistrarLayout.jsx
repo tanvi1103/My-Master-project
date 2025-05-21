@@ -125,8 +125,8 @@ const RegistrarLayout = ({ children }) => {
   return (
     <div className={`flex flex-col min-h-screen ${darkMode ? "dark" : ""}`}>
       {/* Navbar */}
-      <header className="bg-white dark:bg-gray-800 shadow-md z-100">
-        <div className="container mx-auto px-4 py-3 flex items-center justify-between">
+<header className="sticky top-0 z-50 bg-white dark:bg-gray-800 shadow-md">
+  <div className="container mx-auto px-4 py-3 flex items-center justify-between">
           {/* Logo and title */}
           <div className="flex items-center space-x-2">
             <button
@@ -135,7 +135,8 @@ const RegistrarLayout = ({ children }) => {
             >
               {sidebarOpen ? <FiX size={24} /> : <FiMenu size={24} />}
             </button>
-            <div className="flex items-center">
+            <Link to="/registrar">
+                        <div className="flex items-center">
               <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-white font-bold">
                 R
               </div>
@@ -143,6 +144,8 @@ const RegistrarLayout = ({ children }) => {
                 Registrar Portal
               </h1>
             </div>
+            </Link>
+
           </div>
 
           {/* User controls */}
@@ -215,16 +218,16 @@ const RegistrarLayout = ({ children }) => {
         </div>
       </header>
 
-      <div className="flex flex-1 overflow-hidden">
-        {/* Sidebar - Desktop */}
-        <aside
-          id="sidebar"
-          className={`fixed md:sticky top-0 z-600 w-64 h-full-screen bg-white dark:bg-gray-800 shadow-md transform transition-transform duration-300 ease-in-out 
-            ${sidebarOpen ? "translate-x-0" : "-translate-x-full"} md:translate-x-0 overflow-hidden`}
-        >
-          <div className="h-full flex flex-col overflow-y-auto">
+<div className="flex flex-1 overflow-hidden">
+  {/* Sidebar - Desktop */}
+  <aside
+    id="sidebar"
+   className={`fixed top-16 left-0 z-40 w-64 h-[calc(100vh-4rem)] bg-white dark:bg-gray-800 shadow-md transform transition-transform duration-300 ease-in-out
+    ${sidebarOpen ? "translate-x-0" : "-translate-x-full"} md:translate-x-0`}
+>
+          <div className="h-full flex flex-col">
             {/* Non-scrollable nav content */}
-            <nav className="flex-1 px-4 py-6 overflow-hidden">
+            <nav className="flex-1 px-4 py-6 overflow-y-auto">
               <ul className="space-y-2">
                 <li>
                   <Link
