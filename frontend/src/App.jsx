@@ -119,9 +119,10 @@ const App = () => {
                 <p className="text-gray-600 dark:text-gray-300">
                   Here's an overview of your recent activities and important notifications.
                 </p>
-                {/* Add your dashboard content here */}
-                <RegistrarDashBoard />
+       
               </div>
+                       {/* Add your dashboard content here */}
+                <RegistrarDashBoard />
             </RegistrarLayout>
         } />
 ``
