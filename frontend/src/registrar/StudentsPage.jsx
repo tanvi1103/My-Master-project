@@ -14,6 +14,7 @@ import {
 } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
 
+
 const api = `http://localhost:5000/api/admin`;
 const StudentsPage = () => {
   // Sample certificate data matching your schema
@@ -330,7 +331,7 @@ const StudentsPage = () => {
             >
               <option value="All">All Statuses</option>
               <option value="verified">Verified</option>
-              <option value="Pending">Pending</option>
+              <option value="pending">Pending</option>
             </select>
           </div>
 
@@ -651,6 +652,7 @@ const StudentsPage = () => {
                       <h4 className="text-lg font-semibold text-gray-900 dark:text-white">
                         {getFullName(selectedCertificate)}
                       </h4>
+                      
                       <p className="text-sm text-gray-500 dark:text-gray-400">
                         {selectedCertificate.certificateID}
                       </p>
