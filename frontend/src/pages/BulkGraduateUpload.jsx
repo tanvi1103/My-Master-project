@@ -406,10 +406,10 @@ const BulkGraduateUpload = () => {
             <li>Only Excel files (.xlsx, .xls) are accepted</li>
             <li>Maximum file size: 5MB</li>
             <li>Download and use our template to ensure proper formatting</li>
-            <li>Required fields: CertificateID, First Name, Last Name, Department, Gender, CGPA, Program, Graduation Status, College, Start Date, End Date</li>
+            <li>Required fields: CertificateID, First Name, Last Name, Department, Gender, CGPA, Program, ProgramType,  Graduate Status, College, Departments, Start Date, End Date</li>
             <li>CertificateIDs must be unique across the system</li>
             <li>Dates should be in YYYY-MM-DD format</li>
-            <li>CGPA must be between 0 and 4</li>
+            <li>CGPA must be between 2 and 4</li>
           </ul>
         </div>
       </div>
