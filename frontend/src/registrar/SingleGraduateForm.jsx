@@ -203,10 +203,10 @@ const AddStudentCredentials = () => {
         Swal.fire({
           icon: "error",
           title: "Authentication Error",
-          text: "You are not authenticated. Please log in.",
+          text: "You are not authenticated. Please log in as registrar.",
           confirmButtonColor: "#3b82f6",
         });
-        navigate("/admin/login");
+        navigate("/registrar/login");
         return;
       }
   
