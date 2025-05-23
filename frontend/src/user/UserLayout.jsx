@@ -4,6 +4,7 @@ import { Menu, X, Sun, Moon, Bell, User, GraduationCap, Home, FileText, ShieldCh
 import UserChatPage from './UserChatPage';
 import axios from 'axios';
 import { FaFacebook, FaLinkedin, FaMapMarkerAlt, FaTwitter } from 'react-icons/fa';
+import Swal from 'sweetalert2';
 
 const UserLayout = ({ children }) => {
     const [chatMinimized, setChatMinimized] = useState(false);
@@ -66,45 +67,122 @@ const UserLayout = ({ children }) => {
     fetchCurrentUser();
   }, []);
   // Handle logout
+// const handleAdminLogout = async () => {
+//   try {
+//     // 1. First make the logout request to server
+//     await axios.get("http://localhost:5000/api/admin/logout", { 
+//       withCredentials: true 
+//     });
+
+//     // 2. Then clear client-side state
+//     localStorage.removeItem('token');
+//     setCurrentUser(null);
+    
+//     // 3. Show success message
+//     await Swal.fire({
+//       title: "Success", 
+//       text: "🎉 Logout Successful!", 
+//       icon: "success",
+//       timer: 1500,  // Auto close after 1.5 seconds
+//       showConfirmButton: false
+//     });
+
+//     // 4. Navigate to login
+//     navigate("/login");
+
+//   } catch (error) {
+//     console.error("Logout error:", error);
+    
+//     // Fallback client-side logout if server fails
+//     localStorage.removeItem('token');
+//     setCurrentUser(null);
+    
+//     await Swal.fire({
+//       title: "Error",
+//       text: "❌ Logout Failed - You have been signed out locally",
+//       icon: "error"
+//     });
+    
+//     navigate("/login");
+//   }
+// }
+
 const handleAdminLogout = async () => {
   try {
-    // 1. First make the logout request to server
-    await axios.get("http://localhost:5000/api/admin/logout", { 
-      withCredentials: true 
+    // Show loading indicator
+    const swalInstance = Swal.fire({
+      title: 'Logging out...',
+      allowOutsideClick: false,
+      didOpen: () => {
+        Swal.showLoading();
+      }
     });
 
-    // 2. Then clear client-side state
+    // 1. Attempt server logout
+    try {
+      await axios.get("http://localhost:5000/api/admin/logout", {
+        withCredentials: true,
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`
+        }
+      });
+    } catch (serverError) {
+      console.warn("Server logout failed, proceeding with client-side cleanup:", serverError);
+      // Continue with client-side cleanup even if server logout fails
+    }
+
+    // 2. Clear client-side state
     localStorage.removeItem('token');
+    sessionStorage.removeItem('tempData'); // Clear any session storage if used
     setCurrentUser(null);
     
-    // 3. Show success message
+    // 3. Close loading and show success
     await Swal.fire({
-      title: "Success", 
-      text: "🎉 Logout Successful!", 
-      icon: "success",
-      timer: 1500,  // Auto close after 1.5 seconds
-      showConfirmButton: false
+      title: "Logged Out", 
+      html: '<div class="flex flex-col items-center">' +
+            '<svg class="w-16 h-16 text-green-500 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">' +
+            '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />' +
+            '</svg>' +
+            '<p class="text-lg">You have been successfully logged out</p>' +
+            '</div>',
+      showConfirmButton: false,
+      timer: 2000
     });
 
-    // 4. Navigate to login
-    navigate("/login");
+    // 4. Redirect to login with state clear
+    navigate("/login", { 
+      replace: true,
+      state: {
+        from: null // Clear any navigation state
+      } 
+    });
+
+    // 5. Force reload to ensure complete cleanup (optional)
+    window.location.reload();
 
   } catch (error) {
-    console.error("Logout error:", error);
+    console.error("Unexpected logout error:", error);
     
-    // Fallback client-side logout if server fails
+    // Comprehensive client-side cleanup
     localStorage.removeItem('token');
+    sessionStorage.clear();
     setCurrentUser(null);
     
     await Swal.fire({
-      title: "Error",
-      text: "❌ Logout Failed - You have been signed out locally",
-      icon: "error"
+      title: "Session Ended",
+      html: '<div class="flex flex-col items-center">' +
+            '<svg class="w-16 h-16 text-yellow-500 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">' +
+            '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />' +
+            '</svg>' +
+            '<p class="text-lg">Your session has been cleared</p>' +
+            '</div>',
+      showConfirmButton: true,
+      confirmButtonText: 'Back to Login'
     });
     
-    navigate("/login");
+    navigate("/login", { replace: true });
   }
-}
+};
   // Sidebar navigation items
   const navItems = [
     { name: 'Dashboard', icon: Home, path: '/dashboard' },
@@ -178,7 +256,36 @@ const handleAdminLogout = async () => {
       </header>
 
       {/* Sidebar */}
+      <aside
+        className={`fixed inset-y-0 left-0 z-30 w-64 bg-white dark:bg-gray-800 shadow-lg transform transition-transform duration-300 ${
+          isSidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'
+        }`}
+      >
+        <div className="flex items-center justify-between h-16 px-4 border-b dark:border-gray-700">
+          <span className="text-lg font-semibold text-gray-800 dark:text-white">
+            Navigation
+          </span>
+          <button
+            onClick={() => setIsSidebarOpen(false)}
+            className="md:hidden p-2 text-gray-500 dark:text-gray-400"
+          >
+            <X className="w-6 h-6" />
+          </button>
+        </div>
 
+        <nav className="mt-4">
+          {navItems.map((item) => (
+            <Link
+              key={item.name}
+              to={item.path}
+              className="flex items-center px-4 py-3 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+            >
+              <item.icon className="w-5 h-5 mr-3 text-gray-500 dark:text-gray-400" />
+              {item.name}
+            </Link>
+          ))}
+        </nav>
+      </aside>
 
       {/* Main Content */}
       <main className="pt-16 md:ml-64 min-h-screen">
