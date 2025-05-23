@@ -1,10 +1,10 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate, Link } from "react-router-dom";
 
 const UserLogin = () => {
   const navigate = useNavigate();
-  const [loginMethod, setLoginMethod] = useState("email"); // 'email' or 'nationalId'
+  const [loginMethod, setLoginMethod] = useState("email");
   const [formData, setFormData] = useState({
     email: "",
     nationalIdNumber: "",
@@ -12,10 +12,26 @@ const UserLogin = () => {
   });
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  const [ verificationStep, setVerificationStep] = useState(false); // For 2FA
+  const [verificationStep, setVerificationStep] = useState(false);
   const [verificationCode, setVerificationCode] = useState("");
   
   const authurl = 'http://localhost:5000/api/auth';
+
+  // Development-only auto-fill function
+  const autoFillTestCredentials = () => {
+    if (process.env.NODE_ENV === 'development') {
+      setFormData({
+        email: "madisomelese2@gmail.com",
+        nationalIdNumber: "1111111111111119",
+        password: "87654321"
+      });
+    }
+  };
+
+  // Auto-fill on component mount (development only)
+  useEffect(() => {
+    autoFillTestCredentials();
+  }, []);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -35,28 +51,23 @@ const UserLogin = () => {
 
     setLoading(true);
     try {
-         const payload = {
-      password: formData.password
-    };
+      const payload = {
+        password: formData.password
+      };
 
-        // Use the correct property name based on login method
-    if (loginMethod === "email") {
-      payload.email = formData.email;
-    } else {
-      payload.nationalIdNumber = formData.nationalIdNumber;
-    }
-      const { data } = await axios.post(`${authurl}/login`,payload);
+      if (loginMethod === "email") {
+        payload.email = formData.email;
+      } else {
+        payload.nationalIdNumber = formData.nationalIdNumber;
+      }
+
+      const { data } = await axios.post(`${authurl}/login`, payload);
       localStorage.setItem("token", data.token);
-
-
-      console.log(data);
 
       if (data.success) {
         if (data.requiresVerification) {
-          // If server indicates verification is needed
           setVerificationStep(true);
         } else {
-          // If no verification needed, proceed to dashboard
           navigate("/externalUser");
         }
       } else {
@@ -69,30 +80,30 @@ const UserLogin = () => {
     }
   };
 
-const handleVerifyLogin = async () => {
-  if (!verificationCode || verificationCode.length !== 6) {
-    setError("Please enter a valid 6-digit code");
-    return;
-  }
-
-  setLoading(true);
-  try {
-    const { data } = await axios.post(`${authurl}/verify-email`, {
-      [loginMethod]: loginMethod === "email" ? formData.email : formData.nationalIdNumber,
-      code: verificationCode
-    });
-
-    if (data.success) {
-      navigate("/externalUser");
-    } else {
-      setError(data.error || "Invalid verification code");
+  const handleVerifyLogin = async () => {
+    if (!verificationCode || verificationCode.length !== 6) {
+      setError("Please enter a valid 6-digit code");
+      return;
     }
-  } catch (err) {
-    setError(err.response?.data?.error || "Verification failed");
-  } finally {
-    setLoading(false);
-  }
-};
+
+    setLoading(true);
+    try {
+      const { data } = await axios.post(`${authurl}/verify-email`, {
+        [loginMethod]: loginMethod === "email" ? formData.email : formData.nationalIdNumber,
+        code: verificationCode
+      });
+
+      if (data.success) {
+        navigate("/externalUser");
+      } else {
+        setError(data.error || "Invalid verification code");
+      }
+    } catch (err) {
+      setError(err.response?.data?.error || "Verification failed");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 px-4 py-12">
@@ -101,6 +112,16 @@ const handleVerifyLogin = async () => {
           User Login
         </h2>
 
+        {/* Development-only auto-fill button */}
+        {process.env.NODE_ENV === 'development' && (
+          <button
+            onClick={autoFillTestCredentials}
+            className="mb-4 w-full py-2 px-4 bg-yellow-500 hover:bg-yellow-600 text-white font-medium rounded-lg text-sm"
+          >
+            Auto-fill Test Credentials
+          </button>
+        )}
+
         {/* Error Message */}
         {error && (
           <div className="mb-4 p-3 bg-red-100 dark:bg-red-900 text-red-700 dark:text-red-200 rounded-lg">
@@ -108,6 +129,7 @@ const handleVerifyLogin = async () => {
           </div>
         )}
 
+        {/* Rest of your component remains the same */}
         {!verificationStep ? (
           <>
             {/* Login Method Toggle */}
@@ -140,7 +162,7 @@ const handleVerifyLogin = async () => {
                     value={formData.email}
                     onChange={handleInputChange}
                     className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  />
+                 readOnly />
                 </div>
               ) : (
                 <div>
@@ -155,7 +177,7 @@ const handleVerifyLogin = async () => {
                     onChange={handleInputChange}
                     maxLength={16}
                     className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  />
+                 readOnly />
                 </div>
               )}
 
@@ -170,7 +192,7 @@ const handleVerifyLogin = async () => {
                   value={formData.password}
                   onChange={handleInputChange}
                   className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                />
+                readOnly/>
               </div>
 
               <div className="flex items-center justify-between">
