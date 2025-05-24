@@ -165,12 +165,13 @@ const UserAddingPage = () => {
         email: "",
         password: "",
         role: "user",
+        confirmPassword: "",
       });
       } else {
         setError(data?.error || "Registration failed");
       }
     } catch (err) {
-      setError(err.response?.data?.message || "Registration error");
+      setError(err.response?.data?.error || "Registration error");
     } finally {
       setLoading(false);
     }
