@@ -17,6 +17,10 @@ const {
   deleteNotification,
   markNotificationAsRead,
   createUserByAdmin,
+  editUserAccount,
+  deleteUserAccount,
+  getRegistrarUsers,
+  upload,
 } = require("../controllers/adminController");
 
 const router = express.Router();
@@ -24,11 +28,29 @@ const router = express.Router();
 router.post("/login", loginAdmin);
 router.get("/logout", logoutAdmin);
 
+router.get(
+  "/users",
+  authenticateUser,
+  roleMiddleware(["admin"]),
+  getRegistrarUsers
+);
 router.post(
   "/createUser",
   authenticateUser,
   roleMiddleware(["admin"]),
   createUserByAdmin
+);
+router.put('/editUser/:id', 
+ upload.single('photo'),
+  authenticateUser,
+  roleMiddleware(["admin"]),
+
+    editUserAccount);
+router.delete(
+  "/deleteUser/:userId",
+  authenticateUser,
+  roleMiddleware(["admin"]),
+  deleteUserAccount
 );
 
 router.post(
