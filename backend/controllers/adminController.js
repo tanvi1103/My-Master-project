@@ -1,5 +1,6 @@
 const multer = require("multer");
 const path = require("path");
+const fs = require("fs");
 const crypto = require("crypto");
 const Admin = require("../models/Admin");
 const User = require("../models/User");
@@ -12,30 +13,89 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const { validationResult } = require("express-validator");
 const { v4: uuidv4 } = require('uuid');
+const sharp = require('sharp');
+// In your Multer config
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    try {
+      const uploadDir = path.join(__dirname, '..', 'public', 'uploads', 'profiles');
+      fs.mkdirSync(uploadDir, { recursive: true });
+      cb(null, uploadDir);
+    } catch (err) {
+      cb(err);
+    }
+  },
+  // ... rest of config
+});
+
+// File filter for images only
+// In your Multer config
+const fileFilter = (req, file, cb) => {
+  const allowedTypes = ['image/jpeg', 'image/png', 'image/webp'];
+  if (allowedTypes.includes(file.mimetype)) {
+    cb(null, true);
+  } else {
+    cb(new Error('Only JPEG, PNG, and WebP images are allowed!'), false);
+  }
+};
+
+// Configure upload middleware
+const upload = multer({
+  storage: storage,
+  fileFilter: fileFilter,
+  limits: {
+    fileSize: 5 * 1024 * 1024 // 5MB limit
+  }
+});
+
+// Process and optimize image
+// In processImage function
+const processImage = async (filePath) => {
+  try {
+    const optimizedBuffer = await sharp(filePath)
+      .resize(800, 800, { 
+        fit: 'inside', 
+        withoutEnlargement: true 
+      })
+      .jpeg({ 
+        quality: 80, 
+        progressive: true 
+      })
+      .toBuffer();
+
+    // Overwrite original file with optimized version
+    await fs.promises.writeFile(filePath, optimizedBuffer);
+    
+    return filePath;
+  } catch (err) {
+    console.error('Image processing error:', err);
+    return filePath; // Return original if processing fails
+  }
+};
 
 // ==============================
 // Multer Configuration (Secure)
 // ==============================
-const upload = multer({
-  storage: multer.diskStorage({
-    destination: (req, file, cb) => cb(null, "uploads/"),
-    filename: (req, file, cb) => {
-      const uniqueName =
-        crypto.randomBytes(8).toString("hex") + path.extname(file.originalname);
-      cb(null, uniqueName);
-    },
-  }),
-  limits: { fileSize: 5 * 1024 * 1024 }, // 5MB limit
-  fileFilter: (req, file, cb) => {
-    const filetypes = /xlsx|xls/;
-    const extname = filetypes.test(
-      path.extname(file.originalname).toLowerCase()
-    );
-    const mimetype = filetypes.test(file.mimetype);
-    if (mimetype && extname) return cb(null, true);
-    cb(new Error("Only Excel files (xlsx, xls) are allowed!"));
-  },
-}).single("file");
+// const upload = multer({
+//   storage: multer.diskStorage({
+//     destination: (req, file, cb) => cb(null, "uploads/"),
+//     filename: (req, file, cb) => {
+//       const uniqueName =
+//         crypto.randomBytes(8).toString("hex") + path.extname(file.originalname);
+//       cb(null, uniqueName);
+//     },
+//   }),
+//   limits: { fileSize: 5 * 1024 * 1024 }, // 5MB limit
+//   fileFilter: (req, file, cb) => {
+//     const filetypes = /xlsx|xls/;
+//     const extname = filetypes.test(
+//       path.extname(file.originalname).toLowerCase()
+//     );
+//     const mimetype = filetypes.test(file.mimetype);
+//     if (mimetype && extname) return cb(null, true);
+//     cb(new Error("Only Excel files (xlsx, xls) are allowed!"));
+//   },
+// }).single("file");
 
 // ========================
 // Admin Login
@@ -528,19 +588,169 @@ const createUserByAdmin = async (req, res) => {
 };
 
 // ========================
+// Get Registrar Users
+// ========================
+const getRegistrarUsers = async (req, res) => {
+  try {
+    // Ensure the logged-in user is an admin
+    if (req.user?.role !== 'admin') {
+      return res.status(403).json({ success: false, error: 'Unauthorized access' });
+    }
+    // Fetch all users with role 'registrar'
+    const users = await User.find({ role: 'registrar' }, '-password -__v');
+    if (!users || users.length === 0) {
+      return res.status(404).json({ success: false, error: "No registrars found" });
+    }
+    res.status(200).json({ success: true, users });
+  } catch (error) {
+    console.error("Error fetching registrars:", error);
+    res.status(500).json({ success: false, error: "Server error" });
+  }
+};
+
+
+
+// ========================
+//delete account
+// ========================
+
+const editUserAccount = async (req, res) => {
+  try {
+    const { id } = req.params;
+    
+    // Get the user first
+    const user = await User.findById(id);
+    if (!user) {
+      return res.status(404).json({ 
+        success: false, 
+        error: "User not found" 
+      });
+    }
+
+    const updateFields = {
+      firstName: req.body.firstName,
+      lastName: req.body.lastName,
+      phone: req.body.phone,
+      email: req.body.email,
+      role: req.body.role,
+    };
+
+    // Handle file upload if exists
+    if (req.file) {
+      try {
+        // Process the image
+        await processImage(req.file.path);
+        
+        // Construct proper URL path
+        const publicDir = path.join(__dirname, '..', 'public');
+        const relativePath = path.relative(publicDir, req.file.path).replace(/\\/g, '/');
+        updateFields.photo = `/${relativePath}`;
+        
+        // Delete old photo if exists (and not a default random image)
+        if (user.photo && !user.photo.includes('randomuser.me')) {
+          const oldPhotoPath = path.join(
+            publicDir,
+            user.photo.startsWith('/') ? user.photo.substring(1) : user.photo
+          );
+          
+          if (fs.existsSync(oldPhotoPath)) {
+            fs.unlinkSync(oldPhotoPath);
+          }
+        }
+      } catch (fileError) {
+        console.error('File processing error:', fileError);
+        if (req.file?.path) fs.unlinkSync(req.file.path);
+        return res.status(400).json({
+          success: false,
+          error: 'Failed to process profile photo'
+        });
+      }
+    }
+
+    const updatedUser = await User.findByIdAndUpdate(
+      id,
+      updateFields,
+      { new: true, runValidators: true }
+    );
+
+    res.json({ 
+      success: true, 
+      user: updatedUser,
+      message: "User updated successfully"
+    });
+  } catch (error) {
+    console.error("Error updating user:", error);
+    res.status(500).json({ 
+      success: false, 
+      error: error.message || "Server error" 
+    });
+  }
+};
+
+// Delete User Account with Local Image Cleanup
+const deleteUserAccount = async (req, res) => {
+  try {
+    const { userId } = req.params;
+
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ 
+        success: false, 
+        error: "User not found" 
+      });
+    }
+
+    // Delete user's photo if exists
+    if (user.photo && !user.photo.includes('randomuser.me')) {
+      try {
+        const photoPath = path.join(
+          __dirname, 
+          'public', 
+          user.photo.startsWith('/') ? user.photo.slice(1) : user.photo
+        );
+        
+        if (fs.existsSync(photoPath)) {
+          fs.unlinkSync(photoPath);
+        }
+      } catch (fileError) {
+        console.error('Failed to delete photo:', fileError);
+        // Continue with user deletion even if photo deletion fails
+      }
+    }
+
+    await User.findByIdAndDelete(userId);
+
+    res.json({ 
+      success: true, 
+      message: "User deleted successfully" 
+    });
+  } catch (error) {
+    console.error("Error deleting user:", error);
+    res.status(500).json({ 
+      success: false, 
+      error: error.message || "Server error" 
+    });
+  }
+};
+
+// ========================
 // Export Controllers
 // ========================
 module.exports = {
-  createUserByAdmin,
-  loginAdmin,
-  logoutAdmin,
-  uploadFile,
-  getAllCertificates,
-  getSingleCertificate,
-  updateSingleCertificate,
-  deleteSingleCertificate,
-  addStudentCredentials,
-  getNotification,
-  deleteNotification,
-  markNotificationAsRead,
+  upload,
+  getRegistrarUsers,
+addStudentCredentials,
+createUserByAdmin,
+deleteNotification,
+deleteUserAccount,
+deleteSingleCertificate,
+editUserAccount,
+getAllCertificates,
+getNotification,
+getSingleCertificate,
+loginAdmin,
+logoutAdmin,
+markNotificationAsRead,
+updateSingleCertificate,
+uploadFile,
 };
