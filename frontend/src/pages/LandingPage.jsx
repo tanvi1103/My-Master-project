@@ -335,7 +335,7 @@ const LandingPage = ({ children }) => {
                 </Link>
               </li>
               <li>
-                <Link to="/verify" className="hover:text-blue-400">
+                <Link to="/login" className="hover:text-blue-400">
                   Verify Documents
                 </Link>
               </li>
