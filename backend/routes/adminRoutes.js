@@ -21,6 +21,9 @@ const {
   deleteUserAccount,
   getRegistrarUsers,
   upload,
+  getAllUsers,
+  updateExternalUser,
+  deleteExternalUser,
 } = require("../controllers/adminController");
 
 const router = express.Router();
@@ -73,6 +76,9 @@ router.get(
   roleMiddleware(["admin", "registrar"]),
   getAllCertificates
 );
+router.get("/externalUsers", authenticateUser, roleMiddleware(["admin", "registrar"]), getAllUsers);
+router.put("/externalUsers/:id", authenticateUser, roleMiddleware(["admin", "registrar"]), updateExternalUser);
+router.delete("/externalUsers/:id", authenticateUser, roleMiddleware(["admin", "registrar"]), deleteExternalUser);
 router.get("/notifications", getNotification);
 router.delete("/notifications/:id", deleteNotification);
 router.put("/notifications/:id/read", markNotificationAsRead);
