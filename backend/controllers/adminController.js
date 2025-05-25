@@ -734,9 +734,166 @@ const deleteUserAccount = async (req, res) => {
 };
 
 // ========================
+// get all users role = user
+// ========================
+
+
+const getAllUsers = async (req, res) => {
+  try {
+    const users = await User.find({ role: 'user' }, '-password -__v');
+    if (!users || users.length === 0) {
+      return res.status(404).json({ success: false, error: "No users found" });
+    }
+    res.status(200).json(users );
+  } catch (error) {
+    console.error("Error fetching users:", error);
+    res.status(500).json({ success: false, error: "Server error" });
+  }
+};
+
+// ========================
+// edit User Account
+// ========================
+const updateExternalUser = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { 
+      firstName,
+      lastName,
+      email,
+      phone,
+      role,
+      isVerified,
+      verificationCode 
+    } = req.body;
+
+    // Validate input
+    if (!firstName || !lastName || !email || !phone) {
+      return res.status(400).json({ 
+        success: false, 
+        error: "Missing required fields" 
+      });
+    }
+
+    // Check if email is valid
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      return res.status(400).json({ 
+        success: false, 
+        error: "Invalid email format" 
+      });
+    }
+
+    // Check if phone is valid (1-15 digits)
+    if (!/^\d{1,15}$/.test(phone)) {
+      return res.status(400).json({ 
+        success: false, 
+        error: "Phone must contain 1-15 digits" 
+      });
+    }
+
+    const updateData = {
+      firstName,
+      lastName,
+      email: email.toLowerCase(),
+      phone,
+      role,
+      isVerified,
+      ...(!isVerified && verificationCode ? { verificationCode } : { verificationCode: null })
+    };
+
+    const updatedUser = await User.findByIdAndUpdate(
+      id,
+      updateData,
+      { new: true, runValidators: true }
+    ).select('-password -__v');
+
+    if (!updatedUser) {
+      return res.status(404).json({ 
+        success: false, 
+        error: "User not found" 
+      });
+    }
+
+    res.status(200).json({ 
+      success: true, 
+      user: updatedUser 
+    });
+
+  } catch (error) {
+    console.error("Error updating user:", error);
+    
+    // Handle duplicate key errors
+    if (error.code === 11000) {
+      const field = Object.keys(error.keyPattern)[0];
+      return res.status(400).json({ 
+        success: false, 
+        error: `${field} already exists` 
+      });
+    }
+
+    // Handle validation errors
+    if (error.name === 'ValidationError') {
+      const messages = Object.values(error.errors).map(val => val.message);
+      return res.status(400).json({ 
+        success: false, 
+        error: messages 
+      });
+    }
+
+    res.status(500).json({ 
+      success: false, 
+      error: "Server error" 
+    });
+  }
+};
+
+// ========================
+// Delete User Account
+// ========================
+const deleteExternalUser = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    // First find the user to get their details (optional)
+    const user = await User.findById(id);
+    if (!user) {
+      return res.status(404).json({ 
+        success: false, 
+        error: "User not found" 
+      });
+    }
+
+    // Then delete the user
+    const deletedUser = await User.findByIdAndDelete(id);
+
+    if (!deletedUser) {
+      return res.status(404).json({ 
+        success: false, 
+        error: "User not found" 
+      });
+    }
+
+    res.status(200).json({ 
+      success: true, 
+      message: `User ${user.firstName} ${user.lastName} deleted successfully`,
+      deletedUserId: id 
+    });
+
+  } catch (error) {
+    console.error("Error deleting user:", error);
+    res.status(500).json({ 
+      success: false, 
+      error: "Server error" 
+    });
+  }
+};
+// ========================
 // Export Controllers
 // ========================
 module.exports = {
+  deleteExternalUser,
+  updateExternalUser,
+  getAllUsers,
   upload,
   getRegistrarUsers,
 addStudentCredentials,
