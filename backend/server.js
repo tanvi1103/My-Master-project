@@ -21,6 +21,17 @@ const User = require('./models/User');
 const app = express();
 const path = require('path');
 const server = http.createServer(app); // Create HTTP server for Socket.IO
+
+// Middleware
+app.use(cors({ 
+  origin: [
+    "http://localhost:3000", 
+    "http://localhost:5173",
+    "http://localhost:5174",
+    "http://172.20.144.1:3000",
+  ],
+  credentials: true 
+}));
 app.use(cookieParser());
 app.use(helmet());
 app.use(express.json());
@@ -164,16 +175,7 @@ io.on('connection', (socket) => {
     console.log(`User disconnected: ${socket.user._id}`);
   });
 });
-// Middleware
-app.use(cors({ 
-  origin: [
-    "http://localhost:3000", 
-    "http://localhost:5173",
-    "http://localhost:5174",
-    "http://172.20.144.1:3000",
-  ],
-  credentials: true 
-}));
+
 // Error handling
 app.use((err, req, res, next) => {
   console.error(err.stack);
