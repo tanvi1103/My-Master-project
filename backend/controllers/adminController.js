@@ -1,6 +1,7 @@
 const multer = require("multer");
 const path = require("path");
 const fs = require("fs");
+const rateLimit = require('express-rate-limit');
 const crypto = require("crypto");
 const Admin = require("../models/Admin");
 const User = require("../models/User");
@@ -106,12 +107,12 @@ const loginAdmin = async (req, res) => {
   try {
     const admin = await Admin.findOne({ email });
     if (!admin) {
-      return res.status(401).json({ message: "Invalid credentials" });
+      return res.status(401).json({ message: `Invalid credentials, Admin not found with this email ${email}` });
     }
 
     const isMatch = await bcrypt.compare(password, admin.password);
     if (!isMatch) {
-      return res.status(401).json({ message: "Invalid credentials" });
+      return res.status(401).json({ message: "Invalid credentials, password is incorrect" });
     }
 
     const token = jwt.sign(
@@ -137,6 +138,21 @@ res.cookie('adminToken', token, {
     res.status(500).json({ message: "Something went wrong" });
   }
 };
+
+// ========================
+// Admin Login Rate Limit
+// ========================
+const loginLimiter = rateLimit({
+  windowMs: 1 * 60 * 1000, // 1 minute
+  max: 5, // limit each IP to 5 requests per windowMs
+  message: {
+    success: false,
+    error: "Too many login attempts. Please try again after 1 minute."
+  },
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
 
 // ========================
 // Admin Logout
@@ -891,6 +907,7 @@ const deleteExternalUser = async (req, res) => {
 // Export Controllers
 // ========================
 module.exports = {
+  loginLimiter,
   deleteExternalUser,
   updateExternalUser,
   getAllUsers,
