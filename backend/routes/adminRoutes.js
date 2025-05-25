@@ -24,11 +24,12 @@ const {
   getAllUsers,
   updateExternalUser,
   deleteExternalUser,
+  loginLimiter,
 } = require("../controllers/adminController");
 
 const router = express.Router();
 
-router.post("/login", loginAdmin);
+router.post("/login", loginLimiter, loginAdmin);
 router.get("/logout", logoutAdmin);
 
 router.get(
