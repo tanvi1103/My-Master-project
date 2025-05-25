@@ -40,6 +40,7 @@ import UserAddingPage from "./admin/UserAdding";
 import RegistrarDashBoard from "./registrar/RegistrarDashBoard";
 import RegistrarAddGraduate from "./registrar/RegistrarAddGraduate";
 import UserManagementPage from "./admin/UserManagementPage";
+import ExternalUserManagement from "./admin/ExternalUserManagement";
 
 axios.defaults.withCredentials = true;
 
@@ -324,6 +325,16 @@ const App = () => {
             </AdminLayout>
           }
         />
+        
+        <Route
+          path="/admin/ExternalUserManagement"
+          element={
+            <AdminLayout>
+              <ExternalUserManagement />
+            </AdminLayout>
+          }
+        />
+
         <Route
           path="/admin/edit-graduate/:certificateID"
           element={
