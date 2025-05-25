@@ -41,6 +41,20 @@ const AdminSidebar = () => {
         >
           <MdPersonAddAlt  />Create New User
         </Link>
+
+        <Link
+          to="/admin/usermanagement"
+          className="flex items-center gap-3 px-3 py-2 rounded hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-800 dark:text-white transition"
+        >
+          <MdPersonAddAlt  />Manage Accounts 
+        </Link>
+
+        <Link
+          to="/admin/ExternalUserManagement"
+          className="flex items-center gap-3 px-3 py-2 rounded hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-800 dark:text-white transition"
+        >
+          <MdPersonAddAlt  />Manage External User 
+        </Link>
       </nav>
     </aside>
   );
