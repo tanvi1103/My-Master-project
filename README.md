@@ -10,7 +10,15 @@ while providing internal administrators secure tools for managing, uploading, an
 - **nationalidapi**: Microservice for national ID verification
 
 ---
+## Landing Page in Dark Theme
+![image](https://github.com/user-attachments/assets/777e7c11-5c67-4b6c-9f07-8693b1b3d3d8)
 
+---
+## Landing Page in Light Theme
+
+![image](https://github.com/user-attachments/assets/bc829706-f612-48b3-a106-7b134fa82c54)
+
+---
 ## Project Structure
 
 ```
@@ -74,9 +82,23 @@ FINALPROJECT/
 ## Features
 
 - **Admin Login** with rate limiting and lockout after failed attempts
+- ![image](https://github.com/user-attachments/assets/32eba886-13d3-4b59-956c-0a354411be97)
+
+- **After successful logging in:**, Admin Dashboard in Dark theme
+- ![image](https://github.com/user-attachments/assets/3de278b6-2ddd-4e39-96e5-f0fe3ca761bb)
+  
+- - **Upload new Graduates using Exel file** (when admin uploading bulk file simply using .xlxs, .xls, .cvs file)
+![image](https://github.com/user-attachments/assets/7dd4cf85-b680-40f2-bae1-86578422a8dc)
+
+- **Real-time Chat** (Socket.IO) between users and admins in Light theme
+![image](https://github.com/user-attachments/assets/e75dc48f-daac-4c2d-b5aa-35760e68ae11)
+
+
 - **User Management** (CRUD, search, edit, delete, photo upload)
-- **National ID Verification** via dedicated microservice
-- **Real-time Chat** (Socket.IO) between users and admins
+- **National ID Verification** using graduate national id FAN (Fayda Alias Number), it must be 16 digit,
+  
+![image](https://github.com/user-attachments/assets/d6d6f43a-4091-4ee2-94fb-503ce98a4dba)
+
 - **Role-based Access** (admin, registrar, user)
 - **Responsive UI** with Tailwind CSS and Framer Motion
 - **Security**: Helmet.js, CORS, JWT authentication, express-rate-limit
