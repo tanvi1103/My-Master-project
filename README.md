@@ -526,7 +526,13 @@ See [LICENSE](LICENSE) for details.
 
 ---
 
-**Author:** Madiso Melese  
-**Contact:** madishamadiso00@gmail.com
+## 👨‍💻 Author & Contact
+
+**Developed by:**  
+**Madiso Melese**
+
+📧 **Email:** [madishamadiso00@gmail.com](mailto:madishamadiso00@gmail.com)
+
+For questions, feedback, or collaboration opportunities, feel free to reach out!
 
 
