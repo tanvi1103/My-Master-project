@@ -528,11 +528,16 @@ See [LICENSE](LICENSE) for details.
 
 ## 👨‍💻 Author & Contact
 
-**Developed by:**  
+**Developed & Maintained by:**  
 **Madiso Melese**
 
-📧 **Email:** [madishamadiso00@gmail.com](mailto:madishamadiso00@gmail.com)
+- 📧 **Email:** [madishamadiso00@gmail.com](mailto:madishamadiso00@gmail.com)
+- 🌐 **LinkedIn:** [linkedin.com/in/madiso-melese](#) <!-- Add your LinkedIn if available -->
+- 🏛️ **Institution:** Bonga University
 
-For questions, feedback, or collaboration opportunities, feel free to reach out!
+---
+
+> For questions, feedback, or collaboration opportunities,  
+> please feel free to reach out via email.
 
 
