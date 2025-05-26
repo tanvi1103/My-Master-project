@@ -143,7 +143,7 @@ npm run dev
 ```sh
 cd backend
 npm install
-npm start
+npm run dev
 # Runs on http://localhost:5000
 ```
 
@@ -152,11 +152,42 @@ npm start
 ```sh
 cd nationalidapi
 npm install
-node idServer.js
+npm run dev
 # Runs on http://localhost:7000
 ```
 
 ---
+
+## Security
+
+- **Helmet.js**: Sets HTTP headers for security.
+- **CORS**: Only allows requests from whitelisted origins.
+- **JWT**: Used for authentication and authorization.
+- **express-rate-limit**: Protects against brute-force attacks.
+- **Rate Limiting**:
+  - Global: 100 requests per 15 minutes per IP.
+  - Admin Login: 5 attempts per minute per IP. After 5 failed attempts, login is locked for 1 minute.
+
+---
+
+## Troubleshooting
+
+- **CORS errors:** Ensure backend CORS middleware is at the top and origins are correct.
+- **MongoDB connection issues:** Check your `MONGO_URI` in `.env`.
+- **Rate limit lockout:** Wait for 1 minute after 5 failed login attempts.
+- **Socket.IO issues:** Make sure the frontend and backend use the same allowed origins and credentials.
+
+---
+
+## License
+
+This project is for educational purposes.  
+See [LICENSE](LICENSE) for details.
+
+---
+
+**Author:** Madiso Melese  
+**Contact:** madishamadiso00@gmail.com
 
 
 
