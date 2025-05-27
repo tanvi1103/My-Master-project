@@ -60,7 +60,7 @@ const ForgotPassword = () => {
         setError(data.error || "Invalid verification code");
       }
     } catch (err) {
-      setError(err.response?.data?.message || "Verification failed");
+      setError(err.response?.data?.error || "Verification failed");
     } finally {
       setLoading(false);
     }
