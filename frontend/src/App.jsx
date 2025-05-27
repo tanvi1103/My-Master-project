@@ -56,7 +56,7 @@ const App = () => {
         <Route path="/" element={<LandingPage />} />
         {/* <Route path="/signup" element={<UserSignup />} /> */}
         {/* <Route path="/login" element={<UserLogin />} /> */}
-        <Route path="/forgot-password" element={<ForgotPassword />} />
+        {/* <Route path="/forgot-password" element={<ForgotPassword />} /> */}
         <Route path="/search" element={<GraduateSearch />} />
         {/* <Route path="/certificate/:id" element={<CertificateDetail />} /> */}
         {/* <Route path="/admin/login" element={<AdminLogin />} /> */}
@@ -76,6 +76,14 @@ const App = () => {
           element={
             <LandingPage>
               <UserSignup />
+            </LandingPage>
+          }
+        />
+        <Route
+          path="/forgot-password"
+          element={
+            <LandingPage>
+              <ForgotPassword />
             </LandingPage>
           }
         />
