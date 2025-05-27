@@ -1,5 +1,5 @@
 const User = require("../models/User");
-const { sendVerificationEmail } = require("../utils/email");
+const { sendVerificationEmail, sendPasswordResetEmail } = require("../utils/email");
 const { generateToken } = require("../utils/jwt");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
@@ -28,7 +28,7 @@ exports.register = async (req, res) => {
         success: false,
         error:
           existingUser.nationalIdNumber === nationalIdNumber
-            ? "National ID already registered"
+            ? `User with this ${nationalIdNumber} National ID already registered. Please use a different National ID. or login if you lost your password, reset your password <a href="/forgot-password" style="color:#2563eb;text-decoration:underline;">here</a>.`
             : "Email already in use",
       });
     }
@@ -69,8 +69,11 @@ exports.register = async (req, res) => {
   } catch (error) {
     console.error("Registration error:", error);
     res.status(500).json({
+
       success: false,
+
       error: "Registration failed. Please try again.",
+
     });
   }
 };
@@ -234,7 +237,7 @@ exports.forgotPassword = async (req, res) => {
     await user.save();
 
     // Send email with reset code
-    await sendVerificationEmail(user.email, resetCode);
+    await sendPasswordResetEmail(user.email, resetCode);
 
     res.json({
       success: true,
@@ -265,7 +268,7 @@ exports.verifyResetCode = async (req, res) => {
     if (!user) {
       return res.status(404).json({
         success: false,
-        error: "User not found",
+        error: `User with ${email} not found`,
       });
     }
 
@@ -273,7 +276,7 @@ exports.verifyResetCode = async (req, res) => {
     if (user.passwordResetCode !== code) {
       return res.status(401).json({
         success: false,
-        error: "Invalid reset code",
+        error: "Invalid reset code, please enter the code correct sent to your email",
       });
     }
 
@@ -335,7 +338,8 @@ exports.resetPassword = async (req, res) => {
     if (!user) {
       return res.status(404).json({
         success: false,
-        error: "User not found",
+        error: `User with ${email} not found`,
+
       });
     }
 
@@ -343,7 +347,7 @@ exports.resetPassword = async (req, res) => {
     if (user.passwordResetCode !== code) {
       return res.status(401).json({
         success: false,
-        error: "Invalid reset code",
+        error: "Invalid reset code, please enter the code correct sent to your email",
       });
     }
 
