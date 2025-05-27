@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 const UserSignup = () => {
   const navigate = useNavigate();
   const [step, setStep] = useState(1);
+  const [maxStep, setMaxStep] = useState(1); // Track the farthest step reached
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [verificationCode, setVerificationCode] = useState("");
@@ -40,6 +41,11 @@ const UserSignup = () => {
     }));
   };
 
+   const goToStep = (nextStep) => {
+    setStep(nextStep);
+    if (nextStep > maxStep) setMaxStep(nextStep);
+  };
+
   const handleVerifyNationalId = async () => {
     if (formData.nationalIdNumber.length !== 16) {
       setError("Please enter a valid 16-digit National ID");
@@ -47,11 +53,10 @@ const UserSignup = () => {
     }
 
     setLoading(true);
-    try {
+      try {
       const { data } = await axios.get(`${nationalidurl}/nationalIdNumber`, {
         params: { nationalIdNumber: formData.nationalIdNumber }
       });
-
       if (data.success && data.nationalID) {
         setFormData(prev => ({
           ...prev,
@@ -60,7 +65,7 @@ const UserSignup = () => {
           lastName: data.nationalID.lastName,
           gender: data.nationalID.gender
         }));
-        setStep(2);
+        goToStep(2); // Use goToStep instead of setStep
         setError("");
       } else {
         setError(data.error || "National ID not found");
@@ -79,6 +84,7 @@ const UserSignup = () => {
     }
 
     setLoading(true);
+   setLoading(true);
     try {
       const { data } = await axios.get(`${nationalidurl}/nationalIdNumber`, {
         params: {
@@ -89,10 +95,8 @@ const UserSignup = () => {
           phone: formData.phone
         }
       });
-
-
       if (data.success) {
-        setStep(3);
+        goToStep(3);
         setError("");
       } else {
         setError(data.error || "Identity verification failed");
@@ -116,7 +120,7 @@ const UserSignup = () => {
     }
 
     setLoading(true);
-    try {
+ try {
       const { data } = await axios.post(`http://localhost:5000/api/auth/register`, {
         nationalIdNumber: formData.nationalIdNumber,
         firstName: formData.firstName,
@@ -128,13 +132,13 @@ const UserSignup = () => {
         password: formData.password
       });
       if (data.success) {
-        setStep(4);
+        goToStep(4);
         setError("");
       } else {
         setError(data.error || "Registration failed");
       }
     } catch (err) {
-      setError(err.response?.data?.message || "Registration error");
+      setError(err.response?.data?.error || "Registration errord");
     } finally {
       setLoading(false);
     }
@@ -171,13 +175,23 @@ const UserSignup = () => {
     <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 px-4 py-12 overflow-x-hidden">
       <div className="w-full max-w-full md:max-w-7xl bg-white dark:bg-gray-800 rounded-xl shadow-lg p-4 md:p-8">
         <h2 className="text-2xl md:text-4xl font-bold text-center text-gray-900 dark:text-white mb-6">
-          User Registration
+          Welcome To BUGCVS
         </h2>
+        <p className="text-center text-gray-600 dark:text-gray-400 mb-6">
+          Please follow the steps below to create your account.
+        </p>
 
         {/* Progress Steps */}
         <div className="flex justify-between mb-8">
           {[1, 2, 3, 4].map((stepNumber) => (
-            <div key={stepNumber} className="flex flex-col items-center">
+            <div
+              key={stepNumber}
+              className={`flex flex-col items-center cursor-pointer ${stepNumber <= maxStep ? '' : 'cursor-not-allowed opacity-50'}`}
+              onClick={() => {
+                // Allow navigating to any step up to maxStep
+                if (stepNumber <= maxStep) setStep(stepNumber);
+              }}
+            >
               <div className={`w-8 h-8 rounded-full flex items-center justify-center 
                 ${step >= stepNumber ? 'bg-blue-600 text-white' : 'bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-300'}`}>
                 {stepNumber}
@@ -190,18 +204,19 @@ const UserSignup = () => {
         </div>
 
         {/* Error Message */}
-        {error && (
-          <div className="mb-4 p-3 bg-red-100 dark:bg-red-900 text-red-700 dark:text-red-200 rounded-lg">
-            {error}
-          </div>
-        )}
+   {error && (
+  <div
+    className="mb-4 p-3 bg-red-100 dark:bg-red-900 text-red-700 dark:text-red-200 rounded-lg"
+    dangerouslySetInnerHTML={{ __html: error }}
+  />
+)}
 
         {/* Step 1: National ID Verification */}
         {step === 1 && (
           <div className="space-y-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                National ID Number
+               Enter your 16-digit  National ID Number which provided by the government (FAN)
               </label>
               <input
                 type="text"
@@ -286,6 +301,7 @@ const UserSignup = () => {
         )}
 
         {/* Step 3: Create Account */}
+
         {step === 3 && (
           <div className="space-y-4">
             <div>
@@ -330,6 +346,7 @@ const UserSignup = () => {
             </button>
           </div>
         )}
+
 
         {/* Step 4: Verify Email */}
         {step === 4 && (
