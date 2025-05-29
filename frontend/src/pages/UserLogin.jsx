@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate, Link } from "react-router-dom";
 
-const UserLogin = () => {
+const UserLogin = ({ setCurrentUser }) => {
   const navigate = useNavigate();
   const [loginMethod, setLoginMethod] = useState("email");
   const [formData, setFormData] = useState({
@@ -94,6 +94,8 @@ const UserLogin = () => {
       });
 
       if (data.success) {
+          localStorage.setItem("token", data.token);
+        setCurrentUser(data.user);
         navigate("/externalUser");
       } else {
         setError(data.error || "Invalid verification code");
