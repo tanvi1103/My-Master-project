@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { FiSun, FiMoon, FiMenu, FiX, FiArrowRight } from "react-icons/fi";
@@ -56,54 +55,73 @@ const LandingPage = ({ children }) => {
   return (
     <div className="min-h-screen flex flex-col bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
       {/* Header */}
-      <header className="bg-white dark:bg-gray-800 shadow-md py-4 px-6 sticky top-0 z-50">
+      <header className="bg-white dark:bg-gray-900 shadow-sm py-3 px-4 sticky top-0 z-50 border-b border-gray-100 dark:border-gray-700">
         <div className="max-w-7xl mx-auto flex justify-between items-center">
-          <Link to="/" className="flex items-center space-x-2">
+          <Link
+            to="/"
+            className="flex items-center space-x-3 hover:opacity-90 transition-opacity"
+            aria-label="Bonga University Home"
+          >
             <img
               src="/bonga-university-logo.png"
               alt="Bonga University Logo"
               className="h-12 w-auto"
+              width={48}
+              height={48}
             />
-            <span className="text-xl font-bold text-gray-900 dark:text-white">
-              BU Graduate Verification System
+            <span className="text-xl font-bold text-gray-800 dark:text-white">
+              <span className="block text-sm font-medium text-blue-600 dark:text-blue-400">
+                Bonga University
+              </span>
+              <span>Graduate Verification</span>
             </span>
           </Link>
-          <nav className="hidden md:flex space-x-8">
+
+          <nav className="hidden md:flex space-x-6">
             <Link
               to="/"
-              className="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400"
+              className="px-3 py-2 text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 font-medium transition-colors relative group"
             >
               Home
+              <span className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-0 h-0.5 bg-blue-600 group-hover:w-4/5 transition-all duration-300"></span>
             </Link>
             <Link
               to="/login"
-              className="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400"
+              className="px-3 py-2 text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 font-medium transition-colors relative group"
             >
               Verify
+              <span className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-0 h-0.5 bg-blue-600 group-hover:w-4/5 transition-all duration-300"></span>
             </Link>
             <Link
-              to=""
-              className="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400"
+              to="/about"
+              className="px-3 py-2 text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 font-medium transition-colors relative group"
             >
               About
+              <span className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-0 h-0.5 bg-blue-600 group-hover:w-4/5 transition-all duration-300"></span>
             </Link>
             <Link
-              to=""
-              className="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400"
+              to="/contact"
+              className="px-3 py-2 text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 font-medium transition-colors relative group"
             >
               Contact
+              <span className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-0 h-0.5 bg-blue-600 group-hover:w-4/5 transition-all duration-300"></span>
             </Link>
           </nav>
-          <div className="flex items-center space-x-4">
-            {/* Replace the dark mode button with this dropdown */}
+
+          <div className="flex items-center space-x-3">
             <div className="relative group">
-              <button className="flex items-center space-x-1 p-2 rounded-lg bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600 transition">
+              <button
+                className="flex items-center space-x-1.5 px-3 py-2 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-600 transition-all font-medium"
+                aria-haspopup="true"
+                aria-expanded={mobileMenuOpen ? "true" : "false"}
+              >
                 <span>Login As</span>
                 <svg
-                  className="w-4 h-4"
+                  className="w-4 h-4 transition-transform group-hover:rotate-180"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
+                  aria-hidden="true"
                 >
                   <path
                     strokeLinecap="round"
@@ -114,67 +132,155 @@ const LandingPage = ({ children }) => {
                 </svg>
               </button>
 
-              <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-md shadow-lg z-50 invisible group-hover:visible opacity-0 group-hover:opacity-100 transition-all duration-200">
+              <div className="absolute right-0 mt-1 w-56 bg-white dark:bg-gray-800 rounded-lg shadow-xl z-50 border border-gray-100 dark:border-gray-700 invisible group-hover:visible opacity-0 group-hover:opacity-100 transition-all duration-200 origin-top-right transform scale-95 group-hover:scale-100">
                 <div className="py-1">
                   <Link
                     to="/login"
-                    className="block px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+                    className="block px-4 py-2.5 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
                   >
-                    External User
+                    <div className="flex items-center space-x-2">
+                      <svg
+                        className="w-5 h-5"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={1.5}
+                          d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                        />
+                      </svg>
+                      <span>External User</span>
+                    </div>
                   </Link>
                   <Link
                     to="/registrar/login"
-                    className="block px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+                    className="block px-4 py-2.5 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
                   >
-                    Registrar
+                    <div className="flex items-center space-x-2">
+                      <svg
+                        className="w-5 h-5"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={1.5}
+                          d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
+                        />
+                      </svg>
+                      <span>Registrar</span>
+                    </div>
                   </Link>
                   <Link
                     to="/admin/login"
-                    className="block px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+                    className="block px-4 py-2.5 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
                   >
-                    Admin
+                    <div className="flex items-center space-x-2">
+                      <svg
+                        className="w-5 h-5"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={1.5}
+                          d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"
+                        />
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={1.5}
+                          d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                        />
+                      </svg>
+                      <span>Admin</span>
+                    </div>
                   </Link>
                 </div>
               </div>
             </div>
+
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="md:hidden p-2 rounded-full bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300"
+              className="md:hidden p-2 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
+              aria-label="Toggle menu"
             >
-              {mobileMenuOpen ? <FiX size={20} /> : <FiMenu size={20} />}
+              {mobileMenuOpen ? <FiX size={22} /> : <FiMenu size={22} />}
             </button>
           </div>
         </div>
-        {mobileMenuOpen && (
-          <div className="md:hidden bg-white dark:bg-gray-800 shadow-lg mt-2 py-2 px-4">
-            <nav className="flex flex-col space-y-3">
-              <Link
-                to="/"
-                className="py-2 text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400"
-              >
-                Home
-              </Link>
+
+        {/* Mobile menu */}
+        <div
+          className={`md:hidden bg-white dark:bg-gray-900 shadow-lg ${
+            mobileMenuOpen ? "block" : "hidden"
+          } transition-all duration-300 ease-in-out`}
+        >
+          <div className="px-4 pt-2 pb-4 space-y-2 border-t border-gray-100 dark:border-gray-700">
+            <Link
+              to="/"
+              className="block px-4 py-3 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 font-medium transition-colors"
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              Home
+            </Link>
+            <Link
+              to="/login"
+              className="block px-4 py-3 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 font-medium transition-colors"
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              Verify
+            </Link>
+            <Link
+              to="/about"
+              className="block px-4 py-3 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 font-medium transition-colors"
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              About
+            </Link>
+            <Link
+              to="/contact"
+              className="block px-4 py-3 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 font-medium transition-colors"
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              Contact
+            </Link>
+
+            <div className="pt-2 mt-2 border-t border-gray-100 dark:border-gray-700">
+              <h3 className="px-4 py-2 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                Login Options
+              </h3>
               <Link
                 to="/login"
-                className="py-2 text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400"
+                className="block px-4 py-3 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 font-medium transition-colors"
+                onClick={() => setMobileMenuOpen(false)}
               >
-                Verify
+                External User
               </Link>
               <Link
-                to=""
-                className="py-2 text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400"
+                to="/registrar/login"
+                className="block px-4 py-3 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 font-medium transition-colors"
+                onClick={() => setMobileMenuOpen(false)}
               >
-                About
+                Registrar
               </Link>
               <Link
-                to=""
-                className="py-2 text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400"
+                to="/admin/login"
+                className="block px-4 py-3 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 font-medium transition-colors"
+                onClick={() => setMobileMenuOpen(false)}
               >
-                Contact
+                Admin
               </Link>
-            </nav>
+            </div>
           </div>
-        )}
+        </div>
       </header>
 
       <main className="flex-grow p-6 max-w-7xl mx-auto w-full">{children}</main>
@@ -305,7 +411,9 @@ const LandingPage = ({ children }) => {
                         alt={testimonial.company}
                         className="h-12 mr-4"
                       />
-                      <span className="font-bold dark:text-white">{testimonial.company}</span>
+                      <span className="font-bold dark:text-white">
+                        {testimonial.company}
+                      </span>
                     </div>
                   </div>
                 </div>
@@ -316,7 +424,7 @@ const LandingPage = ({ children }) => {
       </section>
 
       {/* Main Content */}
-              <FAQSection />
+      <FAQSection />
       {/* Footer */}
       <footer className="bg-gray-800 dark:bg-gray-950 text-white py-8 px-6">
         <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
