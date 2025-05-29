@@ -164,7 +164,8 @@ const AdminLayout = ({ children }) => {
       </div>
 
       {/* Main Content */}
-      <main className={`pt-16 md:ml-64 transition-all duration-300 ${sidebarOpen ? 'blur-sm' : ''}`}>
+      <main 
+      className={`pt-16 md:ml-64 transition-all duration-300 ${sidebarOpen ? 'blur-sm' : ''}`}>
         {children}
       </main>
 
