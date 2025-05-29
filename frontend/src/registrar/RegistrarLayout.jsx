@@ -310,19 +310,12 @@ const RegistrarLayout = ({ children }) => {
           {/* Page content */}
           <div className="max-w-7xl mx-auto">
             {/* Page header */}
-            <div className="mb-6 flex justify-between items-center">
-              <h2 className="text-2xl font-bold text-gray-800 dark:text-white">
-                Dashboard
-              </h2>
-              <div className="flex space-x-2">
-                <button className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors">
-                  New Student
-                </button>
-              </div>
-            </div>
+
 
             {/* Content area - passed as children */}
-            <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-4 md:p-6">
+            <div 
+            className={`pt-16 md:ml-64 transition-all duration-300 ${sidebarOpen ? 'blur-sm' : ''}`}>
+
               {children}
             </div>
           </div>
