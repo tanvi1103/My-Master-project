@@ -761,13 +761,14 @@ const Notifications = () => {
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.95 }}
                 transition={{ duration: 0.2 }}
-                className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50"
+                className="fixed inset-0 flex items-center justify-center z-10  bg-opacity-50  bg-blur-md backdrop-blur-md"
                 onClick={() => setSelectedNationalId(null)}
               >
                 <motion.div
                   className="w-full max-w-md mx-4"
                   onClick={(e) => e.stopPropagation()}
                 >
+                  <p className="text-gray-800 dark:text-gray-200 text-2xl font-semibold mb-4 ">Check address details of  <span className="text-blue-500 ">{selectedNationalId.firstName} {selectedNationalId.middleName} {selectedNationalId.lastName}</span> </p>
                   <div className="bg-white dark:bg-gray-800 rounded-xl shadow-2xl overflow-hidden border-2 border-yellow-500">
                     {/* Ethiopian National ID Header */}
                     <div className="bg-yellow-500 py-3 px-4 flex items-center">
