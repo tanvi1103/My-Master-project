@@ -34,7 +34,7 @@ const SettingsPage = () => {
         newPassword: formData.newPassword
       }, {
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
+          'Authorization': `Bearer ${localStorage.getItem('registrarToken')}`
         }
       });
       setSuccess('Password updated successfully!');

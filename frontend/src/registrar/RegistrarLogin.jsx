@@ -49,7 +49,7 @@ const RegistrarLogin = () => {
       payload.nationalIdNumber = formData.nationalIdNumber;
     }
       const { data } = await axios.post(`${authurl}/login`, payload);
-      localStorage.setItem("token", data.token);
+      localStorage.setItem("registrarToken", data.token);
 
 
       console.log(data);

@@ -22,7 +22,7 @@ const RegistrarEditGraduate = () => {
     endDate: '',
   });
 
-  const token = localStorage.getItem('token');
+  const token = localStorage.getItem('registrarToken');
 
   useEffect(() => {
     const fetchGraduate = async () => {

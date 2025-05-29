@@ -198,7 +198,7 @@ const AddStudentCredentials = () => {
     setIsSubmitting(true);
   
     try {
-      const token = localStorage.getItem("token");
+      const token = localStorage.getItem("registrarToken");
       if (!token) {
         Swal.fire({
           icon: "error",

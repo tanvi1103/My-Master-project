@@ -71,7 +71,7 @@ const RegistrarDashBoard = () => {
   useEffect(() => {
     const fetchCertificates = async () => {
       try {
-        const token = localStorage.getItem("token");
+        const token = localStorage.getItem("registrarToken");
         const response = await axios.get(`${api}/certificates`, {
           headers: {
             Authorization: `Bearer ${token}`,
