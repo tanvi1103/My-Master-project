@@ -5,6 +5,7 @@ import UserChatPage from './UserChatPage';
 import axios from 'axios';
 import { FaFacebook, FaLinkedin, FaMapMarkerAlt, FaTwitter } from 'react-icons/fa';
 import Swal from 'sweetalert2';
+import LoadingSpinner from '../pages/LoadingSpinner';
 
 const UserLayout = ({ children }) => {
     const [chatMinimized, setChatMinimized] = useState(false);
@@ -56,6 +57,7 @@ const UserLayout = ({ children }) => {
           }
         });
         setCurrentUser(res.data);
+        setIsLoading(false);
       } catch (err) {
         console.error('Error fetching current user:', err);
         const timer = setTimeout(() => {
@@ -190,6 +192,12 @@ const handleAdminLogout = async () => {
     { name: 'Verification Status', icon: ShieldCheck, path: '/verification' },
     { name: 'Academic Records', icon: GraduationCap, path: '/records' },
   ];
+
+  if( isLoading) {
+    return (
+        <LoadingSpinner />
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
