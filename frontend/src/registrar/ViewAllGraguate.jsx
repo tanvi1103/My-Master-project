@@ -162,7 +162,7 @@ const ViewAllGraduate = () => {
   };
 
   return (
-    <div className="p-6 max-w-7xl mx-auto">
+    <div className=" max-w-7xl mx-auto">
     {/* Modal for viewing graduate details */}
 {/* Modal for viewing graduate details */}
 {showModal && selectedGraduate && (
