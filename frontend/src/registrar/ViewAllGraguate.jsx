@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 
 const ViewAllGraduate = () => {
   const [graduates, setGraduates] = useState([]);
-  const token = localStorage.getItem("token");
+  const token = localStorage.getItem("registrarToken");
   const navigate = useNavigate();
 
   const [showFilters, setShowFilters] = useState(false);
@@ -163,103 +163,166 @@ const ViewAllGraduate = () => {
 
   return (
     <div className="p-6 max-w-7xl mx-auto">
-      {/* Modal for viewing graduate details */}
-      {showModal && selectedGraduate && (
-        <div className="flex items-center justify-center  inset-0 z-10 bg-blur-50 backdrop-blur-2xl bg-opacity-50">
-          <div className="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
-            {/* Background overlay */}
-            <div 
-              className="fixed inset-0 transition-opacity" 
-              aria-hidden="true"
-              onClick={closeModal}
-            >
-              <div className="absolute inset-0 bg-gray-500 dark:bg-gray-900 opacity-75"></div>
-            </div>
-            
-            {/* Modal content */}
-            <div className="inline-block align-bottom bg-white dark:bg-gray-800 rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-2xl sm:w-full">
-              <div className="bg-white dark:bg-gray-800 px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
-                <div className="sm:flex sm:items-start">
-                  <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left w-full">
-                    <h3 className="text-lg leading-6 font-medium text-gray-900 dark:text-white mb-4">
-                      Graduate Details
-                    </h3>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div>
-                        <p className="text-sm text-gray-500 dark:text-gray-400">Full Name</p>
-                        <p className="text-gray-900 dark:text-white font-medium">
-                          {selectedGraduate.firstName} {selectedGraduate.middleName} {selectedGraduate.lastName}
-                        </p>
-                      </div>
-                      <div>
-                        <p className="text-sm text-gray-500 dark:text-gray-400">Gender</p>
-                        <p className="text-gray-900 dark:text-white font-medium">
-                          {selectedGraduate.gender}
-                        </p>
-                      </div>
-                      <div>
-                        <p className="text-sm text-gray-500 dark:text-gray-400">Certificate ID</p>
-                        <p className="text-gray-900 dark:text-white font-medium">
-                          #{selectedGraduate.certificateID}
-                        </p>
-                      </div>
-                      <div>
-                        <p className="text-sm text-gray-500 dark:text-gray-400">Status</p>
-                        <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                          selectedGraduate.gstatus === 'verified' ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' :
-                          selectedGraduate.gstatus === 'pending' ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200' :
-                          'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200'
-                        }`}>
-                          {selectedGraduate.gstatus.charAt(0).toUpperCase() + selectedGraduate.gstatus.slice(1)}
-                        </span>
-                      </div>
-                      <div>
-                        <p className="text-sm text-gray-500 dark:text-gray-400">Program</p>
-                        <p className="text-gray-900 dark:text-white font-medium">
-                          {selectedGraduate.program}
-                        </p>
-                      </div>
-                      <div>
-                        <p className="text-sm text-gray-500 dark:text-gray-400">CGPA</p>
-                        <p className="text-gray-900 dark:text-white font-medium">
-                          {selectedGraduate.cgpa}
-                        </p>
-                      </div>
-                      <div>
-                        <p className="text-sm text-gray-500 dark:text-gray-400">Department</p>
-                        <p className="text-gray-900 dark:text-white font-medium">
-                          {selectedGraduate.department}
-                        </p>
-                      </div>
-                      <div>
-                        <p className="text-sm text-gray-500 dark:text-gray-400">College</p>
-                        <p className="text-gray-900 dark:text-white font-medium">
-                          {selectedGraduate.college}
-                        </p>
-                      </div>
-                      <div>
-                        <p className="text-sm text-gray-500 dark:text-gray-400">Graduation Year</p>
-                        <p className="text-gray-900 dark:text-white font-medium">
-                          {new Date(selectedGraduate.endDate).getFullYear()}
-                        </p>
-                      </div>
-                    </div>
+    {/* Modal for viewing graduate details */}
+{/* Modal for viewing graduate details */}
+{showModal && selectedGraduate && (
+  <>
+    {/* Background overlay */}
+    <div 
+      className="fixed inset-0 z-40 bg-black bg-opacity-50 backdrop-blur-sm"
+      onClick={closeModal}
+    ></div>
+    
+    {/* Modal container - centered with higher z-index */}
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+      {/* Modal content */}
+      <div className="relative bg-white dark:bg-gray-800 rounded-lg shadow-xl w-full max-w-4xl max-h-[90vh] overflow-y-auto">
+        {/* Modal header */}
+        <div className="sticky top-0 bg-blue-600 dark:bg-blue-800 px-4 py-3 sm:px-6 flex justify-between items-center">
+          <h3 className="text-lg leading-6 font-medium text-white">
+            Graduate Details - #{selectedGraduate.certificateID}
+          </h3>
+          <button
+            type="button"
+            className="text-white hover:text-gray-200 focus:outline-none"
+            onClick={closeModal}
+          >
+            <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+        
+        {/* Modal body */}
+        <div className="p-4 sm:p-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* Personal Information */}
+            <div className="space-y-4">
+              <div>
+                <h4 className="text-md font-semibold text-gray-900 dark:text-white border-b border-gray-200 dark:border-gray-700 pb-2">
+                  Personal Information
+                </h4>
+                <div className="mt-2 space-y-3">
+                  <div>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">Full Name</p>
+                    <p className="text-gray-900 dark:text-white font-medium">
+                      {selectedGraduate.firstName} {selectedGraduate.middleName} {selectedGraduate.lastName}
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">Gender</p>
+                    <p className="text-gray-900 dark:text-white font-medium">
+                      {selectedGraduate.gender}
+                    </p>
                   </div>
                 </div>
               </div>
-              <div className="bg-gray-50 dark:bg-gray-700 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
-                <button
-                  type="button"
-                  className="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 dark:border-gray-600 shadow-sm px-4 py-2 bg-white dark:bg-gray-600 text-base font-medium text-gray-700 dark:text-white hover:bg-gray-50 dark:hover:bg-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm"
-                  onClick={closeModal}
-                >
-                  Close
-                </button>
+              
+              {/* Academic Information */}
+              <div>
+                <h4 className="text-md font-semibold text-gray-900 dark:text-white border-b border-gray-200 dark:border-gray-700 pb-2">
+                  Academic Information
+                </h4>
+                <div className="mt-2 space-y-3">
+                  <div>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">Program</p>
+                    <p className="text-gray-900 dark:text-white font-medium">
+                      {selectedGraduate.program}
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">CGPA</p>
+                    <div className="flex items-center">
+                      <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
+                        selectedGraduate.cgpa >= 3.5 ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' :
+                        selectedGraduate.cgpa >= 2.75 ? 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200' :
+                        'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200'
+                      }`}>
+                        {selectedGraduate.cgpa}
+                      </span>
+                    </div>
+                  </div>
+                  <div>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">Graduation Year</p>
+                    <p className="text-gray-900 dark:text-white font-medium">
+                      {new Date(selectedGraduate.endDate).getFullYear()}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            {/* Institutional Information */}
+            <div className="space-y-4">
+              <div>
+                <h4 className="text-md font-semibold text-gray-900 dark:text-white border-b border-gray-200 dark:border-gray-700 pb-2">
+                  Institutional Information
+                </h4>
+                <div className="mt-2 space-y-3">
+                  <div>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">College</p>
+                    <p className="text-gray-900 dark:text-white font-medium">
+                      {selectedGraduate.college}
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">Department</p>
+                    <p className="text-gray-900 dark:text-white font-medium">
+                      {selectedGraduate.department}
+                    </p>
+                  </div>
+                </div>
+              </div>
+              
+              {/* Status Information */}
+              <div>
+                <h4 className="text-md font-semibold text-gray-900 dark:text-white border-b border-gray-200 dark:border-gray-700 pb-2">
+                  Verification Status
+                </h4>
+                <div className="mt-2 space-y-3">
+                  <div>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">Status</p>
+                    <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
+                      selectedGraduate.gstatus === 'verified' ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' :
+                      selectedGraduate.gstatus === 'pending' ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200' :
+                      'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200'
+                    }`}>
+                      {selectedGraduate.gstatus.charAt(0).toUpperCase() + selectedGraduate.gstatus.slice(1)}
+                    </span>
+                  </div>
+                  <div>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">Certificate ID</p>
+                    <p className="text-gray-900 dark:text-white font-medium">
+                      #{selectedGraduate.certificateID}
+                    </p>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
         </div>
-      )}
+        
+        {/* Modal footer */}
+        <div className="sticky bottom-0 bg-gray-50 dark:bg-gray-700 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse border-t border-gray-200 dark:border-gray-600">
+          <button
+            type="button"
+            className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-blue-600 text-base font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:ml-3 sm:w-auto sm:text-sm"
+            onClick={() => handleUpdate(selectedGraduate.certificateID)}
+          >
+            Edit Record
+          </button>
+          <button
+            type="button"
+            className="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 dark:border-gray-600 shadow-sm px-4 py-2 bg-white dark:bg-gray-600 text-base font-medium text-gray-700 dark:text-white hover:bg-gray-50 dark:hover:bg-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm"
+            onClick={closeModal}
+          >
+            Close
+          </button>
+        </div>
+      </div>
+    </div>
+  </>
+)}
 
       {/* Header Section */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
