@@ -42,41 +42,47 @@ import RegistrarAddGraduate from "./registrar/RegistrarAddGraduate";
 import UserManagementPage from "./admin/UserManagementPage";
 import ExternalUserManagement from "./admin/ExternalUserManagement";
 
+import RequireGuest from "./pages/RequireGuest";
+
 axios.defaults.withCredentials = true;
 
 const App = () => {
   const [currentUser, setCurrentUser] = useState(null);
+
+  useEffect(() => {
+    // Check for token in localStorage on mount
+    const token = localStorage.getItem("token");
+    if (token) {
+      setCurrentUser(token? token: null); // Or decode token if you want user info
+    }
+  }, []);
   // const navigate = useNavigate();
 
   return (
     <ThemeProvider>
       <Toaster position="top-center" reverseOrder={false} />
       <Routes>
-        {/* <Route path="/externalUser" element={<UserLayout />} /> */}
         <Route path="/" element={<LandingPage />} />
-        {/* <Route path="/signup" element={<UserSignup />} /> */}
-        {/* <Route path="/login" element={<UserLogin />} /> */}
-        {/* <Route path="/forgot-password" element={<ForgotPassword />} /> */}
-        <Route path="/search" element={<GraduateSearch />} />
-        {/* <Route path="/certificate/:id" element={<CertificateDetail />} /> */}
-        {/* <Route path="/admin/login" element={<AdminLogin />} /> */}
-        {/* <Route path="/registrar/login" element={<RegistrarLogin />} /> */}
-        {/* Internal user routes */}
+      
         <Route
           path="/login"
           element={
-            <LandingPage>
-              <UserLogin />
-            </LandingPage>
+            <RequireGuest currentUser={currentUser}>
+              <LandingPage>
+                <UserLogin />
+              </LandingPage>
+            </RequireGuest>
           }
         />
         {/* Internal user routes */}
         <Route
           path="/signup"
           element={
-            <LandingPage>
-              <UserSignup />
-            </LandingPage>
+                     <RequireGuest currentUser={currentUser}>
+              <LandingPage>
+                <UserSignup />
+              </LandingPage>
+            </RequireGuest>
           }
         />
         <Route
@@ -125,6 +131,7 @@ const App = () => {
         <Route
           path="/externalUser"
           element={
+            
             <UserLayout>
               <div className="space-y-4">
                 <h3 className="text-lg font-semibold text-gray-800 dark:text-white">
