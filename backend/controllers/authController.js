@@ -3,6 +3,7 @@ const { sendVerificationEmail, sendPasswordResetEmail } = require("../utils/emai
 const { generateToken } = require("../utils/jwt");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const axios = require("axios");
 
 exports.register = async (req, res) => {
   try {
@@ -119,10 +120,17 @@ exports.verifyEmail = async (req, res) => {
   }
 };
 
+const validateCaptcha = async (token) => {
+  const secretKey = "6Lfi11ArAAAAAAghMx_O7AE82IEEMY6Ij7d9mVVd";
+  const response = await axios.post(
+    `https://www.google.com/recaptcha/api/siteverify?secret=${secretKey}&response=${token}`
+  );
+  return response.data.success;
+};
 // Login with email or national ID
 exports.login = async (req, res) => {
   try {
-    const { email, nationalIdNumber, password } = req.body;
+    const { email, nationalIdNumber, password, captchaToken  } = req.body;
     const identifier = email || nationalIdNumber;
 
     if (!identifier) {
@@ -131,6 +139,13 @@ exports.login = async (req, res) => {
         error: "Email/Nationa ID is required",
       });
     }
+        if(!captchaToken){
+      return res.status(400).json({
+        success: false,
+        error: "please mark CAPTCHA, it's required",
+      })
+    }
+    
     if (!password) {
       return res.status(400).json({
         success: false,
@@ -142,6 +157,10 @@ exports.login = async (req, res) => {
         success: false,
         error: "Password must be at least 8 characters long",
       });
+    }
+     const isHuman = await validateCaptcha(captchaToken);
+    if (!isHuman) {
+      return res.status(403).json({ message: "CAPTCHA validation failed" });
     }
 
     // Find user by email or national ID
