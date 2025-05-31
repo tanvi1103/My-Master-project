@@ -1,10 +1,12 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate, Link } from "react-router-dom";
+import ReCAPTCHA from "react-google-recaptcha";
 
 
 
 const RegistrarLogin = () => {
+const [captchaToken, setCaptchaToken] = useState("");
 
   const navigate = useNavigate();
   const [loginMethod, setLoginMethod] = useState("email"); // 'email' or 'nationalId'
@@ -39,7 +41,8 @@ const RegistrarLogin = () => {
     setLoading(true);
     try {
          const payload = {
-      password: formData.password
+      password: formData.password,
+      captchaToken
     };
 
         // Use the correct property name based on login method
@@ -196,7 +199,10 @@ const handleVerifyLogin = async () => {
                   Forgot password?
                 </Link>
               </div>
-
+<ReCAPTCHA
+  sitekey="6Lfi11ArAAAAAJls25EhGPChQv7PiEg7gllCOiW3"
+  onChange={(token) => setCaptchaToken(token)}
+/>
               <button
                 onClick={handleLogin}
                 disabled={loading}
