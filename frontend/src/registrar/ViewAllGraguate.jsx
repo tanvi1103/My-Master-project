@@ -2,6 +2,7 @@ import axios from 'axios';
 import Swal from 'sweetalert2';
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import LoadingSpinner from '../pages/LoadingSpinner';
 
 const ViewAllGraduate = () => {
   const [graduates, setGraduates] = useState([]);
@@ -18,6 +19,7 @@ const ViewAllGraduate = () => {
   const [currentPage, setCurrentPage] = useState(0);
   const [selectedGraduate, setSelectedGraduate] = useState(null);
   const [showModal, setShowModal] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   
   const itemsPerPage = 10;
 
@@ -81,6 +83,7 @@ const ViewAllGraduate = () => {
         });
         const data = await response.data;
         setGraduates(data);
+        setIsLoading(false);
       } catch (error) {
         if (error.response && error.response.status === 401) {
           Swal.fire({
@@ -160,6 +163,10 @@ const ViewAllGraduate = () => {
     setShowModal(false);
     setSelectedGraduate(null);
   };
+
+     if (isLoading) {
+        return <LoadingSpinner />
+      }
 
   return (
     <div className=" max-w-7xl mx-auto">
@@ -335,7 +342,7 @@ const ViewAllGraduate = () => {
         <div className="flex space-x-3">
           <button
             onClick={() => setShowFilters(!showFilters)}
-            className="flex items-center px-4 py-2 bg-gray-200 dark:bg-gray-700 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition"
+            className="flex items-center px-4 py-2 dark:text-gray-100 bg-gray-200 dark:bg-gray-700 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition"
           >
             <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
@@ -363,7 +370,7 @@ const ViewAllGraduate = () => {
               <select
                 value={filters.department}
                 onChange={(e) => setFilters({...filters, department: e.target.value})}
-                className="w-full p-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 rounded"
+                className="w-full p-2 border dark:text-gray-200 border-gray-300 dark:border-gray-600 dark:bg-gray-700 rounded"
               >
                 <option value="">All Departments</option>
                 {departments.map(dept => (
@@ -376,7 +383,7 @@ const ViewAllGraduate = () => {
               <select
                 value={filters.program}
                 onChange={(e) => setFilters({...filters, program: e.target.value})}
-                className="w-full p-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 rounded"
+                className="w-full p-2 border dark:text-gray-200 border-gray-300 dark:border-gray-600 dark:bg-gray-700 rounded"
               >
                 <option value="">All Programs</option>
                 <option value="BSc">Bachelor's</option>
@@ -389,7 +396,7 @@ const ViewAllGraduate = () => {
               <select
                 value={filters.year}
                 onChange={(e) => setFilters({...filters, year: e.target.value})}
-                className="w-full p-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 rounded"
+                className="w-full p-2 border dark:text-gray-200 border-gray-300 dark:border-gray-600 dark:bg-gray-700 rounded"
               >
                 <option value="">All Years</option>
                 {Array.from({length: 10}, (_, i) => new Date().getFullYear() - 5 + i)
@@ -403,7 +410,7 @@ const ViewAllGraduate = () => {
               <select
                 value={filters.status}
                 onChange={(e) => setFilters({...filters, status: e.target.value})}
-                className="w-full p-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 rounded"
+                className="w-full p-2 border dark:text-gray-200 border-gray-300 dark:border-gray-600 dark:bg-gray-700 rounded"
               >
                 <option value="">All Statuses</option>
                 <option value="verified">Verified</option>
