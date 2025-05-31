@@ -1,8 +1,13 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate, Link } from "react-router-dom";
+import ReCAPTCHA from "react-google-recaptcha";
+
 
 const UserLogin = ({ setCurrentUser }) => {
+
+const [captchaToken, setCaptchaToken] = useState("");
+
   const navigate = useNavigate();
   const [loginMethod, setLoginMethod] = useState("email");
   const [formData, setFormData] = useState({
@@ -52,7 +57,8 @@ const UserLogin = ({ setCurrentUser }) => {
     setLoading(true);
     try {
       const payload = {
-        password: formData.password
+        password: formData.password,
+        captchaToken
       };
 
       if (loginMethod === "email") {
@@ -74,7 +80,7 @@ const UserLogin = ({ setCurrentUser }) => {
         setError(data.error || "Login failed");
       }
     } catch (err) {
-      setError(err.response?.data?.error || "Login error");
+      setError(err.response?.data?.error || "Login errtor");
     } finally {
       setLoading(false);
     }
@@ -217,7 +223,10 @@ const UserLogin = ({ setCurrentUser }) => {
                   Forgot password?
                 </Link>
               </div>
-
+<ReCAPTCHA
+  sitekey="6Lfi11ArAAAAAJls25EhGPChQv7PiEg7gllCOiW3"
+  onChange={(token) => setCaptchaToken(token)}
+/>
               <button
                 onClick={handleLogin}
                 disabled={loading}
@@ -226,6 +235,8 @@ const UserLogin = ({ setCurrentUser }) => {
                 {loading ? 'Logging in...' : 'Login'}
               </button>
             </div>
+
+
 
             <div className="mt-4 text-center text-sm text-gray-600 dark:text-gray-400">
               Don't have an account?{' '}
