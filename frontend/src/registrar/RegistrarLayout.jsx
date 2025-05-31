@@ -16,6 +16,8 @@ import { useNavigate } from "react-router-dom";
 
 const RegistrarLayout = ({ children }) => {
   const navigate = useNavigate();
+  const [preview, setPreview] = useState("");
+
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [currentUser, setCurrentUser] = useState(null);
@@ -59,31 +61,39 @@ const RegistrarLayout = ({ children }) => {
   useEffect(() => {
     const fetchCurrentUser = async () => {
       try {
-        const res = await axios.get('http://localhost:5000/api/auth/me', {
-          headers: { 
-            Authorization: `Bearer ${localStorage.getItem('registrarToken')}` 
-          }
+        const res = await axios.get("http://localhost:5000/api/auth/me", {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("registrarToken")}`,
+          },
         });
         setCurrentUser(res.data);
       } catch (err) {
-        console.error('Error fetching current user:', err);
+        console.error("Error fetching current user:", err);
         navigate("/registrar/login");
       } finally {
         setIsLoading(false);
       }
     };
-    
+
     fetchCurrentUser();
   }, [navigate]);
 
- const handleLogout = async () => {
+  useEffect(() => {
+    console.log("Current User:", currentUser); // Add this
+    if (currentUser) {
+      setPreview(currentUser.photo || "");
+      console.log("Photo URL:", currentUser.photo); // Add this
+    }
+  }, [currentUser]);
+
+  const handleLogout = async () => {
     try {
-      await axios.get("http://localhost:5000/api/admin/logout", { 
-        withCredentials: true 
+      await axios.get("http://localhost:5000/api/admin/logout", {
+        withCredentials: true,
       });
-          localStorage.removeItem('token');
+      localStorage.removeItem("registrarToken");
       setCurrentUser(null); // Clear current user state
-      S
+      S;
       Swal.fire("Success", "🎉 Logout Successful!", "success");
       setTimeout(() => {
         window.location.reload();
@@ -125,8 +135,8 @@ const RegistrarLayout = ({ children }) => {
   return (
     <div className={`flex flex-col min-h-screen ${darkMode ? "dark" : ""}`}>
       {/* Navbar */}
-<header className="sticky top-0 z-50 bg-white dark:bg-gray-800 shadow-md">
-  <div className="container mx-auto px-4 py-3 flex items-center justify-between">
+      <header className="sticky top-0 z-50 bg-white dark:bg-gray-800 shadow-md">
+        <div className="container mx-auto px-4 py-3 flex items-center justify-between">
           {/* Logo and title */}
           <div className="flex items-center space-x-2">
             <button
@@ -136,31 +146,33 @@ const RegistrarLayout = ({ children }) => {
               {sidebarOpen ? <FiX size={24} /> : <FiMenu size={24} />}
             </button>
             <Link to="/registrar">
-                        <div className="flex items-center">
-              <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-white font-bold">
-                R
+              <div className="flex items-center">
+                <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-white font-bold">
+                  R
+                </div>
+                <h1 className="ml-2 text-xl font-semibold text-gray-800 dark:text-white">
+                  Registrar Portal
+                </h1>
               </div>
-              <h1 className="ml-2 text-xl font-semibold text-gray-800 dark:text-white">
-                Registrar Portal
-              </h1>
-            </div>
             </Link>
-
           </div>
 
           {/* User controls */}
           <div className="flex items-center space-x-4">
-
-            
             {/* User profile */}
             <div className="flex items-center space-x-4">
               <div className="relative group">
                 <div className="flex items-center space-x-2 cursor-pointer">
                   <div className="w-10 h-10 rounded-full bg-blue-100 dark:bg-blue-900 flex items-center justify-center overflow-hidden">
-                    {currentUser.photo ? (
-                      <img 
-                        src={currentUser.photo} 
-                        alt="Profile" 
+                    {preview ? (
+                      <img
+                        src={
+                          preview.startsWith("blob:") ||
+                          preview.startsWith("http")
+                            ? preview
+                            : `http://localhost:5000${preview}`
+                        }
+                        alt="Profile"
                         className="w-full h-full object-cover"
                       />
                     ) : (
@@ -218,13 +230,13 @@ const RegistrarLayout = ({ children }) => {
         </div>
       </header>
 
-<div className="flex flex-1 overflow-hidden">
-  {/* Sidebar - Desktop */}
-  <aside
-    id="sidebar"
-   className={`fixed top-16 left-0 z-40 w-64 h-[calc(100vh-4rem)] bg-white dark:bg-gray-800 shadow-md transform transition-transform duration-300 ease-in-out
+      <div className="flex flex-1 overflow-hidden">
+        {/* Sidebar - Desktop */}
+        <aside
+          id="sidebar"
+          className={`fixed top-16 left-0 z-40 w-64 h-[calc(100vh-4rem)] bg-white dark:bg-gray-800 shadow-md transform transition-transform duration-300 ease-in-out
     ${sidebarOpen ? "translate-x-0" : "-translate-x-full"} md:translate-x-0`}
->
+        >
           <div className="h-full flex flex-col">
             {/* Non-scrollable nav content */}
             <nav className="flex-1 px-4 py-6 overflow-y-auto">
@@ -272,12 +284,17 @@ const RegistrarLayout = ({ children }) => {
             <div className="px-4 py-4 border-t border-gray-200 dark:border-gray-700">
               <div className="flex items-center">
                 <div className="w-10 h-10 rounded-full bg-blue-100 dark:bg-blue-900 flex items-center justify-center">
-                  {currentUser.photo ? (
-                    <img
-                      src={currentUser.photo}
-                      alt="User Avatar"
-                      className="w-full h-full rounded-full"
-                    />
+                       {preview ? (
+                      <img
+                        src={
+                          preview.startsWith("blob:") ||
+                          preview.startsWith("http")
+                            ? preview
+                            : `http://localhost:5000${preview}`
+                        }
+                        alt="Profile"
+                        className="w-full h-full rounded-full object-cover"
+                      />
                   ) : (
                     <span className="text-blue-600 dark:text-blue-300 font-medium">
                       {currentUser.firstName.charAt(0)}
@@ -311,11 +328,12 @@ const RegistrarLayout = ({ children }) => {
           <div className="max-w-7xl mx-auto">
             {/* Page header */}
 
-
             {/* Content area - passed as children */}
-            <div 
-            className={`pt-16 md:ml-64 transition-all duration-300 ${sidebarOpen ? 'blur-sm' : ''}`}>
-
+            <div
+              className={`pt-16 md:ml-64 transition-all duration-300 ${
+                sidebarOpen ? "blur-sm" : ""
+              }`}
+            >
               {children}
             </div>
           </div>
