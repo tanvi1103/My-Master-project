@@ -212,13 +212,8 @@ const App = () => {
           path="/registrar/viewallcertificates"
           element={
             <RegistrarLayout currentUser={currentUser}>
-              <div className="space-y-4">
-                <h3 className="text-lg font-semibold text-gray-800 dark:text-white">
-                  Welcome back!
-                </h3>
                 <ViewAllGraduate />
-                {/* Add your dashboard content here */}
-              </div>
+    
             </RegistrarLayout>
           }
         />
