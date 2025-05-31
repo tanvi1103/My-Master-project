@@ -13,6 +13,7 @@ import {
   FiX,
 } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
+import LoadingSpinner from "../pages/LoadingSpinner";
 
 
 const api = `http://localhost:5000/api/admin`;
@@ -51,32 +52,7 @@ const StudentsPage = () => {
   //   },
   //   // Add more sample data as needed
   // ]);
-  const [certificates, setCertificates] = useState([]);
 
-  
-    useEffect(() => {
-      const fetchCertificates = async () => {
-        try {
-          const token = localStorage.getItem("registrarToken");
-          const response = await axios.get(`${api}/certificates`,
-            {
-              headers: {
-                Authorization: `Bearer ${token}`, // Ensure the token is sent
-              },
-            }
-          ); // Replace with your backend endpoint
-          console.log(response.data); // Log the response data for debugging
-          setCertificates(response.data); // Assuming the backend returns an array of certificates
-          setIsLoading(false);
-        } catch (err) {
-          console.error("Error fetching certificates:", err);
-          setError("Failed to fetch certificates. Please try again later.");
-          setIsLoading(false);
-        }
-      };
-  
-      fetchCertificates();
-    }, []);
  
 
   const [searchTerm, setSearchTerm] = useState("");
@@ -107,6 +83,32 @@ const StudentsPage = () => {
   });
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
+    const [certificates, setCertificates] = useState([]);
+
+  
+    useEffect(() => {
+      const fetchCertificates = async () => {
+        try {
+          const token = localStorage.getItem("registrarToken");
+          const response = await axios.get(`${api}/certificates`,
+            {
+              headers: {
+                Authorization: `Bearer ${token}`, // Ensure the token is sent
+              },
+            }
+          ); // Replace with your backend endpoint
+          console.log(response.data); // Log the response data for debugging
+          setCertificates(response.data); // Assuming the backend returns an array of certificates
+          setIsLoading(false);
+        } catch (err) {
+          console.error("Error fetching certificates:", err);
+          setError("Failed to fetch certificates. Please try again later.");
+          setIsLoading(false);
+        }
+      };
+  
+      fetchCertificates();
+    }, []);
   // college options
   const colleges = [
     "Engineering and Technology",
@@ -277,6 +279,10 @@ const StudentsPage = () => {
     setSelectedCollege(e.target.value);
     setSelectedDepartment("All");
   };
+
+  if (isLoading) {
+    return <LoadingSpinner />
+  }
 
   return (
     <div className="space-y-6">
@@ -621,149 +627,171 @@ const StudentsPage = () => {
       </div>
 
       {/* View Details Modal */}
-      {isModalOpen && selectedCertificate && (
-        <div className="sticky inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-            <div className="p-6">
-              <div className="flex justify-between items-center mb-4">
-                <h3 className="text-xl font-bold text-gray-900 dark:text-white">
-                  Graduate Details
-                </h3>
-                <button
-                  onClick={() => setIsModalOpen(false)}
-                  className="text-gray-400 hover:text-gray-500 dark:hover:text-gray-300"
-                >
-                  <FiX className="h-6 w-6" />
-                </button>
+{isModalOpen && selectedCertificate && (
+  <div className="fixed inset-0 z-10 flex items-center justify-center p-4  bg-opacity-50 backdrop-blur-sm">
+    <div className="relative w-full max-w-4xl bg-white rounded-lg shadow-2xl dark:bg-gray-800 border-4 border-gold-500">
+      {/* Certificate Header */}
+      <div className="absolute top-0 left-0 right-0 h-2 bg-blue-600 rounded-t-lg"></div>
+      
+      {/* Certificate Seal (top right) */}
+      <div className="absolute top-6 right-6 w-16 h-16 rounded-full bg-red-100 border-4 border-red-300 flex items-center justify-center text-red-600 font-bold text-xs text-center">
+        OFFICIAL SEAL
+      </div>
+      
+      {/* Certificate Ribbon (left side) */}
+      <div className="absolute left-0 top-1/4 h-1/2 w-4 bg-blue-600"></div>
+
+      {/* Modal Header */}
+      <div className="px-8 pt-8 pb-6 border-b border-gray-200 dark:border-gray-700">
+        <div className="flex justify-between items-center">
+          <div>
+            <h2 className="text-3xl font-bold text-blue-800 dark:text-blue-300 mb-1">ACADEMIC CERTIFICATE</h2>
+            <p className="text-sm text-gray-500 dark:text-gray-400">Issued by {selectedCertificate.college}</p>
+          </div>
+          <button
+            onClick={() => setIsModalOpen(false)}
+            className="text-gray-500 hover:text-gray-700 dark:hover:text-gray-300"
+          >
+            <FiX className="h-6 w-6" />
+          </button>
+        </div>
+      </div>
+
+      {/* Certificate Content */}
+      <div className="p-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          {/* Left Column: Photo and Basic Info */}
+          <div className="col-span-1 flex flex-col items-center">
+            <div className="relative mb-6">
+              <img
+                className="h-40 w-32 object-cover border-4 border-gray-300 rounded"
+                src={selectedCertificate.photo}
+                alt={getFullName(selectedCertificate)}
+              />
+              <div className="absolute -bottom-3 left-0 right-0 text-center">
+                <span className="inline-block px-2 py-1 text-xs font-bold bg-blue-600 text-white rounded">
+                  STUDENT PHOTO
+                </span>
               </div>
+            </div>
+            
+            <div className="w-full space-y-3">
+              <div className="border-b border-gray-200 pb-2">
+                <p className="text-xs font-semibold text-gray-500 uppercase">Certificate ID</p>
+                <p className="font-mono text-lg font-bold">{selectedCertificate.certificateID}</p>
+              </div>
+              
+              <div className="border-b border-gray-200 pb-2">
+                <p className="text-xs font-semibold text-gray-500 uppercase">Gender</p>
+                <p className="text-lg">{selectedCertificate.gender}</p>
+              </div>
+              
+              <div className="border-b border-gray-200 pb-2">
+                <p className="text-xs font-semibold text-gray-500 uppercase">CGPA</p>
+                <p className="text-lg font-bold text-blue-800">{selectedCertificate.cgpa.toFixed(2)}</p>
+              </div>
+            </div>
+          </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {/* Left Column */}
-                <div className="space-y-4">
-                  <div className="flex items-center space-x-4">
-                    <div className="flex-shrink-0">
-                      <img
-                        className="h-16 w-16 rounded-full object-cover"
-                        src={selectedCertificate.photo}
-                        alt={getFullName(selectedCertificate)}
-                      />
-                    </div>
-                    <div>
-                      <h4 className="text-lg font-semibold text-gray-900 dark:text-white">
-                        {getFullName(selectedCertificate)}
-                      </h4>
-                      
-                      <p className="text-sm text-gray-500 dark:text-gray-400">
-                        {selectedCertificate.certificateID}
-                      </p>
-                    </div>
-                  </div>
-
-                  <div>
-                    <h4 className="text-md font-medium text-gray-900 dark:text-white mb-2">
-                      Academic Information
-                    </h4>
-                    <div className="space-y-2">
-                      <p className="text-sm">
-                        <span className="font-medium text-gray-700 dark:text-gray-300">
-                          Program:
-                        </span>{" "}
-                        {selectedCertificate.program}
-                      </p>
-                      <p className="text-sm">
-                        <span className="font-medium text-gray-700 dark:text-gray-300">
-                          Department:
-                        </span>{" "}
-                        {selectedCertificate.department}
-                      </p>
-                      <p className="text-sm">
-                        <span className="font-medium text-gray-700 dark:text-gray-300">
-                          College:
-                        </span>{" "}
-                        {selectedCertificate.college}
-                      </p>
-                      <p className="text-sm">
-                        <span className="font-medium text-gray-700 dark:text-gray-300">
-                          CGPA:
-                        </span>{" "}
-                        {selectedCertificate.cgpa.toFixed(2)}
-                      </p>
-                    </div>
-                  </div>
+          {/* Middle Column: Academic Details */}
+          <div className="col-span-1 md:col-span-2 space-y-6">
+            <div>
+              <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
+                {getFullName(selectedCertificate)}
+              </h3>
+              <div className="h-1 w-20 bg-blue-600 mb-4"></div>
+              
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <p className="text-sm font-semibold text-gray-500 uppercase">Program</p>
+                  <p className="text-lg">{selectedCertificate.program}</p>
                 </div>
-
-                {/* Right Column */}
-                <div className="space-y-4">
-                  <div>
-                    <h4 className="text-md font-medium text-gray-900 dark:text-white mb-2">
-                      Status Information
-                    </h4>
-                    <div className="space-y-2">
-                      <p className="text-sm">
-                        <span className="font-medium text-gray-700 dark:text-gray-300">
-                          Graduation Status:
-                        </span>
-                        <span
-                          className={`ml-2 px-2 py-1 text-xs font-medium rounded-full ${
-                            selectedCertificate.gstatus === "Verified"
-                              ? "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200"
-                              : selectedCertificate.gstatus === "Pending"
-                              ? "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200"
-                              : "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200"
-                          }`}
-                        >
-                          {selectedCertificate.gstatus}
-                        </span>
-                      </p>
-                      <p className="text-sm">
-                        <span className="font-medium text-gray-700 dark:text-gray-300">
-                          Study Period:
-                        </span>
-                        {new Date(
-                          selectedCertificate.startDate
-                        ).toLocaleDateString()}{" "}
-                        -{" "}
-                        {new Date(
-                          selectedCertificate.endDate
-                        ).toLocaleDateString()}
-                      </p>
-                      <p className="text-sm">
-                        <span className="font-medium text-gray-700 dark:text-gray-300">
-                          Gender:
-                        </span>{" "}
-                        {selectedCertificate.gender}
-                      </p>
-                    </div>
-                  </div>
-
-                  <div>
-                    <h4 className="text-md font-medium text-gray-900 dark:text-white mb-2">
-                      Actions
-                    </h4>
-                    <div className="flex space-x-3">
-                      <button className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm transition-colors">
-                        Generate Certificate
-                      </button>
-                      <button className="px-4 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg text-sm transition-colors">
-                        View Transcript
-                      </button>
-                    </div>
-                  </div>
+                <div>
+                  <p className="text-sm font-semibold text-gray-500 uppercase">Department</p>
+                  <p className="text-lg">{selectedCertificate.department}</p>
+                </div>
+                <div>
+                  <p className="text-sm font-semibold text-gray-500 uppercase">College</p>
+                  <p className="text-lg">{selectedCertificate.college}</p>
+                </div>
+                <div>
+                  <p className="text-sm font-semibold text-gray-500 uppercase">Study Period</p>
+                  <p className="text-lg">
+                    {new Date(selectedCertificate.startDate).toLocaleDateString()} - {" "}
+                    {new Date(selectedCertificate.endDate).toLocaleDateString()}
+                  </p>
                 </div>
               </div>
-
-              <div className="mt-6 flex justify-end space-x-3">
-                <button
-                  onClick={() => setIsModalOpen(false)}
-                  className="px-4 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg text-sm transition-colors"
-                >
-                  Close
-                </button>
+            </div>
+            
+            <div className="bg-blue-50 dark:bg-blue-900 p-4 rounded-lg">
+              <div className="flex justify-between items-center">
+                <div>
+                  <p className="text-sm font-semibold text-gray-500 dark:text-gray-300 uppercase">Graduation Status</p>
+                  <p className={`text-lg font-bold ${
+                    selectedCertificate.gstatus === "verified" ? "text-green-600 dark:text-green-300" :
+                    selectedCertificate.gstatus === "pending" ? "text-blue-600 dark:text-blue-300" :
+                    "text-red-600 dark:text-red-300"
+                  }`}>
+                    {selectedCertificate.gstatus.toUpperCase()}
+                  </p>
+                </div>
+                <div className="text-right">
+                  <p className="text-sm font-semibold text-gray-500 dark:text-gray-300 uppercase">Date Issued</p>
+                  <p className="text-lg">{new Date().toLocaleDateString()}</p>
+                </div>
+              </div>
+            </div>
+            
+            {/* Signature Area */}
+            <div className="mt-8 flex justify-between items-end">
+              <div className="text-center">
+                <div className="h-16 w-48 border-t-2 border-gray-400 mb-2"></div>
+                <p className="text-sm font-semibold">Registrar's Signature</p>
+              </div>
+              <div className="text-center">
+                <div className="h-16 w-48 border-t-2 border-gray-400 mb-2"></div>
+                <p className="text-sm font-semibold">Dean's Signature</p>
               </div>
             </div>
           </div>
         </div>
-      )}
+      </div>
+
+      {/* Certificate Footer */}
+      <div className="px-8 py-4 bg-gray-50 dark:bg-gray-700 rounded-b-lg border-t border-gray-200 dark:border-gray-600">
+        <div className="flex justify-between items-center">
+          <p className="text-sm text-gray-500 dark:text-gray-400">
+            This document is officially issued by {selectedCertificate.college}
+          </p>
+          <div className="flex space-x-3">
+                            <button
+                  onClick={() =>
+                    handleEditClick(selectedCertificate.certificateID)
+                  }
+                  className="flex items-center rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-100 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600"
+                >
+                  <FiEdit2 className="mr-1 inline-block" />
+                  Edit
+                </button>
+            <button 
+              className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
+              onClick={() => console.log("Generate Certificate")}
+            >
+              Download PDF
+            </button>
+            <button
+              onClick={() => setIsModalOpen(false)}
+              className="px-4 py-2 border border-gray-300 text-gray-700 rounded hover:bg-gray-100 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-600 transition-colors"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+)}
 
       {/* Edit Certificate Modal */}
       {isEditModalOpen && selectedCertificate && (
