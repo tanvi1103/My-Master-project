@@ -6,11 +6,14 @@ import {
   FiSettings,
   FiMenu,
   FiX,
+  FiUserPlus,
   FiSun,
   FiMoon,
   FiLogOut,
+    FiChevronLeft,
+  FiChevronRight,
 } from "react-icons/fi";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
@@ -22,6 +25,42 @@ const RegistrarLayout = ({ children }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [currentUser, setCurrentUser] = useState(null);
   const authurl = import.meta.env.VITE_AUTH_ROUTE;
+const location = useLocation();
+  const [activePath, setActivePath] = useState(location.pathname);
+
+  // Update active path when location changes
+  useEffect(() => {
+    setActivePath(location.pathname);
+  }, [location]);
+
+  // Sidebar navigation items
+  const navItems = [
+    {
+      path: "/registrar",
+      icon: <FiHome className="w-5 h-5" />,
+      label: "Dashboard",
+    },
+    {
+      path: "/registrar/studentRecords",
+      icon: <FiUsers className="w-5 h-5" />,
+      label: "Graduates",
+    },
+    {
+      path: "/registrar/viewallcertificates",
+      icon: <FiFileText className="w-5 h-5" />,
+      label: "View Certificates",
+    },
+    {
+      path: "/registrar/addgraduate",
+      icon: <FiUserPlus className="w-5 h-5" />,
+      label: "Add Graduate",
+    },
+    {
+      path: "/registrar/settings",
+      icon: <FiSettings className="w-5 h-5" />,
+      label: "Settings",
+    },
+  ];
 
   const [darkMode, setDarkMode] = useState(() => {
     return (
@@ -232,87 +271,73 @@ const RegistrarLayout = ({ children }) => {
 
       <div className="flex flex-1 overflow-hidden">
         {/* Sidebar - Desktop */}
-        <aside
-          id="sidebar"
-          className={`fixed top-16 left-0 z-40 w-64 h-[calc(100vh-4rem)] bg-white dark:bg-gray-800 shadow-md transform transition-transform duration-300 ease-in-out
-    ${sidebarOpen ? "translate-x-0" : "-translate-x-full"} md:translate-x-0`}
-        >
-          <div className="h-full flex flex-col">
-            {/* Non-scrollable nav content */}
-            <nav className="flex-1 px-4 py-6 overflow-y-auto">
-              <ul className="space-y-2">
-                <li>
-                  <Link
-                    to={"/registrar"}
-                    className="flex items-center px-4 py-3 rounded-lg bg-blue-100 dark:bg-gray-700 text-blue-600 dark:text-blue-300"
-                  >
-                    <FiHome className="mr-3" />
-                    <span>Dashboard</span>
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    to={"/registrar/studentRecords"}
-                    className="flex items-center px-4 py-3 rounded-lg text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
-                  >
-                    <FiUsers className="mr-3" />
-                    <span>Graduates</span>
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    to="/registrar/viewallcertificates"
-                    className="flex items-center px-4 py-3 rounded-lg text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
-                  >
-                    <FiFileText className="mr-3" />
-                    <span>view all certificates</span>
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    to="/registrar/settings"
-                    className="flex items-center px-4 py-3 rounded-lg text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
-                  >
-                    <FiSettings className="mr-3" />
-                    <span>Settings</span>
-                  </Link>
-                </li>
-              </ul>
-            </nav>
+  <aside
+        id="sidebar"
+        className={`fixed top-0 left-0 z-40 w-64 h-screen bg-white dark:bg-gray-800 shadow-lg transition-all duration-300 ease-in-out
+          ${sidebarOpen ? "translate-x-0" : "-translate-x-full"} md:translate-x-0`}
+      >
+        <div className="h-full flex flex-col">
+          {/* Logo/School Name */}
+          <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+            <h2 className="text-xl font-bold text-gray-800 dark:text-white">
+              Academic Registry
+            </h2>
+          </div>
 
-            {/* Sidebar footer - always visible at bottom */}
-            <div className="px-4 py-4 border-t border-gray-200 dark:border-gray-700">
-              <div className="flex items-center">
-                <div className="w-10 h-10 rounded-full bg-blue-100 dark:bg-blue-900 flex items-center justify-center">
-                       {preview ? (
-                      <img
-                        src={
-                          preview.startsWith("blob:") ||
-                          preview.startsWith("http")
-                            ? preview
-                            : `http://localhost:5000${preview}`
-                        }
-                        alt="Profile"
-                        className="w-full h-full rounded-full object-cover"
-                      />
-                  ) : (
-                    <span className="text-blue-600 dark:text-blue-300 font-medium">
-                      {currentUser.firstName.charAt(0)}
-                    </span>
-                  )}
-                </div>
-                <div className="ml-3">
-                  <p className="text-sm font-medium text-gray-700 dark:text-gray-200">
-                    {currentUser.firstName} {currentUser.lastName}
-                  </p>
-                  <p className="text-xs text-gray-500 dark:text-gray-400">
-                    Registrar
-                  </p>
-                </div>
+          {/* Navigation */}
+          <nav className="flex-1 px-2 py-4 overflow-y-auto">
+            <ul className="space-y-1">
+              {navItems.map((item) => (
+                <li key={item.path}>
+                  <Link
+                    to={item.path}
+                    className={`flex items-center px-4 py-3 rounded-lg transition-colors duration-200
+                      ${
+                        activePath === item.path
+                          ? "bg-blue-100 dark:bg-blue-900/50 text-blue-600 dark:text-blue-300 font-medium"
+                          : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+                      }`}
+                  >
+                    <span className="mr-3">{item.icon}</span>
+                    <span>{item.label}</span>
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </nav>
+
+          {/* User Profile */}
+          <div className="px-4 py-4 border-t border-gray-200 dark:border-gray-700">
+            <div className="flex items-center">
+              <div className="relative w-10 h-10 rounded-full bg-blue-100 dark:bg-blue-900/50 flex items-center justify-center overflow-hidden">
+                {preview ? (
+                  <img
+                    src={
+                      preview.startsWith("blob:") || preview.startsWith("http")
+                        ? preview
+                        : `http://localhost:5000${preview}`
+                    }
+                    alt="Profile"
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <span className="text-blue-600 dark:text-blue-300 font-medium">
+                    {currentUser?.firstName?.charAt(0) || "U"}
+                  </span>
+                )}
+              </div>
+              <div className="ml-3 overflow-hidden">
+                <p className="text-sm font-medium text-gray-700 dark:text-gray-200 truncate">
+                  {currentUser?.firstName} {currentUser?.lastName}
+                </p>
+                <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
+                  Registrar
+                </p>
               </div>
             </div>
           </div>
-        </aside>
+        </div>
+      </aside>
 
         {/* Main content */}
         <main className="flex-1 overflow-auto bg-gray-50 dark:bg-gray-900 p-4 md:p-6">
