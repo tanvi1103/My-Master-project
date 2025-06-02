@@ -101,13 +101,19 @@ const GraduateSearch = () => {
               gender: data.nationalID.gender || "",
             });
           } else {
-            setError(data.error || "No record found with this national ID");
+            setError("National API not found or invalid");
           }
         } catch (err) {
-          setError(
-            err.response?.data?.message ||
-              "No record found with this national ID"
-          );
+          if (err.response?.status === 404) {
+            setError(
+              err.response?.data?.error ||
+                "No record found with this national ID"
+            );
+          } else {
+            setError(
+              "National ID service unavailable. Please contact system admin through our chat."
+            );
+          }
         } finally {
           setIsFetching(false);
         }
@@ -162,7 +168,7 @@ const GraduateSearch = () => {
 
       setCertificate(data);
     } catch (err) {
-      setError(err.response?.data?.message || "Something went wrong");
+      setError(err.response?.data?.error || "Something went wrong");
     } finally {
       setIsSearching(false);
     }
