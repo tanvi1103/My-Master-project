@@ -3,32 +3,30 @@ import axios from "axios";
 import { useNavigate, Link } from "react-router-dom";
 import ReCAPTCHA from "react-google-recaptcha";
 
-
 const UserLogin = ({ setCurrentUser }) => {
-
-const [captchaToken, setCaptchaToken] = useState("");
+  const [captchaToken, setCaptchaToken] = useState("");
 
   const navigate = useNavigate();
   const [loginMethod, setLoginMethod] = useState("email");
   const [formData, setFormData] = useState({
     email: "",
     nationalIdNumber: "",
-    password: ""
+    password: "",
   });
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [verificationStep, setVerificationStep] = useState(false);
   const [verificationCode, setVerificationCode] = useState("");
-  
-  const authurl = 'http://localhost:5000/api/auth';
+
+  const authurl = "http://localhost:5000/api/auth";
 
   // Development-only auto-fill function
   const autoFillTestCredentials = () => {
-    if (process.env.NODE_ENV === 'development') {
+    if (process.env.NODE_ENV === "development") {
       setFormData({
         email: "madisomelese2@gmail.com",
         nationalIdNumber: "1111111111111119",
-        password: "87654321"
+        password: "87654321",
       });
     }
   };
@@ -40,16 +38,18 @@ const [captchaToken, setCaptchaToken] = useState("");
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
   };
 
   const handleLogin = async () => {
-    if ((loginMethod === "email" && !formData.email) || 
-        (loginMethod === "nationalId" && !formData.nationalIdNumber) || 
-        !formData.password) {
+    if (
+      (loginMethod === "email" && !formData.email) ||
+      (loginMethod === "nationalId" && !formData.nationalIdNumber) ||
+      !formData.password
+    ) {
       setError("Please fill all required fields");
       return;
     }
@@ -58,7 +58,7 @@ const [captchaToken, setCaptchaToken] = useState("");
     try {
       const payload = {
         password: formData.password,
-        captchaToken
+        captchaToken,
       };
 
       if (loginMethod === "email") {
@@ -95,12 +95,13 @@ const [captchaToken, setCaptchaToken] = useState("");
     setLoading(true);
     try {
       const { data } = await axios.post(`${authurl}/verify-email`, {
-        [loginMethod]: loginMethod === "email" ? formData.email : formData.nationalIdNumber,
-        code: verificationCode
+        [loginMethod]:
+          loginMethod === "email" ? formData.email : formData.nationalIdNumber,
+        code: verificationCode,
       });
 
       if (data.success) {
-          localStorage.setItem("token", data.token);
+        localStorage.setItem("token", data.token);
         setCurrentUser(data.user);
         navigate("/externalUser");
       } else {
@@ -121,7 +122,7 @@ const [captchaToken, setCaptchaToken] = useState("");
         </h2>
 
         {/* Development-only auto-fill button */}
-        {process.env.NODE_ENV === 'development' && (
+        {process.env.NODE_ENV === "development" && (
           <button
             onClick={autoFillTestCredentials}
             className="mb-4 w-full py-2 px-4 bg-yellow-500 hover:bg-yellow-600 text-white font-medium rounded-lg text-sm"
@@ -143,13 +144,21 @@ const [captchaToken, setCaptchaToken] = useState("");
             {/* Login Method Toggle */}
             <div className="flex mb-4 border-b border-gray-200 dark:border-gray-700">
               <button
-                className={`flex-1 py-2 font-medium ${loginMethod === "email" ? "text-blue-600 border-b-2 border-blue-600" : "text-gray-500 dark:text-gray-400"}`}
+                className={`flex-1 py-2 font-medium ${
+                  loginMethod === "email"
+                    ? "text-blue-600 border-b-2 border-blue-600"
+                    : "text-gray-500 dark:text-gray-400"
+                }`}
                 onClick={() => setLoginMethod("email")}
               >
                 Email
               </button>
               <button
-                className={`flex-1 py-2 font-medium ${loginMethod === "nationalId" ? "text-blue-600 border-b-2 border-blue-600" : "text-gray-500 dark:text-gray-400"}`}
+                className={`flex-1 py-2 font-medium ${
+                  loginMethod === "nationalId"
+                    ? "text-blue-600 border-b-2 border-blue-600"
+                    : "text-gray-500 dark:text-gray-400"
+                }`}
                 onClick={() => setLoginMethod("nationalId")}
               >
                 National ID
@@ -211,37 +220,38 @@ const [captchaToken, setCaptchaToken] = useState("");
                     type="checkbox"
                     className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
                   />
-                  <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-700 dark:text-gray-300">
+                  <label
+                    htmlFor="remember-me"
+                    className="ml-2 block text-sm text-gray-700 dark:text-gray-300"
+                  >
                     Remember me
                   </label>
                 </div>
 
-                <Link 
-                  to="/forgot-password" 
+                <Link
+                  to="/forgot-password"
                   className="text-sm text-blue-600 hover:text-blue-500 dark:text-blue-400 dark:hover:text-blue-300"
                 >
                   Forgot password?
                 </Link>
               </div>
-<ReCAPTCHA
-  sitekey="6Lfi11ArAAAAAJls25EhGPChQv7PiEg7gllCOiW3"
-  onChange={(token) => setCaptchaToken(token)}
-/>
+              <ReCAPTCHA
+                sitekey="6Lfi11ArAAAAAJls25EhGPChQv7PiEg7gllCOiW3"
+                onChange={(token) => setCaptchaToken(token)}
+              />
               <button
                 onClick={handleLogin}
                 disabled={loading}
                 className="w-full py-2 px-4 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg disabled:opacity-50 transition"
               >
-                {loading ? 'Logging in...' : 'Login'}
+                {loading ? "Logging in..." : "Login"}
               </button>
             </div>
 
-
-
             <div className="mt-4 text-center text-sm text-gray-600 dark:text-gray-400">
-              Don't have an account?{' '}
-              <Link 
-                to="/signup" 
+              Don't have an account?{" "}
+              <Link
+                to="/signup"
                 className="font-medium text-blue-600 hover:text-blue-500 dark:text-blue-400 dark:hover:text-blue-300"
               >
                 Sign up
@@ -253,9 +263,10 @@ const [captchaToken, setCaptchaToken] = useState("");
             {/* Verification Step */}
             <div className="space-y-4">
               <p className="text-gray-600 dark:text-gray-400">
-                We sent a 6-digit verification code to your {loginMethod === "email" ? "email" : "registered email"}
+                We sent a 6-digit verification code to your{" "}
+                {loginMethod === "email" ? "email" : "registered email"}
               </p>
-              
+
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                   Verification Code
@@ -264,7 +275,11 @@ const [captchaToken, setCaptchaToken] = useState("");
                   type="text"
                   placeholder="Enter 6-digit code"
                   value={verificationCode}
-                  onChange={(e) => setVerificationCode(e.target.value.replace(/\D/g, '').slice(0, 6))}
+                  onChange={(e) =>
+                    setVerificationCode(
+                      e.target.value.replace(/\D/g, "").slice(0, 6)
+                    )
+                  }
                   className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 />
               </div>
@@ -274,7 +289,7 @@ const [captchaToken, setCaptchaToken] = useState("");
                 disabled={loading}
                 className="w-full py-2 px-4 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg disabled:opacity-50 transition"
               >
-                {loading ? 'Verifying...' : 'Verify & Login'}
+                {loading ? "Verifying..." : "Verify & Login"}
               </button>
 
               <button
