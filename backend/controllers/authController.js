@@ -16,7 +16,7 @@ exports.register = async (req, res) => {
       phone,
       email,
       password,
-      role
+      role,
     } = req.body;
 
     // Check if user already exists
@@ -29,8 +29,17 @@ exports.register = async (req, res) => {
         success: false,
         error:
           existingUser.nationalIdNumber === nationalIdNumber
-            ? `User with this ${nationalIdNumber} National ID already registered. Please use a different National ID. or login if you lost your password, reset your password <a href="/forgot-password" style="color:#2563eb;text-decoration:underline;">here</a>.`
+            ? `User with this ${nationalIdNumber} National ID already registered.`
             : "Email already in use",
+      });
+    }
+
+    // Password strength validation
+    const passwordStrength = validatePasswordStrength(password);
+    if (!passwordStrength.isValid) {
+      return res.status(400).json({
+        success: false,
+        error: passwordStrength.message,
       });
     }
 
@@ -39,10 +48,11 @@ exports.register = async (req, res) => {
       100000 + Math.random() * 900000
     ).toString();
 
-        // Validate role (only admin can create other admins/registrars)
-    if (role && role !== 'user' && req.user?.role !== 'admin') {
-      return res.status(403).json({ error: 'Not authorized to create this role' });
+    // Validate role (only admin can create other admins/registrars)
+    if (role && role !== "user" && req.user?.role !== "admin") {
+      return res.status(403).json({ error: "Not authorized to create this role" });
     }
+
     // Create new user
     const newUser = new User({
       nationalIdNumber,
@@ -54,7 +64,7 @@ exports.register = async (req, res) => {
       email,
       password,
       verificationCode,
-      role: role || 'user', // Default to 'user' if no role is provided
+      role: role || "user", // Default to 'user' if no role is provided
     });
 
     await newUser.save();
@@ -64,19 +74,42 @@ exports.register = async (req, res) => {
 
     res.status(201).json({
       success: true,
-      message:
-        "Registration successful. Please check your email for verification.",
+      message: "Registration successful. Please check your email for verification.",
     });
   } catch (error) {
     console.error("Registration error:", error);
     res.status(500).json({
-
       success: false,
-
       error: "Registration failed. Please try again.",
-
     });
   }
+};
+
+// Helper function to validate password strength
+const validatePasswordStrength = (password) => {
+  const minLength = 8;
+  const hasUppercase = /[A-Z]/.test(password);
+  const hasLowercase = /[a-z]/.test(password);
+  const hasNumber = /[0-9]/.test(password);
+  const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(password);
+
+  if (password.length < minLength) {
+    return { isValid: false, message: "Password must be at least 8 characters long." };
+  }
+  if (!hasUppercase) {
+    return { isValid: false, message: "Password must include at least one uppercase letter." };
+  }
+  if (!hasLowercase) {
+    return { isValid: false, message: "Password must include at least one lowercase letter." };
+  }
+  if (!hasNumber) {
+    return { isValid: false, message: "Password must include at least one number." };
+  }
+  if (!hasSpecialChar) {
+    return { isValid: false, message: "Password must include at least one special character." };
+  }
+
+  return { isValid: true, message: "Password is strong." };
 };
 
 exports.verifyEmail = async (req, res) => {
