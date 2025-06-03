@@ -118,7 +118,7 @@ const loginAdmin = async (req, res) => {
     const token = jwt.sign(
       { id: admin._id, role: "admin" },
       process.env.JWT_SECRET,
-      { expiresIn: "1h" }
+      { expiresIn: "24h" }
     );
 
 res.cookie('adminToken', token, {
@@ -163,6 +163,7 @@ const logoutAdmin = (req, res) => {
     secure: process.env.NODE_ENV === "production",
     sameSite: "Strict",
   });
+  
   res.status(200).json({ message: "Logged out successfully",
     clearLocalStorage: true 
    });
