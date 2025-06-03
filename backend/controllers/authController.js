@@ -142,7 +142,7 @@ exports.login = async (req, res) => {
         if(!captchaToken){
       return res.status(400).json({
         success: false,
-        error: "please mark CAPTCHA, it's required",
+        error: "please, idenitify your self you're not robot   it's required",
       })
     }
     
@@ -180,7 +180,7 @@ exports.login = async (req, res) => {
     if (!isMatch) {
       return res.status(401).json({
         success: false,
-        error: "Invalid password, please try again or reset your password",
+        error: "Incorrect password, please try again or reset your password",
       });
     }
 
