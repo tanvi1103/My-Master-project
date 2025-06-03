@@ -1,14 +1,106 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { FaCheck, FaTimes } from "react-icons/fa";
 
+const PasswordStrengthMeter = ({ password }) => {
+  const [strength, setStrength] = useState(0);
+  const [requirements, setRequirements] = useState({
+    length: false,
+    uppercase: false,
+    lowercase: false,
+    number: false,
+    specialChar: false,
+  });
+
+  useEffect(() => {
+    const calculateStrength = () => {
+      let score = 0;
+      const newRequirements = {
+        length: password.length >= 8,
+        uppercase: /[A-Z]/.test(password),
+        lowercase: /[a-z]/.test(password),
+        number: /[0-9]/.test(password),
+        specialChar: /[^A-Za-z0-9]/.test(password),
+      };
+
+      setRequirements(newRequirements);
+
+      // Calculate score
+      if (newRequirements.length) score += 20;
+      if (newRequirements.uppercase) score += 20;
+      if (newRequirements.lowercase) score += 20;
+      if (newRequirements.number) score += 20;
+      if (newRequirements.specialChar) score += 20;
+
+      setStrength(score);
+    };
+
+    calculateStrength();
+  }, [password]);
+
+  const getStrengthColor = () => {
+    if (strength < 40) return "bg-red-500";
+    if (strength < 80) return "bg-yellow-500";
+    return "bg-green-500";
+  };
+
+  const getStrengthText = () => {
+    if (strength < 40) return "Weak";
+    if (strength < 80) return "Moderate";
+    return "Strong";
+  };
+
+  return (
+    <div className="mt-2">
+      <div className="flex justify-between mb-1">
+        <span className="text-sm font-medium">Password Strength</span>
+        <span className="text-sm font-medium">{getStrengthText()}</span>
+      </div>
+      <div className="w-full bg-gray-200 rounded-full h-2.5">
+        <div
+          className={`h-2.5 rounded-full ${getStrengthColor()}`}
+          style={{ width: `${strength}%` }}
+        ></div>
+      </div>
+
+      <div className="mt-3 text-sm">
+        <p className="font-medium mb-1">Password Requirements:</p>
+        <ul className="space-y-1">
+          <li className={`flex items-center ${requirements.length ? "text-green-500" : "text-gray-500"}`}>
+            {requirements.length ? <FaCheck className="mr-1" /> : <FaTimes className="mr-1" />}
+            At least 8 characters
+          </li>
+          <li className={`flex items-center ${requirements.uppercase ? "text-green-500" : "text-gray-500"}`}>
+            {requirements.uppercase ? <FaCheck className="mr-1" /> : <FaTimes className="mr-1" />}
+            At least one uppercase letter
+          </li>
+          <li className={`flex items-center ${requirements.lowercase ? "text-green-500" : "text-gray-500"}`}>
+            {requirements.lowercase ? <FaCheck className="mr-1" /> : <FaTimes className="mr-1" />}
+            At least one lowercase letter
+          </li>
+          <li className={`flex items-center ${requirements.number ? "text-green-500" : "text-gray-500"}`}>
+            {requirements.number ? <FaCheck className="mr-1" /> : <FaTimes className="mr-1" />}
+            At least one number
+          </li>
+          <li className={`flex items-center ${requirements.specialChar ? "text-green-500" : "text-gray-500"}`}>
+            {requirements.specialChar ? <FaCheck className="mr-1" /> : <FaTimes className="mr-1" />}
+            At least one special character
+          </li>
+        </ul>
+      </div>
+    </div>
+  );
+};
 const UserSignup = () => {
   const navigate = useNavigate();
   const [step, setStep] = useState(1);
   const [maxStep, setMaxStep] = useState(1); // Track the farthest step reached
   const [error, setError] = useState("");
+  const [successMessage, setSuccessMessage] = useState(""); // For positive feedback
   const [loading, setLoading] = useState(false);
   const [verificationCode, setVerificationCode] = useState("");
+  const [strength, setStrength] = useState(0); // Add strength state
   const [formData, setFormData] = useState({
     nationalIdNumber: "",
     firstName: "",
@@ -18,12 +110,42 @@ const UserSignup = () => {
     phone: "",
     email: "",
     password: "",
-    confirmPassword: ""
+    confirmPassword: "",
   });
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const handlePasswordStrength = (password) => {
+    let score = 0;
+    const requirements = {
+      length: password.length >= 8,
+      uppercase: /[A-Z]/.test(password),
+      lowercase: /[a-z]/.test(password),
+      number: /[0-9]/.test(password),
+      specialChar: /[^A-Za-z0-9]/.test(password),
+    };
+
+    if (requirements.length) score += 20;
+    if (requirements.uppercase) score += 20;
+    if (requirements.lowercase) score += 20;
+    if (requirements.number) score += 20;
+    if (requirements.specialChar) score += 20;
+
+    setStrength(score);
+  };
+
+  useEffect(() => {
+    handlePasswordStrength(formData.password);
+  }, [formData.password]);
 
   const nationalidurl = import.meta.env.VITE_NATIONAL_ID_ROUTE;
   const authurl = import.meta.env.VITE_AUTH_ROUTE;
-  console.log("authurl", authurl);
 
   useEffect(() => {
     if (formData.nationalIdNumber.length > 0 && formData.nationalIdNumber.length !== 16) {
@@ -33,15 +155,9 @@ const UserSignup = () => {
     }
   }, [formData.nationalIdNumber]);
 
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
-  };
 
-   const goToStep = (nextStep) => {
+
+  const goToStep = (nextStep) => {
     setStep(nextStep);
     if (nextStep > maxStep) setMaxStep(nextStep);
   };
@@ -53,20 +169,22 @@ const UserSignup = () => {
     }
 
     setLoading(true);
-      try {
+    setError("");
+    setSuccessMessage("");
+    try {
       const { data } = await axios.get(`${nationalidurl}/nationalIdNumber`, {
-        params: { nationalIdNumber: formData.nationalIdNumber }
+        params: { nationalIdNumber: formData.nationalIdNumber },
       });
       if (data.success && data.nationalID) {
-        setFormData(prev => ({
+        setFormData((prev) => ({
           ...prev,
           firstName: data.nationalID.firstName,
           middleName: data.nationalID.middleName,
           lastName: data.nationalID.lastName,
-          gender: data.nationalID.gender
+          gender: data.nationalID.gender,
         }));
-        goToStep(2); // Use goToStep instead of setStep
-        setError("");
+        setSuccessMessage("National ID verified successfully!");
+        goToStep(2);
       } else {
         setError(data.error || "National ID not found");
       }
@@ -84,7 +202,8 @@ const UserSignup = () => {
     }
 
     setLoading(true);
-   setLoading(true);
+    setError("");
+    setSuccessMessage("");
     try {
       const { data } = await axios.get(`${nationalidurl}/nationalIdNumber`, {
         params: {
@@ -92,12 +211,12 @@ const UserSignup = () => {
           firstName: formData.firstName,
           middleName: formData.middleName,
           lastName: formData.lastName,
-          phone: formData.phone
-        }
+          phone: formData.phone,
+        },
       });
       if (data.success) {
+        setSuccessMessage("Identity verified successfully!");
         goToStep(3);
-        setError("");
       } else {
         setError(data.error || "Identity verification failed");
       }
@@ -120,8 +239,10 @@ const UserSignup = () => {
     }
 
     setLoading(true);
- try {
-      const { data } = await axios.post(`http://localhost:5000/api/auth/register`, {
+    setError("");
+    setSuccessMessage("");
+    try {
+      const { data } = await axios.post(`${authurl}/register`, {
         nationalIdNumber: formData.nationalIdNumber,
         firstName: formData.firstName,
         middleName: formData.middleName,
@@ -129,16 +250,16 @@ const UserSignup = () => {
         gender: formData.gender,
         phone: formData.phone,
         email: formData.email,
-        password: formData.password
+        password: formData.password,
       });
       if (data.success) {
+        setSuccessMessage("Registration successful! Please check your email for verification.");
         goToStep(4);
-        setError("");
       } else {
         setError(data.error || "Registration failed");
       }
     } catch (err) {
-      setError(err.response?.data?.error || "Registration errord");
+      setError(err.response?.data?.error || "Registration error");
     } finally {
       setLoading(false);
     }
@@ -151,18 +272,20 @@ const UserSignup = () => {
     }
 
     setLoading(true);
+    setError("");
+    setSuccessMessage("");
     try {
-      const { data } = await axios.post(`http://localhost:5000/api/auth/verify-email`, {
+      const { data } = await axios.post(`${authurl}/verify-email`, {
         email: formData.email,
-        code: verificationCode
+        code: verificationCode,
       });
       localStorage.setItem("token", data.token);
 
       if (data.success) {
+        setSuccessMessage("Email verified successfully!");
         navigate("/externalUser");
       } else {
         setError(data.error || "Invalid verification code");
-        navigate("/login");
       }
     } catch (err) {
       setError(err.response?.data?.error || "Verification failed");
@@ -188,7 +311,6 @@ const UserSignup = () => {
               key={stepNumber}
               className={`flex flex-col items-center cursor-pointer ${stepNumber <= maxStep ? '' : 'cursor-not-allowed opacity-50'}`}
               onClick={() => {
-                // Allow navigating to any step up to maxStep
                 if (stepNumber <= maxStep) setStep(stepNumber);
               }}
             >
@@ -204,19 +326,25 @@ const UserSignup = () => {
         </div>
 
         {/* Error Message */}
-   {error && (
-  <div
-    className="mb-4 p-3 bg-red-100 dark:bg-red-900 text-red-700 dark:text-red-200 rounded-lg"
-    dangerouslySetInnerHTML={{ __html: error }}
-  />
-)}
+        {error && (
+          <div className="mb-4 p-3 bg-red-100 dark:bg-red-900 text-red-700 dark:text-red-200 rounded-lg">
+            {error}
+          </div>
+        )}
+
+        {/* Success Message */}
+        {successMessage && (
+          <div className="mb-4 p-3 bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-200 rounded-lg">
+            {successMessage}
+          </div>
+        )}
 
         {/* Step 1: National ID Verification */}
         {step === 1 && (
           <div className="space-y-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-               Enter your 16-digit  National ID Number which provided by the government (FAN)
+                Enter your 16-digit National ID Number provided by the government (FAN)
               </label>
               <input
                 type="text"
@@ -238,8 +366,7 @@ const UserSignup = () => {
           </div>
         )}
 
-        {/* Step 2: Confirm Identity */}
-        {step === 2 && (
+                {step === 2 && (
           <div className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
@@ -302,9 +429,9 @@ const UserSignup = () => {
 
         {/* Step 3: Create Account */}
 
-        {step === 3 && (
+{step === 3 && (
           <div className="space-y-4">
-            <div>
+                        <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Email</label>
               <input
                 type="email"
@@ -325,6 +452,7 @@ const UserSignup = () => {
                 onChange={handleInputChange}
                 className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               />
+              <PasswordStrengthMeter password={formData.password} />
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Confirm Password</label>
@@ -336,10 +464,15 @@ const UserSignup = () => {
                 onChange={handleInputChange}
                 className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               />
+              {formData.password && formData.confirmPassword && (
+                <p className={`text-sm mt-1 ${formData.password === formData.confirmPassword ? 'text-green-500' : 'text-red-500'}`}>
+                  {formData.password === formData.confirmPassword ? 'Passwords match!' : 'Passwords do not match!'}
+                </p>
+              )}
             </div>
             <button
               onClick={handleRegister}
-              disabled={loading}
+              disabled={loading || strength < 80 || formData.password !== formData.confirmPassword}
               className="w-full py-2 px-4 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg disabled:opacity-50 transition"
             >
               {loading ? 'Registering...' : 'Register'}
