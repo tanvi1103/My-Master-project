@@ -3,6 +3,9 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 
+const authurl = process.env.VITE_ADMIN_ROUTE
+const nationalidurl = process.env.VITE_NATIONAL_ID_ROUTE
+const userAuthUrl= procces.env.VITE_AUTH_ROUTE
 const UserAddingPage = () => {
   const navigate = useNavigate();
   const [step, setStep] = useState(1);
@@ -22,8 +25,8 @@ const UserAddingPage = () => {
     confirmPassword: "",
   });
 
-  const nationalidurl = import.meta.env.VITE_NATIONAL_ID_ROUTE;
-  const authurl = import.meta.env.VITE_AUTH_ROUTE;
+  // const nationalidurl = import.meta.env.VITE_NATIONAL_ID_ROUTE;
+  // const authurl = import.meta.env.VITE_AUTH_ROUTE;
 
   useEffect(() => {
     if (
@@ -128,7 +131,7 @@ const UserAddingPage = () => {
     setLoading(true);
     try {
       const token = localStorage.getItem("adminToken");
-      const { data } = await axios.post(`http://localhost:5000/api/admin/createUser`, {
+      const { data } = await axios.post(`${authurl}/createUser`, {
         nationalIdNumber: formData.nationalIdNumber,
         firstName: formData.firstName,
         middleName: formData.middleName,

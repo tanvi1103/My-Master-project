@@ -30,8 +30,10 @@ ChartJS.register(
   LineElement
 );
 
+
+const userAuthUrl= procces.env.VITE_AUTH_ROUTE
 const AdminDashBoard = () => {
-  const api = `http://localhost:5000/api/admin`;
+  const api = process.env.VITE_ADMIN_ROUTE;
   const [certificates, setCertificates] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);

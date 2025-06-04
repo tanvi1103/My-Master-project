@@ -9,6 +9,9 @@ import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
 import ChatPage from "../chat/ChatPage";
 
+const authurl = process.env.VITE_ADMIN_ROUTE
+const userAuthUrl= procces.env.VITE_AUTH_ROUTE
+
 const AdminLayout = ({ children }) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [showChat, setShowChat] = useState(false);
@@ -55,7 +58,7 @@ const AdminLayout = ({ children }) => {
   // Logout
   const handleAdminLogout = async () => {
     try {
-      await axios.get("http://localhost:5000/api/admin/logout", { 
+      await axios.get(`${authurl}/logout`, { 
         withCredentials: true 
       });
           localStorage.removeItem('adminToken');
@@ -70,7 +73,7 @@ const AdminLayout = ({ children }) => {
   useEffect(() => {
     const fetchCurrentUser = async () => {
       try {
-        const res = await axios.get('http://localhost:5000/api/auth/me', {
+        const res = await axios.get(`${userAuthUrl}/me`, {
           headers: { 
             Authorization: `Bearer ${localStorage.getItem('adminToken')}` 
           }

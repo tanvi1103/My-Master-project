@@ -67,24 +67,64 @@ const PasswordStrengthMeter = ({ password }) => {
       <div className="mt-3 text-sm">
         <p className="font-medium mb-1">Password Requirements:</p>
         <ul className="space-y-1">
-          <li className={`flex items-center ${requirements.length ? "text-green-500" : "text-gray-500"}`}>
-            {requirements.length ? <FaCheck className="mr-1" /> : <FaTimes className="mr-1" />}
+          <li
+            className={`flex items-center ${
+              requirements.length ? "text-green-500" : "text-gray-500"
+            }`}
+          >
+            {requirements.length ? (
+              <FaCheck className="mr-1" />
+            ) : (
+              <FaTimes className="mr-1" />
+            )}
             At least 8 characters
           </li>
-          <li className={`flex items-center ${requirements.uppercase ? "text-green-500" : "text-gray-500"}`}>
-            {requirements.uppercase ? <FaCheck className="mr-1" /> : <FaTimes className="mr-1" />}
+          <li
+            className={`flex items-center ${
+              requirements.uppercase ? "text-green-500" : "text-gray-500"
+            }`}
+          >
+            {requirements.uppercase ? (
+              <FaCheck className="mr-1" />
+            ) : (
+              <FaTimes className="mr-1" />
+            )}
             At least one uppercase letter
           </li>
-          <li className={`flex items-center ${requirements.lowercase ? "text-green-500" : "text-gray-500"}`}>
-            {requirements.lowercase ? <FaCheck className="mr-1" /> : <FaTimes className="mr-1" />}
+          <li
+            className={`flex items-center ${
+              requirements.lowercase ? "text-green-500" : "text-gray-500"
+            }`}
+          >
+            {requirements.lowercase ? (
+              <FaCheck className="mr-1" />
+            ) : (
+              <FaTimes className="mr-1" />
+            )}
             At least one lowercase letter
           </li>
-          <li className={`flex items-center ${requirements.number ? "text-green-500" : "text-gray-500"}`}>
-            {requirements.number ? <FaCheck className="mr-1" /> : <FaTimes className="mr-1" />}
+          <li
+            className={`flex items-center ${
+              requirements.number ? "text-green-500" : "text-gray-500"
+            }`}
+          >
+            {requirements.number ? (
+              <FaCheck className="mr-1" />
+            ) : (
+              <FaTimes className="mr-1" />
+            )}
             At least one number
           </li>
-          <li className={`flex items-center ${requirements.specialChar ? "text-green-500" : "text-gray-500"}`}>
-            {requirements.specialChar ? <FaCheck className="mr-1" /> : <FaTimes className="mr-1" />}
+          <li
+            className={`flex items-center ${
+              requirements.specialChar ? "text-green-500" : "text-gray-500"
+            }`}
+          >
+            {requirements.specialChar ? (
+              <FaCheck className="mr-1" />
+            ) : (
+              <FaTimes className="mr-1" />
+            )}
             At least one special character
           </li>
         </ul>
@@ -148,14 +188,15 @@ const UserSignup = () => {
   const authurl = import.meta.env.VITE_AUTH_ROUTE;
 
   useEffect(() => {
-    if (formData.nationalIdNumber.length > 0 && formData.nationalIdNumber.length !== 16) {
+    if (
+      formData.nationalIdNumber.length > 0 &&
+      formData.nationalIdNumber.length !== 16
+    ) {
       setError("National ID must be 16 digits");
     } else {
       setError("");
     }
   }, [formData.nationalIdNumber]);
-
-
 
   const goToStep = (nextStep) => {
     setStep(nextStep);
@@ -253,7 +294,9 @@ const UserSignup = () => {
         password: formData.password,
       });
       if (data.success) {
-        setSuccessMessage("Registration successful! Please check your email for verification.");
+        setSuccessMessage(
+          "Registration successful! Please check your email for verification."
+        );
         goToStep(4);
       } else {
         setError(data.error || "Registration failed");
@@ -309,17 +352,31 @@ const UserSignup = () => {
           {[1, 2, 3, 4].map((stepNumber) => (
             <div
               key={stepNumber}
-              className={`flex flex-col items-center cursor-pointer ${stepNumber <= maxStep ? '' : 'cursor-not-allowed opacity-50'}`}
+              className={`flex flex-col items-center cursor-pointer ${
+                stepNumber <= maxStep ? "" : "cursor-not-allowed opacity-50"
+              }`}
               onClick={() => {
                 if (stepNumber <= maxStep) setStep(stepNumber);
               }}
             >
-              <div className={`w-8 h-8 rounded-full flex items-center justify-center 
-                ${step >= stepNumber ? 'bg-blue-600 text-white' : 'bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-300'}`}>
+              <div
+                className={`w-8 h-8 rounded-full flex items-center justify-center 
+                ${
+                  step >= stepNumber
+                    ? "bg-blue-600 text-white"
+                    : "bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-300"
+                }`}
+              >
                 {stepNumber}
               </div>
-              <div className={`text-xs mt-1 ${step >= stepNumber ? 'text-blue-600 dark:text-blue-400' : 'text-gray-500'}`}>
-                {['Verify ID', 'Confirm', 'Account', 'Verify'][stepNumber - 1]}
+              <div
+                className={`text-xs mt-1 ${
+                  step >= stepNumber
+                    ? "text-blue-600 dark:text-blue-400"
+                    : "text-gray-500"
+                }`}
+              >
+                {["Verify ID", "Confirm", "Account", "Verify"][stepNumber - 1]}
               </div>
             </div>
           ))}
@@ -344,7 +401,8 @@ const UserSignup = () => {
           <div className="space-y-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                Enter your 16-digit National ID Number provided by the government (FAN)
+                Enter your 16-digit National ID Number provided by the
+                government (FAN)
               </label>
               <input
                 type="text"
@@ -361,16 +419,18 @@ const UserSignup = () => {
               disabled={loading}
               className="w-full py-2 px-4 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg disabled:opacity-50 transition"
             >
-              {loading ? 'Verifying...' : 'Verify National ID'}
+              {loading ? "Verifying..." : "Verify National ID"}
             </button>
           </div>
         )}
 
-                {step === 2 && (
+        {step === 2 && (
           <div className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">First Name</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  First Name
+                </label>
                 <input
                   type="text"
                   value={formData.firstName}
@@ -379,7 +439,9 @@ const UserSignup = () => {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Middle Name</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  Middle Name
+                </label>
                 <input
                   type="text"
                   value={formData.middleName}
@@ -388,7 +450,9 @@ const UserSignup = () => {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Last Name</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  Last Name
+                </label>
                 <input
                   type="text"
                   value={formData.lastName}
@@ -397,7 +461,9 @@ const UserSignup = () => {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Gender</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  Gender
+                </label>
                 <input
                   type="text"
                   value={formData.gender}
@@ -407,7 +473,9 @@ const UserSignup = () => {
               </div>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Phone Number</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                Phone Number
+              </label>
               <input
                 type="tel"
                 name="phone"
@@ -422,17 +490,19 @@ const UserSignup = () => {
               disabled={loading}
               className="w-full py-2 px-4 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg disabled:opacity-50 transition"
             >
-              {loading ? 'Verifying...' : 'Continue'}
+              {loading ? "Verifying..." : "Continue"}
             </button>
           </div>
         )}
 
         {/* Step 3: Create Account */}
 
-{step === 3 && (
+        {step === 3 && (
           <div className="space-y-4">
-                        <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Email</label>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                Email
+              </label>
               <input
                 type="email"
                 name="email"
@@ -443,7 +513,9 @@ const UserSignup = () => {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Password</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                Password
+              </label>
               <input
                 type="password"
                 name="password"
@@ -455,7 +527,9 @@ const UserSignup = () => {
               <PasswordStrengthMeter password={formData.password} />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Confirm Password</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                Confirm Password
+              </label>
               <input
                 type="password"
                 name="confirmPassword"
@@ -465,35 +539,53 @@ const UserSignup = () => {
                 className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               />
               {formData.password && formData.confirmPassword && (
-                <p className={`text-sm mt-1 ${formData.password === formData.confirmPassword ? 'text-green-500' : 'text-red-500'}`}>
-                  {formData.password === formData.confirmPassword ? 'Passwords match!' : 'Passwords do not match!'}
+                <p
+                  className={`text-sm mt-1 ${
+                    formData.password === formData.confirmPassword
+                      ? "text-green-500"
+                      : "text-red-500"
+                  }`}
+                >
+                  {formData.password === formData.confirmPassword
+                    ? "Passwords match!"
+                    : "Passwords do not match!"}
                 </p>
               )}
             </div>
             <button
               onClick={handleRegister}
-              disabled={loading || strength < 80 || formData.password !== formData.confirmPassword}
+              disabled={
+                loading ||
+                strength < 80 ||
+                formData.password !== formData.confirmPassword
+              }
               className="w-full py-2 px-4 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg disabled:opacity-50 transition"
             >
-              {loading ? 'Registering...' : 'Register'}
+              {loading ? "Registering..." : "Register"}
             </button>
           </div>
         )}
-
 
         {/* Step 4: Verify Email */}
         {step === 4 && (
           <div className="space-y-4">
             <p className="text-gray-600 dark:text-gray-400">
-              We sent a 6-digit verification code to <span className="font-medium">{formData.email}</span>
+              We sent a 6-digit verification code to{" "}
+              <span className="font-medium">{formData.email}</span>
             </p>
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Verification Code</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                Verification Code
+              </label>
               <input
                 type="text"
                 placeholder="Enter 6-digit code"
                 value={verificationCode}
-                onChange={(e) => setVerificationCode(e.target.value.replace(/\D/g, '').slice(0, 6))}
+                onChange={(e) =>
+                  setVerificationCode(
+                    e.target.value.replace(/\D/g, "").slice(0, 6)
+                  )
+                }
                 className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               />
             </div>
@@ -502,7 +594,7 @@ const UserSignup = () => {
               disabled={loading}
               className="w-full py-2 px-4 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg disabled:opacity-50 transition"
             >
-              {loading ? 'Verifying...' : 'Verify Email'}
+              {loading ? "Verifying..." : "Verify Email"}
             </button>
           </div>
         )}
