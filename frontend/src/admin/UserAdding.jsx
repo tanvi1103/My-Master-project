@@ -5,7 +5,7 @@ import Swal from "sweetalert2";
 
 const authurl = process.env.VITE_ADMIN_ROUTE
 const nationalidurl = process.env.VITE_NATIONAL_ID_ROUTE
-const userAuthUrl= procces.env.VITE_AUTH_ROUTE
+const userAuthUrl= process.env.VITE_AUTH_ROUTE
 const UserAddingPage = () => {
   const navigate = useNavigate();
   const [step, setStep] = useState(1);
