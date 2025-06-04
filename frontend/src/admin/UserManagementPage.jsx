@@ -3,9 +3,14 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 
+
+
+const authUrl = process.env.VITE_ADMIN_ROUTE
+const nationalidurl = process.env.VITE_NATIONAL_ID_ROUTE
+const userAuthUrl= process.env.VITE_AUTH_ROUTE
 const UserManagementPage = () => {
   const navigate = useNavigate();
-  const authUrl = import.meta.env.VITE_ADMIN_ROUTE;
+  // const authUrl = import.meta.env.VITE_ADMIN_ROUTE;
 
   const [users, setUsers] = useState([]);
   const [filteredUsers, setFilteredUsers] = useState([]);

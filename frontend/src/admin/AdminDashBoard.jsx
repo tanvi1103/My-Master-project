@@ -31,7 +31,7 @@ ChartJS.register(
 );
 
 
-const userAuthUrl= procces.env.VITE_AUTH_ROUTE
+const userAuthUrl= process.env.VITE_AUTH_ROUTE
 const AdminDashBoard = () => {
   const api = process.env.VITE_ADMIN_ROUTE;
   const [certificates, setCertificates] = useState([]);

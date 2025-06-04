@@ -4,7 +4,7 @@ import Swal from "sweetalert2";
 
 
 const authUrl = process.env.VITE_ADMIN_ROUTE
-const userAuthUrl= procces.env.VITE_AUTH_ROUTE
+const userAuthUrl= process.env.VITE_AUTH_ROUTE
 const ExternalUserManagement = () => {
   const [state, setState] = useState({
     users: [],
