@@ -10,7 +10,7 @@ import { motion } from "framer-motion";
 axios.defaults.withCredentials = true;
 
 const MAX_ATTEMPTS = 5;
-
+const authurl = process.env.VITE_ADMIN_ROUTE
 const AdminLogin = () => {
   const [adminCredentials, setAdminCredentials] = useState({
     email: "",
@@ -41,7 +41,7 @@ const AdminLogin = () => {
     
     try {
       const response = await axios.post(
-        "http://localhost:5000/api/admin/login",
+        `${authurl}/login`,
         adminCredentials
       );
       localStorage.setItem("adminToken", response.data.token);
