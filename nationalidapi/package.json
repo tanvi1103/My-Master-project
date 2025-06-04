@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "main": "idServer.js",
   "scripts": {
-    "id": "node idServer.js",
+    "start": "node idServer.js",
     "nationalid": "node data/delete.js",
     "dev": "nodemon idServer.js"
   },
