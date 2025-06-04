@@ -18,7 +18,7 @@ const UserLogin = ({ setCurrentUser }) => {
   const [verificationStep, setVerificationStep] = useState(false);
   const [verificationCode, setVerificationCode] = useState("");
 
-  const authurl = "http://localhost:5000/api/auth";
+  const authurl = process.env.VITE_AUTH_ROUTE;
 
   // Development-only auto-fill function
   const autoFillTestCredentials = () => {
