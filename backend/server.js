@@ -29,6 +29,7 @@ app.use(
       "http://localhost:5173",
       "http://localhost:5174",
       "http://172.20.144.1:3000",
+      "https://bonga-university-graduate-document.onrender.com",
     ],
     credentials: true,
   })
@@ -60,6 +61,7 @@ const io = new Server(server, {
       "http://localhost:5173",
       "http://localhost:5174",
       "http://172.20.144.1:3000",
+      "https://bonga-university-graduate-document.onrender.com/",
     ],
     methods: ["GET", "POST"],
     credentials: true,
