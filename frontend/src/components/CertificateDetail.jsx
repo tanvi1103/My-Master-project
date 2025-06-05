@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { FaCertificate, FaSignature, FaCalendarAlt, FaRegStar } from 'react-icons/fa';
 import { QRCodeCanvas } from 'qrcode.react';
 
-const url = 'http://localhost:5000';
+const url = import.meta.env.VITE_BACKEND_URL 
 
 const CertificateDetail = () => {
   // ... existing state and logic ...
@@ -17,7 +17,7 @@ const CertificateDetail = () => {
   useEffect(() => {
     const fetchCertificate = async () => {
       try {
-        const response = await fetch(`http://localhost:5000/api/certificates/${id}`);
+        const response = await fetch(`${url}/api/certificates/${id}`);
         const data = await response.json();
         setCertificateData(data);
         setLoading(false);
@@ -32,7 +32,7 @@ const CertificateDetail = () => {
   }, [id]);
 
   const downloadCertificate = () => {
-    const pdfUrl = `http://localhost:5000/api/certificates/${id}/pdf`;
+    const pdfUrl = `${url}/api/certificates/${id}/pdf`;
     window.open(pdfUrl, '_blank'); // Open the PDF in a new tab
   };
 
