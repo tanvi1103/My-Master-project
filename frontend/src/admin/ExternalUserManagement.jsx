@@ -3,8 +3,8 @@ import axios from "axios";
 import Swal from "sweetalert2";
 
 
-const authUrl = process.env.VITE_ADMIN_ROUTE
-const userAuthUrl= process.env.VITE_AUTH_ROUTE
+const authUrl = import.meta.env.VITE_ADMIN_ROUTE
+const userAuthUrl= import.meta.env.VITE_AUTH_ROUTE
 const ExternalUserManagement = () => {
   const [state, setState] = useState({
     users: [],
