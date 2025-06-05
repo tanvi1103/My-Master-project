@@ -17,7 +17,7 @@ const CertificateDetail = () => {
   useEffect(() => {
     const fetchCertificate = async () => {
       try {
-        const response = await fetch(`https://bonga-university-graduate-document.onrender.com/externalUser/certificate//${id}`);
+        const response = await fetch(`${url}/api/certificates/${id}`);
         const data = await response.json();
         setCertificateData(data);
         setLoading(false);
