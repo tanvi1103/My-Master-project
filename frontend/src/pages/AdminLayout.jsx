@@ -9,8 +9,8 @@ import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
 import ChatPage from "../chat/ChatPage";
 
-const authurl = process.env.VITE_ADMIN_ROUTE
-const userAuthUrl= process.env.VITE_AUTH_ROUTE
+const authurl = import.meta.env.VITE_ADMIN_ROUTE
+const userAuthUrl= import.meta.env.VITE_AUTH_ROUTE
 
 const AdminLayout = ({ children }) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
