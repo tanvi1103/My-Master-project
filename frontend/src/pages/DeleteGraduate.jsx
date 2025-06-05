@@ -2,6 +2,8 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import axios from "axios";
 
+const authURL = import.meta.env.VITE_ADMIN_ROUTE
+const national_ID_URL = import.meta.env.VITE_NATIONAL_ID_ROUTE;
 const DeleteGraduate = () => {
   const { certificateID } = useParams();
   const navigate = useNavigate();
@@ -10,7 +12,7 @@ const DeleteGraduate = () => {
   useEffect(() => {
     const deleteGraduate = async () => {
       if (window.confirm("Are you sure you want to delete this graduate?")) {
-        await axios.delete(`http://localhost:5000/api/admin/certificate/${certificateID}`, {
+        await axios.delete(`${authURL}/certificate/${certificateID}`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
