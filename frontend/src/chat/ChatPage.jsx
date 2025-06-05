@@ -256,7 +256,8 @@ import { Send, Smile, Image, X, MessageSquare } from "lucide-react";
 import PropTypes from 'prop-types';
 import { useMemo } from "react";
 
-const chatapi = 'http://localhost:5000/api/chat';
+const chatapi = import.meta.env.VITE_CHAT_ROUTE;
+const baseUrl = import.meta.env.VITE_BACKEND_URL;
 
 const ChatPage = ({ currentUser }) => {
   const [messages, setMessages] = useState([]);
@@ -274,7 +275,7 @@ const ChatPage = ({ currentUser }) => {
 
   // Initialize socket connection
   useEffect(() => {
-    socketRef.current = io("http://localhost:5000", {
+    socketRef.current = io(`${baseUrl}`, {
       auth: {
         token: localStorage.getItem("adminToken"),
       },
