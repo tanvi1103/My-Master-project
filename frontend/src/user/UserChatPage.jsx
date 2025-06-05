@@ -14,7 +14,7 @@ const UserChatPage = ({ currentUser }) => {
   const messagesEndRef = useRef(null);
 
 
-  const chatapi = import.meta.env.VITE_CHAT_ROUTE || 'http://localhost:5000/api/chat';
+  const chatapi = import.meta.env.VITE_CHAT_ROUTE;
   // Fetch assigned admin
   const fetchAdmin = async () => {
     try {
@@ -57,7 +57,7 @@ const UserChatPage = ({ currentUser }) => {
   useEffect(() => {
     const initializeChat = async () => {
       // 1. Connect to socket
-      socketRef.current = io(import.meta.env.VITE_SOCKET_URL || 'http://localhost:5000', {
+      socketRef.current = io(import.meta.env.VITE_BACKEND_URL , {
         auth: {
           token: localStorage.getItem('token'),
         },
