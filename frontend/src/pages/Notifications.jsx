@@ -509,7 +509,7 @@ const Notifications = () => {
     try {
       setLoading(true);
       const { data } = await axios.get(
-        `http://localhost:5000/api/admin/notifications`
+        `${apiUrl}/notifications`
       );
       console.log("Fetched notifications:", data);
       setNotifications(data);
