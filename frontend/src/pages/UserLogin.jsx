@@ -18,11 +18,11 @@ const UserLogin = ({ setCurrentUser }) => {
   const [verificationStep, setVerificationStep] = useState(false);
   const [verificationCode, setVerificationCode] = useState("");
 
-  const authurl = process.env.VITE_AUTH_ROUTE;
+  const authurl = import.meta.env.VITE_AUTH_ROUTE;
 
   // Development-only auto-fill function
   const autoFillTestCredentials = () => {
-    if (process.env.NODE_ENV === "development") {
+    if (import.meta.env.NODE_ENV === "development") {
       setFormData({
         email: "madisomelese2@gmail.com",
         nationalIdNumber: "1111111111111119",
@@ -122,7 +122,7 @@ const UserLogin = ({ setCurrentUser }) => {
         </h2>
 
         {/* Development-only auto-fill button */}
-        {process.env.NODE_ENV === "development" && (
+        {import.meta.env.NODE_ENV === "development" && (
           <button
             onClick={autoFillTestCredentials}
             className="mb-4 w-full py-2 px-4 bg-yellow-500 hover:bg-yellow-600 text-white font-medium rounded-lg text-sm"
