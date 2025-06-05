@@ -25,6 +25,10 @@ import {
 import Swal from "sweetalert2";
 import LoadingSpinner from "../pages/LoadingSpinner";
 
+const authurl = import.meta.env.VITE_AUTH_ROUTE;
+const authURL = import.meta.env.VITE_ADMIN_ROUTE;
+const URL = import.meta.env.VITE_BACKEND_URL;
+
 const UserLayout = ({ children }) => {
   const [preview, setPreview] = useState("");
   const [chatMinimized, setChatMinimized] = useState(false);
@@ -73,7 +77,7 @@ const UserLayout = ({ children }) => {
   useEffect(() => {
     const fetchCurrentUser = async () => {
       try {
-        const res = await axios.get("http://localhost:5000/api/auth/me", {
+        const res = await axios.get(`${authurl}/me`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
@@ -91,15 +95,15 @@ const UserLayout = ({ children }) => {
     fetchCurrentUser();
   }, []);
 
-   useEffect(() => {
-      console.log("Current User:", currentUser); // Add this
-      if (currentUser) {
-        setPreview(currentUser.photo || "");
-        console.log("Photo URL:", currentUser.photo); // Add this
-      }
-    }, [currentUser]);
+  useEffect(() => {
+    console.log("Current User:", currentUser); // Add this
+    if (currentUser) {
+      setPreview(currentUser.photo || "");
+      console.log("Photo URL:", currentUser.photo); // Add this
+    }
+  }, [currentUser]);
 
-// // Handle logout
+  // // Handle logout
   const handleLogout = async () => {
     try {
       // Show loading indicator
@@ -113,7 +117,7 @@ const UserLayout = ({ children }) => {
 
       // 1. Attempt server logout
       try {
-        await axios.get("http://localhost:5000/api/admin/logout", {
+        await axios.get(`${authURL}/logout`, {
           withCredentials: true,
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -203,6 +207,7 @@ const UserLayout = ({ children }) => {
               <button
                 onClick={() => setIsSidebarOpen(!isSidebarOpen)}
                 className="md:hidden p-2 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200"
+                aria-label="Toggle Sidebar"
               >
                 <Menu className="w-6 h-6" />
               </button>
@@ -235,17 +240,18 @@ const UserLayout = ({ children }) => {
               <div className="ml-4 relative">
                 <button className="flex items-center text-sm text-gray-800 dark:text-white focus:outline-none">
                   <User className="w-6 h-6 text-gray-500 dark:text-gray-400" />
-                      <img
-                        src={
-                          preview?.startsWith("blob:") ||
-                          preview?.startsWith("http")
-                            ? preview
-                            : `http://localhost:5000${preview}`
-                        }
-                        alt="Profile"
-                                           className="w-8 h-8 rounded-full ml-2"
-
-                      />
+                  <img
+                    src={
+                      preview?.startsWith("blob:") ||
+                      preview?.startsWith("http")
+                        ? preview
+                        : preview
+                        ? `${URL}${preview}`
+                        : "/default-profile.png" // Fallback to a default profile image
+                    }
+                    alt="Profile"
+                    className="w-8 h-8 rounded-full ml-2"
+                  />
                   <span className="ml-2">
                     {currentUser?.firstName + " " + currentUser?.lastName}
                   </span>
@@ -327,7 +333,13 @@ const UserLayout = ({ children }) => {
               chatMinimized ? "h-0" : "h-full"
             }`}
           >
-            <UserChatPage currentUser={currentUser} />
+            {currentUser ? (
+              <UserChatPage currentUser={currentUser} />
+            ) : (
+              <p className="text-center text-gray-500">
+                Unable to load chat. Please try again later.
+              </p>
+            )}
           </div>
         </div>
       )}
