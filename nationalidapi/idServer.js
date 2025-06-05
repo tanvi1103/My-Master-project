@@ -11,10 +11,18 @@ dotenv.config()
 const PORT =  process.env.PORT || 6000;
 const app = express();
 
-app.use(cors({
-  origin: process.env.CLIENT_URL,
-  credentials: true,
-}));
+app.use(
+  cors({
+    origin: [
+      "http://localhost:3000",
+      "http://localhost:5173",
+      "http://localhost:5174",
+      "http://172.20.144.1:3000",
+      "https://bonga-university-graduate-document.onrender.com",
+    ],
+    credentials: true,
+  })
+);
 app.use(cookieParser());
 app.use(express.json());
 
