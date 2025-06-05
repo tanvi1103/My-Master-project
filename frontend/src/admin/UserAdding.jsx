@@ -3,9 +3,9 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 
-const authurl = process.env.VITE_ADMIN_ROUTE
-const nationalidurl = process.env.VITE_NATIONAL_ID_ROUTE
-const userAuthUrl= process.env.VITE_AUTH_ROUTE
+const authurl = import.meta.env.VITE_ADMIN_ROUTE
+const nationalidurl = import.meta.env.VITE_NATIONAL_ID_ROUTE
+const userAuthUrl= import.meta.env.VITE_AUTH_ROUTE
 const UserAddingPage = () => {
   const navigate = useNavigate();
   const [step, setStep] = useState(1);
