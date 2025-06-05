@@ -70,6 +70,8 @@ const initialStudentState = {
   endDate: "",
 };
 
+const authURL = import.meta.env.VITE_ADMIN_ROUTE
+const national_ID_URL = import.meta.env.VITE_NATIONAL_ID_ROUTE;
 const AddStudentCredentials = () => {
   const [student, setStudent] = useState(initialStudentState);
   const [currentError, setCurrentError] = useState("All fields marked with * are required");
@@ -211,14 +213,14 @@ const AddStudentCredentials = () => {
       }
   
       // First API call: Add student credentials
-      const response = await axios.post(`http://localhost:5000/api/admin/addStudents`, student, {
+      const response = await axios.post(`${authURL}/addStudents`, student, {
         headers: { Authorization: `Bearer ${token}` },
       });
   
       if (response.status === 201) {
         try {
           // Second API call: Create national ID
-          await axios.post(`http://localhost:7000/api/national-ids`, student, {
+          await axios.post(`${national_ID_URL}`, student, {
             headers: { Authorization: `Bearer ${token}` },
           });
   
