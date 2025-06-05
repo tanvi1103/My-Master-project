@@ -10,7 +10,7 @@ import { motion } from "framer-motion";
 axios.defaults.withCredentials = true;
 
 const MAX_ATTEMPTS = 5;
-const authurl = process.env.VITE_ADMIN_ROUTE
+const authurl = import.meta.env.VITE_ADMIN_ROUTE
 const AdminLogin = () => {
   const [adminCredentials, setAdminCredentials] = useState({
     email: "",
