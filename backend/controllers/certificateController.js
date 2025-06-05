@@ -382,7 +382,7 @@ exports.generateCertificatePDF = async (req, res) => {
       .roundedRect(doc.page.width - 120, doc.page.height - 120, 80, 80, 5)
       .stroke("#1a3e72")
       .lineWidth(1);
-    const qrUrl = `http://localhost:5173/certificate/${certificate.certificateID}`;
+    const qrUrl = `https://bonga-university-graduate-document.onrender.com/externalUser/certificate/${certificate.certificateID}`;
     const qrDataUrl = await QRCode.toDataURL(qrUrl);
     doc.image(qrDataUrl, doc.page.width - 110, doc.page.height - 110, {
       width: 60,
