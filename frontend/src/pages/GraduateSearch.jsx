@@ -46,6 +46,11 @@ const departments = [
   "Political Science and International Relations Department",
 ];
 
+
+  const authurl = import.meta.env.VITE_AUTH_ROUTE;
+  const authURL = import.meta.env.VITE_ADMIN_ROUTE;
+  const nationalidurl = import.meta.env.VITE_NATIONAL_ID_ROUTE;
+
 const GraduateSearch = () => {
   const navigate = useNavigate();
   const [certificate, setCertificate] = useState(null);
@@ -77,7 +82,8 @@ const GraduateSearch = () => {
     programType: "",
     program: "",
   });
-  const nationalidurl = import.meta.env.VITE_NATIONAL_ID_ROUTE;
+ 
+  // Fetch personal details based on national ID
   useEffect(() => {
     const fetchPersonalDetails = async () => {
       if (nationalId.length >= 10) {
@@ -87,7 +93,7 @@ const GraduateSearch = () => {
         try {
           // Replace with your actual National ID API endpoint
           const { data } = await axios.get(
-            `http://localhost:7000/api/national-ids/nationalIdNumber`,
+            `${nationalidurl}/nationalIdNumber`,
             {
               params: { nationalIdNumber: nationalId },
             }
@@ -158,17 +164,16 @@ const GraduateSearch = () => {
       };
       console.log("Search Params:", searchParams);
       const { data } = await axios.get(
-        "http://localhost:5000/api/certificates/name",
+        `${import.meta.env.VITE_CERTIFICATE_ROUTE}/name`,
         {
           params: searchParams,
         }
       );
       console.log("Search Result:", data);
-
-
+      
       setCertificate(data);
     } catch (err) {
-      setError(err.response?.data?.error || "Something went wrong");
+      setError(err.response?.data?.message || "Something went wrong");
     } finally {
       setIsSearching(false);
     }
