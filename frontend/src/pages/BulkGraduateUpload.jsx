@@ -5,6 +5,9 @@ import { FaFileExcel, FaUpload, FaDownload } from "react-icons/fa";
 import Swal from "sweetalert2";
 import * as XLSX from "xlsx";
 
+const baseUrl = import.meta.env.VITE_BACKEND_URL;
+const national_ID_URL = import.meta.env.VITE_NATIONAL_ID_ROUTE;
+
 const BulkGraduateUpload = () => {
   const [file, setFile] = useState(null);
   const [uploadStatus, setUploadStatus] = useState("");
@@ -125,7 +128,7 @@ const BulkGraduateUpload = () => {
       }
 
       const response = await axios.post(
-        "http://localhost:5000/api/upload",
+        `${baseUrl}/api/upload`,
         formData,
         {
           headers: {
@@ -144,7 +147,7 @@ const BulkGraduateUpload = () => {
       if (response.status === 201) {
         // upload this file nationalID api's too
         const nationalIdResponse = await axios.post(
-          "http://localhost:7000/api/national-ids/upload-excel",
+          `${national_ID_URL}/upload-excel`,
           formData,
           { headers:{
             "Content-Type": "multipart/form-data",
