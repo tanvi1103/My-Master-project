@@ -16,7 +16,8 @@ import {
   FiPrinter
 } from 'react-icons/fi';
 import LoadingSpinner from '../pages/LoadingSpinner';
-
+const certURL = import.meta.env.VITE_CERTIFICATE_ROUTE;
+const authURL = import.meta.env.VITE_ADMIN_ROUTE;
 const ViewUpdateGraduates = ({ currentUser }) => {
   const [graduates, setGraduates] = useState([]);
   const [filteredGraduates, setFilteredGraduates] = useState([]);
@@ -44,7 +45,7 @@ const ViewUpdateGraduates = ({ currentUser }) => {
   const fetchGraduates = async () => {
     try {
       setLoading(true);
-      const response = await axios.get("http://localhost:5000/api/admin/certificates", {
+      const response = await axios.get(`${authURL}/certificates`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       const data = response.data;
