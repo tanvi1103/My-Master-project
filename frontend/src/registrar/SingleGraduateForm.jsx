@@ -70,6 +70,7 @@ const initialStudentState = {
   endDate: "",
 };
 
+const auth_URL = import.meta.env.VITE_ADMIN_ROUTE
 const AddStudentCredentials = () => {
   const [student, setStudent] = useState(initialStudentState);
   const [currentError, setCurrentError] = useState("All fields marked with * are required");
@@ -211,7 +212,7 @@ const AddStudentCredentials = () => {
       }
   
       // First API call: Add student credentials
-      const response = await axios.post(`http://localhost:5000/api/admin/addStudents`, student, {
+      const response = await axios.post(`${auth_URL}/addStudents`, student, {
         headers: { Authorization: `Bearer ${token}` },
       });
   

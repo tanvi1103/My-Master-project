@@ -5,6 +5,7 @@ import { FaFileExcel, FaUpload, FaDownload } from "react-icons/fa";
 import Swal from "sweetalert2";
 import * as XLSX from "xlsx";
 
+const base_URL = import.meta.env.VITE_BACKEND_URL
 const BulkGraduateUpload = () => {
   const [file, setFile] = useState(null);
   const [uploadStatus, setUploadStatus] = useState("");
@@ -125,7 +126,7 @@ const BulkGraduateUpload = () => {
       }
 
       const response = await axios.post(
-        "http://localhost:5000/api/upload",
+        `${base_URL}/api/upload`,
         formData,
         {
           headers: {

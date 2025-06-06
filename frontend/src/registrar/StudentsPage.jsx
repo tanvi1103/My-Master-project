@@ -16,7 +16,7 @@ import { useNavigate } from "react-router-dom";
 import LoadingSpinner from "../pages/LoadingSpinner";
 
 
-const api = `http://localhost:5000/api/admin`;
+const api = import.meta.env.VITE_ADMIN_ROUTE; // Ensure this is set to your backend API route
 const StudentsPage = () => {
   // Sample certificate data matching your schema
   // const [certificates, setCertificates] = useState([

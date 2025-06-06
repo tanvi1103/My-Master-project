@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import LoadingSpinner from '../pages/LoadingSpinner';
 
+const auth_URL = import.meta.env.VITE_ADMIN_ROUTE;
 const ViewAllGraduate = () => {
   const [graduates, setGraduates] = useState([]);
   const token = localStorage.getItem("registrarToken");
@@ -76,7 +77,7 @@ const ViewAllGraduate = () => {
   useEffect(() => {
     const fetchGraduates = async () => {
       try {
-        const response = await axios.get("http://localhost:5000/api/admin/certificates", {
+        const response = await axios.get(`${auth_URL}/certificates`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },

@@ -20,7 +20,7 @@ const [captchaToken, setCaptchaToken] = useState("");
   const [ verificationStep, setVerificationStep] = useState(false); // For 2FA
   const [verificationCode, setVerificationCode] = useState("");
   
-  const authurl = 'http://localhost:5000/api/auth';
+  const authurl = import.meta.env.VITE_AUTH_ROUTE;
   
   const handleInputChange = (e) => {
     const { name, value } = e.target;

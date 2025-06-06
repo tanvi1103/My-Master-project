@@ -31,7 +31,7 @@ ChartJS.register(
 );
 
 const RegistrarDashBoard = () => {
-  const api = `http://localhost:5000/api/admin`;
+  const api = import.meta.env.VITE_ADMIN_ROUTE;
   const [certificates, setCertificates] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);

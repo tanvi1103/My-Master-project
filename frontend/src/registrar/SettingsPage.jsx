@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { FiLock, FiSave } from 'react-icons/fi';
 import axios from 'axios';
 
+const authurl = import.meta.env.VITE_AUTH_ROUTE;
 const SettingsPage = () => {
   const [formData, setFormData] = useState({
     currentPassword: '',
@@ -29,7 +30,7 @@ const SettingsPage = () => {
     setSuccess('');
 
     try {
-      await axios.put('http://localhost:5000/api/auth/settings/password', {
+      await axios.put(`${authurl}/settings/password`, {
         currentPassword: formData.currentPassword,
         newPassword: formData.newPassword
       }, {

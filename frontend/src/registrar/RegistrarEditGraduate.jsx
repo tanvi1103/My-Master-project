@@ -4,6 +4,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import Swal from 'sweetalert2';
 
+const auth_URL = import.meta.env.VITE_ADMIN_ROUTE;
 const RegistrarEditGraduate = () => {
   const { certificateID } = useParams();
   const navigate = useNavigate();
@@ -28,7 +29,7 @@ const RegistrarEditGraduate = () => {
     const fetchGraduate = async () => {
       try {
         const res = await axios.get(
-          `http://localhost:5000/api/admin/certificates/${certificateID}`,
+          `${auth_URL}/certificates/${certificateID}`,
           { headers: { Authorization: `Bearer ${token}` } }
         );
         const data = await res.data;
@@ -84,7 +85,7 @@ const RegistrarEditGraduate = () => {
     if (isFormInvalid) return;
     try {
       await axios.put(
-        `http://localhost:5000/api/admin/certificates/${certificateID}/edit`,
+        `${auth_URL}/certificates/${certificateID}/edit`,
         formData,
         { headers: { Authorization: `Bearer ${token}` } }
       );

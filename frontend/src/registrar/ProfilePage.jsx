@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import { FiUser, FiMail, FiPhone, FiSave, FiCamera } from "react-icons/fi";
 import axios from "axios";
 
+const base_URL = import.meta.env.VITE_BACKEND_URL
+const authurl = import.meta.env.VITE_AUTH_ROUTE;
 const ProfilePage = () => {
   const [currentUser, setCurrentUser] = useState(null);
   const [formData, setFormData] = useState({
@@ -16,7 +18,7 @@ const ProfilePage = () => {
   useEffect(() => {
     const fetchCurrentUser = async () => {
       try {
-        const res = await axios.get("http://localhost:5000/api/auth/me", {
+        const res = await axios.get(`${authurl}/me`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("registrarToken")}`,
           },
@@ -71,7 +73,7 @@ const ProfilePage = () => {
       console.log("Sending:", formDataToSend); // Add this
 
       const { data } = await axios.put(
-        "http://localhost:5000/api/auth/profile",
+        `${authurl}/profile`,
         formDataToSend,
         {
           headers: {
@@ -126,7 +128,7 @@ const ProfilePage = () => {
                     src={
                       preview.startsWith("blob:") || preview.startsWith("http")
                         ? preview
-                        : `http://localhost:5000${preview}`
+                        : `${base_URL}${preview}`
                     }
                     alt="Profile"
                     className="w-full h-full object-cover"

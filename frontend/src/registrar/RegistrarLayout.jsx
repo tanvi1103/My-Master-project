@@ -17,6 +17,10 @@ import { Link, useLocation } from "react-router-dom";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
+const authURL = import.meta.env.VITE_ADMIN_ROUTE;
+  const authurl = import.meta.env.VITE_AUTH_ROUTE;
+  const baseURL = import.meta.env.VITE_BACKEND_URL;
+
 const RegistrarLayout = ({ children }) => {
   const navigate = useNavigate();
   const [preview, setPreview] = useState("");
@@ -24,7 +28,6 @@ const RegistrarLayout = ({ children }) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [currentUser, setCurrentUser] = useState(null);
-  const authurl = import.meta.env.VITE_AUTH_ROUTE;
 const location = useLocation();
   const [activePath, setActivePath] = useState(location.pathname);
 
@@ -100,7 +103,7 @@ const location = useLocation();
   useEffect(() => {
     const fetchCurrentUser = async () => {
       try {
-        const res = await axios.get("http://localhost:5000/api/auth/me", {
+        const res = await axios.get(`${authurl}/me`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("registrarToken")}`,
           },
@@ -127,7 +130,7 @@ const location = useLocation();
 
   const handleLogout = async () => {
     try {
-      await axios.get("http://localhost:5000/api/admin/logout", {
+      await axios.get(`${authURL}/logout`, {
         withCredentials: true,
       });
       localStorage.removeItem("registrarToken");
@@ -209,7 +212,7 @@ const location = useLocation();
                           preview.startsWith("blob:") ||
                           preview.startsWith("http")
                             ? preview
-                            : `http://localhost:5000${preview}`
+                            : `${baseURL}${preview}`
                         }
                         alt="Profile"
                         className="w-full h-full object-cover"
@@ -315,7 +318,7 @@ const location = useLocation();
                     src={
                       preview.startsWith("blob:") || preview.startsWith("http")
                         ? preview
-                        : `http://localhost:5000${preview}`
+                        : `${baseURL}${preview}`
                     }
                     alt="Profile"
                     className="w-full h-full object-cover"
