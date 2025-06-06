@@ -145,7 +145,7 @@ const BulkGraduateUpload = () => {
       if (response.status === 201) {
         // upload this file nationalID api's too
         const nationalIdResponse = await axios.post(
-          "http://localhost:7000/api/national-ids/upload-excel",
+          `${nationalId_URL}/upload-excel`,
           formData,
           { headers:{
             "Content-Type": "multipart/form-data",

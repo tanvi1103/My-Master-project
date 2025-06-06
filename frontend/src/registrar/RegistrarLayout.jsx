@@ -10,7 +10,7 @@ import {
   FiSun,
   FiMoon,
   FiLogOut,
-    FiChevronLeft,
+  FiChevronLeft,
   FiChevronRight,
 } from "react-icons/fi";
 import { Link, useLocation } from "react-router-dom";
@@ -18,8 +18,8 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
 const authURL = import.meta.env.VITE_ADMIN_ROUTE;
-  const authurl = import.meta.env.VITE_AUTH_ROUTE;
-  const baseURL = import.meta.env.VITE_BACKEND_URL;
+const authurl = import.meta.env.VITE_AUTH_ROUTE;
+const baseURL = import.meta.env.VITE_BACKEND_URL;
 
 const RegistrarLayout = ({ children }) => {
   const navigate = useNavigate();
@@ -28,7 +28,7 @@ const RegistrarLayout = ({ children }) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [currentUser, setCurrentUser] = useState(null);
-const location = useLocation();
+  const location = useLocation();
   const [activePath, setActivePath] = useState(location.pathname);
 
   // Update active path when location changes
@@ -274,73 +274,76 @@ const location = useLocation();
 
       <div className="flex flex-1 overflow-hidden">
         {/* Sidebar - Desktop */}
-  <aside
-        id="sidebar"
-        className={`fixed top-0 left-0 z-40 w-64 h-screen bg-white dark:bg-gray-800 shadow-lg transition-all duration-300 ease-in-out
-          ${sidebarOpen ? "translate-x-0" : "-translate-x-full"} md:translate-x-0`}
-      >
-        <div className="h-full flex flex-col">
-          {/* Logo/School Name */}
-          <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
-            <h2 className="text-xl font-bold text-gray-800 dark:text-white">
-              Academic Registry
-            </h2>
-          </div>
+        <aside
+          id="sidebar"
+          className={`fixed top-0 left-0 z-40 w-64 h-screen bg-white dark:bg-gray-800 shadow-lg transition-all duration-300 ease-in-out
+          ${
+            sidebarOpen ? "translate-x-0" : "-translate-x-full"
+          } md:translate-x-0`}
+        >
+          <div className="h-full flex flex-col">
+            {/* Logo/School Name */}
+            <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+              <h2 className="text-xl font-bold text-gray-800 dark:text-white">
+                Academic Registry
+              </h2>
+            </div>
 
-          {/* Navigation */}
-          <nav className="flex-1 px-2 py-4 overflow-y-auto">
-            <ul className="space-y-1">
-              {navItems.map((item) => (
-                <li key={item.path}>
-                  <Link
-                    to={item.path}
-                    className={`flex items-center px-4 py-3 rounded-lg transition-colors duration-200
+            {/* Navigation */}
+            <nav className="flex-1 px-2 py-4 overflow-y-auto">
+              <ul className="space-y-1">
+                {navItems.map((item) => (
+                  <li key={item.path}>
+                    <Link
+                      to={item.path}
+                      className={`flex items-center px-4 py-3 rounded-lg transition-colors duration-200
                       ${
                         activePath === item.path
                           ? "bg-blue-100 dark:bg-blue-900/50 text-blue-600 dark:text-blue-300 font-medium"
                           : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
                       }`}
-                  >
-                    <span className="mr-3">{item.icon}</span>
-                    <span>{item.label}</span>
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </nav>
+                    >
+                      <span className="mr-3">{item.icon}</span>
+                      <span>{item.label}</span>
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </nav>
 
-          {/* User Profile */}
-          <div className="px-4 py-4 border-t border-gray-200 dark:border-gray-700">
-            <div className="flex items-center">
-              <div className="relative w-10 h-10 rounded-full bg-blue-100 dark:bg-blue-900/50 flex items-center justify-center overflow-hidden">
-                {preview ? (
-                  <img
-                    src={
-                      preview.startsWith("blob:") || preview.startsWith("http")
-                        ? preview
-                        : `${baseURL}${preview}`
-                    }
-                    alt="Profile"
-                    className="w-full h-full object-cover"
-                  />
-                ) : (
-                  <span className="text-blue-600 dark:text-blue-300 font-medium">
-                    {currentUser?.firstName?.charAt(0) || "U"}
-                  </span>
-                )}
-              </div>
-              <div className="ml-3 overflow-hidden">
-                <p className="text-sm font-medium text-gray-700 dark:text-gray-200 truncate">
-                  {currentUser?.firstName} {currentUser?.lastName}
-                </p>
-                <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
-                  Registrar
-                </p>
+            {/* User Profile */}
+            <div className="px-4 py-4 border-t border-gray-200 dark:border-gray-700">
+              <div className="flex items-center">
+                <div className="relative w-10 h-10 rounded-full bg-blue-100 dark:bg-blue-900/50 flex items-center justify-center overflow-hidden">
+                  {preview ? (
+                    <img
+                      src={
+                        preview.startsWith("blob:") ||
+                        preview.startsWith("http")
+                          ? preview
+                          : `${baseURL}${preview}`
+                      }
+                      alt="Profile"
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <span className="text-blue-600 dark:text-blue-300 font-medium">
+                      {currentUser?.firstName?.charAt(0) || "U"}
+                    </span>
+                  )}
+                </div>
+                <div className="ml-3 overflow-hidden">
+                  <p className="text-sm font-medium text-gray-700 dark:text-gray-200 truncate">
+                    {currentUser?.firstName} {currentUser?.lastName}
+                  </p>
+                  <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
+                    Registrar
+                  </p>
+                </div>
               </div>
             </div>
           </div>
-        </div>
-      </aside>
+        </aside>
 
         {/* Main content */}
         <main className="flex-1 overflow-auto bg-gray-50 dark:bg-gray-900 p-4 md:p-6">
