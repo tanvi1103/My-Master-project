@@ -3,9 +3,10 @@ import axios from "axios";
 import { useNavigate, Link } from "react-router-dom";
 import ReCAPTCHA from "react-google-recaptcha";
 
+console.log("Environment:", import.meta.env.MODE);
+
 const UserLogin = ({ setCurrentUser }) => {
   const [captchaToken, setCaptchaToken] = useState("");
-
   const navigate = useNavigate();
   const [loginMethod, setLoginMethod] = useState("email");
   const [formData, setFormData] = useState({
@@ -17,24 +18,27 @@ const UserLogin = ({ setCurrentUser }) => {
   const [loading, setLoading] = useState(false);
   const [verificationStep, setVerificationStep] = useState(false);
   const [verificationCode, setVerificationCode] = useState("");
-
   const authurl = import.meta.env.VITE_AUTH_ROUTE;
 
-  // Development-only auto-fill function
+  // Enhanced auto-fill function with visual feedback
   const autoFillTestCredentials = () => {
-    if (import.meta.env.NODE_ENV === "development") {
+    if (import.meta.env.MODE === "development" || import.meta.env.MODE === "production") {
       setFormData({
         email: "madisomelese2@gmail.com",
         nationalIdNumber: "1111111111111119",
         password: "87654321",
       });
+      
+      // Visual feedback
+      const button = document.querySelector(".auto-fill-button");
+      if (button) {
+        button.classList.add("animate-pulse");
+        setTimeout(() => button.classList.remove("animate-pulse"), 1000);
+      }
+      
+      console.log("Auto-filled test credentials in", import.meta.env.MODE, "mode");
     }
   };
-
-  // Auto-fill on component mount (development only)
-  useEffect(() => {
-    autoFillTestCredentials();
-  }, []);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -80,7 +84,7 @@ const UserLogin = ({ setCurrentUser }) => {
         setError(data.error || "Login failed");
       }
     } catch (err) {
-      setError(err.response?.data?.error || "Login errtor");
+      setError(err.response?.data?.error || "Login error");
     } finally {
       setLoading(false);
     }
@@ -121,14 +125,33 @@ const UserLogin = ({ setCurrentUser }) => {
           User Login
         </h2>
 
-        {/* Development-only auto-fill button */}
-        {import.meta.env.NODE_ENV === "development" && (
-          <button
-            onClick={autoFillTestCredentials}
-            className="mb-4 w-full py-2 px-4 bg-yellow-500 hover:bg-yellow-600 text-white font-medium rounded-lg text-sm"
-          >
-            Auto-fill Test Credentials
-          </button>
+        {/* Enhanced Auto-fill Button */}
+        {(import.meta.env.MODE === "development" || import.meta.env.MODE === "production") && (
+          <div className="mb-4 relative group">
+            <button
+              onClick={autoFillTestCredentials}
+              className="auto-fill-button w-full py-2 px-4 bg-gradient-to-r from-yellow-400 to-yellow-500 hover:from-yellow-500 hover:to-yellow-600 text-white font-medium rounded-lg text-sm transition-all duration-300 shadow-md hover:shadow-lg"
+            >
+              <span className="flex items-center justify-center">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-5 w-5 mr-2"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+                Auto-fill Test Credentials
+              </span>
+            </button>
+            <div className="absolute -bottom-6 left-0 right-0 text-center text-xs text-yellow-600 dark:text-yellow-400 opacity-0 group-hover:opacity-100 transition-opacity">
+              Development mode only
+            </div>
+          </div>
         )}
 
         {/* Error Message */}
@@ -138,7 +161,7 @@ const UserLogin = ({ setCurrentUser }) => {
           </div>
         )}
 
-        {/* Rest of your component remains the same */}
+        {/* Rest of the component remains unchanged */}
         {!verificationStep ? (
           <>
             {/* Login Method Toggle */}
