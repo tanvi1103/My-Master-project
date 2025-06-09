@@ -7,6 +7,12 @@ const FAQSection = () => {
   const [displayCount, setDisplayCount] = useState(6);
 
 const faqs = [
+   {
+      question: "Is the verification system secure?",
+      answer:
+        "Yes, it uses encryption, role-based access, CAPTCHA protection, and is integrated with national ID verification for enhanced security.",
+      tags: ["security", "safety", "authentication"],
+    },
     {
       question: "How do I verify a graduate's document?",
       answer:
@@ -43,12 +49,7 @@ const faqs = [
         "Reports are valid indefinitely but reflect the database status at verification time. Re-verify for current status.",
       tags: ["validity", "expiry", "report"],
     },
-    {
-      question: "Is the verification system secure?",
-      answer:
-        "Yes, it uses encryption, role-based access, CAPTCHA protection, and is integrated with national ID verification for enhanced security.",
-      tags: ["security", "safety", "authentication"],
-    },
+   
     {
       question: "Can I track my previous verification attempts?",
       answer:
