@@ -14,10 +14,8 @@ const app = express();
 app.use(
   cors({
     origin: [
-      "http://localhost:3000",
+     
       "http://localhost:5173",
-      "http://localhost:5174",
-      "http://172.20.144.1:3000",
       "https://bonga-university-graduate-document.onrender.com",
     ],
     credentials: true,
@@ -34,11 +32,6 @@ app.get ("/", (req, res) => {
 })
 
 
-
-
-
-
-
 // Initialize Counter
 const initializeCounter = async () => {
   const existingCounter = await Counter.findOne({ id: 'nationalId' });
@@ -47,8 +40,6 @@ const initializeCounter = async () => {
     console.log('Counter initialized for nationalId');
   }
 };
-
-
 
 
 
