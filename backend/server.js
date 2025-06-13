@@ -49,9 +49,7 @@ const limiter = rateLimit({
 });
 app.use(limiter);
 // Serve static files from public directory
-// In server.js
-// In server.js
-// Serve static files from public directory
+
 app.use("/uploads", express.static(path.join(__dirname, "public", "uploads")));
 // Socket.IO setup
 const io = new Server(server, {
