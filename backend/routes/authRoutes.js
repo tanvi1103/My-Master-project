@@ -1,11 +1,11 @@
 const express = require('express'); 
-const { register, verifyEmail, login, verifyLogin, forgotPassword, verifyResetCode, resetPassword } =  require('../controllers/authController.js');
+const { googleOAuthCallback, register, verifyEmail, login, verifyLogin, forgotPassword, verifyResetCode, resetPassword } =  require('../controllers/authController.js');
 const { authenticateUser, authenticateRegistrar } = require('../middleware/authMiddleware');
 const User = require('../models/User');
 const Admin = require('../models/Admin');
 const router = express.Router();
 const bcrypt = require('bcrypt');
-
+const passport = require('../utils/passport.js'); // Ensure this path is correct
 const { updateProfile, upload } = require('../controllers/registrarController.js');
 
 // POST /api/auth/register
@@ -16,6 +16,17 @@ router.post('/verify-email', verifyEmail);
 
 // Login routes
 router.post("/login", login);
+router.get(
+  "/google",
+  passport.authenticate("google", { scope: ["profile", "email"] })
+);
+
+// Google OAuth callback route
+router.get(
+  "/google/callback",
+  passport.authenticate("google", { failureRedirect: "/login", session: false }),
+  googleOAuthCallback
+);
 
 // Password reset routes
 router.post("/forgot-password", forgotPassword);
