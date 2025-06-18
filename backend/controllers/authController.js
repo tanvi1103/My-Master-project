@@ -4,6 +4,8 @@ const { generateToken } = require("../utils/jwt");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const axios = require("axios");
+const dotenv = require("dotenv");
+dotenv.config();
 
 exports.register = async (req, res) => {
   try {
@@ -258,6 +260,42 @@ exports.login = async (req, res) => {
       success: false,
       error: "Server error during login",
     });
+  }
+};
+
+// Google OAuth login
+exports.googleOAuthCallback = async (req, res) => {
+  try {
+    // Passport attaches user object to req.user after successful authentication
+    const user = req.user;
+
+    if (!user) {
+      return res.status(401).json({ success: false, error: "User not authenticated" });
+    }
+
+    // Generate JWT token
+    const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {
+      expiresIn: "7d",
+    });
+
+    // Respond with token and user info
+    // res.json({
+    //   success: true,
+    //   token,
+    //   user: {
+    //     id: user._id,
+    //     email: user.email,
+    //     firstName: user.firstName,
+    //     lastName: user.lastName,
+    //     role: user.role,
+    //   },
+    // });
+    res.redirect(
+      `${process.env.CLIENT_URL}/login?token=${token}`
+    );
+  } catch (error) {
+    console.error("Google OAuth callback error:", error);
+    res.status(500).json({ success: false, error: "Google login failed" });
   }
 };
 
