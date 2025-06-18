@@ -1,6 +1,9 @@
 const express = require("express");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
+const session = require("express-session");
+const passport = require("./utils/passport"); 
+
 const connectDB = require("./config/db");
 const authRoutes = require("./routes/authRoutes");
 const adminroutes = require("./routes/adminRoutes");
@@ -20,6 +23,16 @@ const User = require("./models/User");
 const app = express();
 const path = require("path");
 const server = http.createServer(app); // Create HTTP server for Socket.IO
+app.use(
+  session({
+    secret: "some_secret_key",
+    resave: false,
+    saveUninitialized: false,
+  })
+);
+app.use(passport.initialize());
+app.use(passport.session());
+
 app.use("/uploads", express.static(path.join(__dirname, "public/uploads")));
 // Middleware
 app.use(
