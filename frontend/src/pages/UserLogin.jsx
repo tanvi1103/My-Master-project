@@ -3,7 +3,6 @@ import axios from "axios";
 import { useNavigate, Link } from "react-router-dom";
 import ReCAPTCHA from "react-google-recaptcha";
 
-console.log("Environment:", import.meta.env.MODE);
 
 const UserLogin = ({ setCurrentUser }) => {
   const [captchaToken, setCaptchaToken] = useState("");
@@ -14,6 +13,7 @@ const UserLogin = ({ setCurrentUser }) => {
     nationalIdNumber: "",
     password: "",
   });
+  const [captchaError, setCaptchaError] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [verificationStep, setVerificationStep] = useState(false);
@@ -22,21 +22,28 @@ const UserLogin = ({ setCurrentUser }) => {
 
   // Enhanced auto-fill function with visual feedback
   const autoFillTestCredentials = () => {
-    if (import.meta.env.MODE === "development" || import.meta.env.MODE === "production") {
+    if (
+      import.meta.env.MODE === "development" ||
+      import.meta.env.MODE === "production"
+    ) {
       setFormData({
         email: "madisomelese2@gmail.com",
         nationalIdNumber: "1111111111111119",
         password: "87654321",
       });
-      
+
       // Visual feedback
       const button = document.querySelector(".auto-fill-button");
       if (button) {
         button.classList.add("animate-pulse");
         setTimeout(() => button.classList.remove("animate-pulse"), 1000);
       }
-      
-      console.log("Auto-filled test credentials in", import.meta.env.MODE, "mode");
+
+      console.log(
+        "Auto-filled test credentials in",
+        import.meta.env.MODE,
+        "mode"
+      );
     }
   };
 
@@ -118,6 +125,20 @@ const UserLogin = ({ setCurrentUser }) => {
     }
   };
 
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const token = params.get("token");
+
+    if (token) {
+      localStorage.setItem("token", token);
+
+      // Optionally: also store user info if sent via query
+      // localStorage.setItem("user", JSON.stringify(user));
+
+      navigate("/externalUser"); // Redirect to user dashboard
+    }
+  }, []);
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 px-4 py-12">
       <div className="w-full max-w-md bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 md:p-8">
@@ -126,7 +147,8 @@ const UserLogin = ({ setCurrentUser }) => {
         </h2>
 
         {/* Enhanced Auto-fill Button */}
-        {(import.meta.env.MODE === "development" || import.meta.env.MODE === "production") && (
+        {(import.meta.env.MODE === "development" ||
+          import.meta.env.MODE === "production") && (
           <div className="mb-4 relative group">
             <button
               onClick={autoFillTestCredentials}
@@ -259,8 +281,11 @@ const UserLogin = ({ setCurrentUser }) => {
                 </Link>
               </div>
               <ReCAPTCHA
-                sitekey="6Lfi11ArAAAAAJls25EhGPChQv7PiEg7gllCOiW3"
-                onChange={(token) => setCaptchaToken(token)}
+                sitekey={import.meta.env.VITE_RECAPTCHA_SITE_KEY}
+                
+                onChange={(token) => {setCaptchaToken(token);
+                   setCaptchaError("");
+                }}
               />
               <button
                 onClick={handleLogin}
@@ -270,6 +295,32 @@ const UserLogin = ({ setCurrentUser }) => {
                 {loading ? "Logging in..." : "Login"}
               </button>
             </div>
+
+ <div className="mt-6 text-center">
+            <button
+              onClick={() => {
+                if (!captchaToken) {
+                  setCaptchaError("Please complete the captcha before continuing with Google.");
+                  return;
+                }
+                window.location.href = `${authurl}/google`;
+              }}
+              disabled={!captchaToken}
+              className={`w-full flex items-center justify-center gap-3 py-2 px-4 bg-white border border-gray-300 hover:bg-gray-100 text-gray-700 font-medium rounded-lg transition ${
+                !captchaToken ? "opacity-50 cursor-not-allowed" : ""
+              }`}
+            >
+              <img
+                src="https://developers.google.com/identity/images/g-logo.png"
+                alt="Google"
+                className="w-5 h-5"
+              />
+              Continue with Google
+            </button>
+            {captchaError && (
+              <div className="text-red-500 text-sm mt-2">{captchaError}</div>
+            )}
+          </div>
 
             <div className="mt-4 text-center text-sm text-gray-600 dark:text-gray-400">
               Don't have an account?{" "}
