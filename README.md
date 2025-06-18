@@ -88,7 +88,7 @@ This project is a comprehensive, secure, and user-friendly platform for graduate
 ### 👤 **User Profile Management**
 - **Profile Customization:**  
   - Users can update their profile photo, email, and password.
-  - View non-editable personal information fetched from National ID.
+  - View non-editable personal information fetched from National ID (Fayda).
 
 ---
 

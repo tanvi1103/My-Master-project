@@ -449,7 +449,7 @@ const ExternalUserManagement = () => {
           </div>
         )}
 
-        {/* Delete Confirmation Modal */}
+        {/* Delete Confirmation Modal section */}
         {state.showDeleteModal && (
           <div className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm flex items-center justify-center p-4 z-10">
             <div className="bg-white dark:bg-gray-800 rounded-xl shadow-2xl w-full max-w-md">
