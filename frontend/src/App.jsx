@@ -42,7 +42,10 @@ import RegistrarAddGraduate from "./registrar/RegistrarAddGraduate";
 import UserManagementPage from "./admin/UserManagementPage";
 import ExternalUserManagement from "./admin/ExternalUserManagement";
 
+import UserProfilePage from "./user/UserProfile";
+
 import RequireGuest from "./pages/RequireGuest";
+import UserAccountSetting from "./user/UserAccountSetting";
 
 axios.defaults.withCredentials = true;
 
@@ -53,7 +56,7 @@ const App = () => {
     // Check for token in localStorage on mount
     const token = localStorage.getItem("token");
     if (token) {
-      setCurrentUser(token? token: null); // Or decode token if you want user info
+      setCurrentUser(token ? token : null); // Or decode token if you want user info
     }
   }, []);
   // const navigate = useNavigate();
@@ -62,8 +65,7 @@ const App = () => {
     <ThemeProvider>
       <Toaster position="top-center" reverseOrder={false} />
       <Routes>
-        <Route path="/" element={<LandingPage />} />
-      
+        <Route path="/*" element={<LandingPage />} />
         <Route
           path="/login"
           element={
@@ -78,7 +80,7 @@ const App = () => {
         <Route
           path="/signup"
           element={
-                     <RequireGuest currentUser={currentUser}>
+            <RequireGuest currentUser={currentUser}>
               <LandingPage>
                 <UserSignup />
               </LandingPage>
@@ -131,7 +133,6 @@ const App = () => {
         <Route
           path="/externalUser"
           element={
-            
             <UserLayout>
               <div className="space-y-4">
                 <h3 className="text-lg font-semibold text-gray-800 dark:text-white">
@@ -151,6 +152,35 @@ const App = () => {
           element={
             <UserLayout>
               <CertificateDetail />
+            </UserLayout>
+          }
+        />
+
+               <Route
+          path="/user/profile"
+          element={
+            <UserLayout currentUser={currentUser}>
+              <div className="space-y-4">
+                <h3 className="text-lg font-semibold text-gray-800 dark:text-white">
+                  You can modify your Profile picture and Phone number only!
+                </h3>
+                <UserProfilePage />
+                {/* Add your dashboard content here */}
+              </div>
+            </UserLayout>
+          }
+        />
+               <Route
+          path="/user/settings"
+          element={
+            <UserLayout currentUser={currentUser}>
+              <div className="space-y-4">
+                <h3 className="text-lg font-semibold text-gray-800 dark:text-white">
+                  You can change your password!
+                </h3>
+                <UserAccountSetting />
+                {/* Add your dashboard content here */}
+              </div>
             </UserLayout>
           }
         />
@@ -212,8 +242,7 @@ const App = () => {
           path="/registrar/viewallcertificates"
           element={
             <RegistrarLayout currentUser={currentUser}>
-                <ViewAllGraduate />
-    
+              <ViewAllGraduate />
             </RegistrarLayout>
           }
         />
@@ -335,7 +364,6 @@ const App = () => {
             </AdminLayout>
           }
         />
-        
         <Route
           path="/admin/ExternalUserManagement"
           element={
@@ -344,7 +372,6 @@ const App = () => {
             </AdminLayout>
           }
         />
-
         <Route
           path="/admin/edit-graduate/:certificateID"
           element={
