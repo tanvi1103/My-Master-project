@@ -29,7 +29,7 @@ const UserLogin = ({ setCurrentUser }) => {
       setFormData({
         email: "madisomelese2@gmail.com",
         nationalIdNumber: "1111111111111119",
-        password: "87654321",
+        password: "@Madisha5423$$",
       });
 
       // Visual feedback
