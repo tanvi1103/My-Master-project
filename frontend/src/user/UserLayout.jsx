@@ -1,10 +1,8 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import {
   Menu,
   X,
-  Sun,
-  Moon,
   Bell,
   User,
   GraduationCap,
@@ -24,6 +22,7 @@ import {
 } from "react-icons/fa";
 import Swal from "sweetalert2";
 import LoadingSpinner from "../pages/LoadingSpinner";
+import { FiLogOut, FiSettings } from "react-icons/fi";
 
 const authurl = import.meta.env.VITE_AUTH_ROUTE;
 const authURL = import.meta.env.VITE_ADMIN_ROUTE;
@@ -31,40 +30,43 @@ const URL = import.meta.env.VITE_BACKEND_URL;
 
 const UserLayout = ({ children }) => {
   const [preview, setPreview] = useState("");
-  const [chatMinimized, setChatMinimized] = useState(false);
-  const sidebarRef = useRef();
   const [currentUser, setCurrentUser] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
-  const chatRef = useRef();
-  const navigate = useNavigate();
   const [showChat, setShowChat] = useState(false);
+  const [chatMinimized, setChatMinimized] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [darkMode, setDarkMode] = useState(() => {
     return localStorage.getItem("theme") === "dark";
   });
 
+  const sidebarRef = useRef();
+  const chatRef = useRef();
+  const navigate = useNavigate();
+
   // Theme handling
   useEffect(() => {
+    const html = document.documentElement;
     if (darkMode) {
-      document.documentElement.classList.add("dark");
+      html.classList.add("dark");
       localStorage.setItem("theme", "dark");
     } else {
-      document.documentElement.classList.remove("dark");
+      html.classList.remove("dark");
       localStorage.setItem("theme", "light");
     }
   }, [darkMode]);
 
+  // Click outside handlers
   useEffect(() => {
     const handleClickOutside = (event) => {
-      if (sidebarRef.current && !sidebarRef.current.contains(event.target)) {
+      if (
+        sidebarRef.current &&
+        !sidebarRef.current.contains(event.target) &&
+        !event.target.closest('[aria-label="Toggle Sidebar"]')
+      ) {
         setIsSidebarOpen(false);
       }
-      if (
-        chatRef.current &&
-        !chatRef.current.contains(event.target) &&
-        !event.target.closest(".chat-trigger")
-      ) {
+      if (chatRef.current && !chatRef.current.contains(event.target)) {
         setShowChat(false);
       }
     };
@@ -77,33 +79,26 @@ const UserLayout = ({ children }) => {
   useEffect(() => {
     const fetchCurrentUser = async () => {
       try {
+        const token = localStorage.getItem("token");
+        if (!token) throw new Error("No token found");
+
         const res = await axios.get(`${authurl}/me`, {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
+          headers: { Authorization: `Bearer ${token}` },
         });
         setCurrentUser(res.data);
-        setIsLoading(false);
+        setPreview(res.data.photo || "");
       } catch (err) {
         console.error("Error fetching current user:", err);
-        const timer = setTimeout(() => {
-          navigate("/login");
-        }, 2000);
-        return () => clearTimeout(timer);
+        navigate("/login", { replace: true });
+      } finally {
+        setIsLoading(false);
       }
     };
+
     fetchCurrentUser();
-  }, []);
+  }, [navigate]);
 
-  useEffect(() => {
-    console.log("Current User:", currentUser); // Add this
-    if (currentUser) {
-      setPreview(currentUser.photo || "");
-      console.log("Photo URL:", currentUser.photo); // Add this
-    }
-  }, [currentUser]);
-
-  // // Handle logout
+  // Handle logout
   const handleLogout = async () => {
     try {
       // Show loading indicator
@@ -184,6 +179,8 @@ const UserLayout = ({ children }) => {
       navigate("/login", { replace: true });
     }
   };
+
+
   // Sidebar navigation items
   const navItems = [
     { name: "Dashboard", icon: Home, path: "/dashboard" },
@@ -193,76 +190,141 @@ const UserLayout = ({ children }) => {
   ];
 
   if (isLoading) {
-    return <LoadingSpinner />;
+    return <LoadingSpinner fullScreen />;
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-200">
       {/* Header */}
-      <header className="fixed top-0 w-full z-40 bg-white dark:bg-gray-800 shadow-sm">
-        <div className="mx-auto px-4 sm:px-6 lg:px-8">
+      <header className="fixed top-0 w-full z-50 bg-white/90 dark:bg-gray-900/90 backdrop-blur-md border-b border-gray-200/80 dark:border-gray-700/80 shadow-sm">
+        {/* Header content remains the same as your improved version */}
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
-            {/* Left Section */}
-            <div className="flex items-center">
+            {/* Left Section - Logo and Mobile Menu */}
+            <div className="flex items-center space-x-4">
               <button
-                onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-                className="md:hidden p-2 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200"
+                onClick={() => setIsSidebarOpen((prev) => !prev)}
+                className="md:hidden p-2 rounded-lg text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-all duration-200"
                 aria-label="Toggle Sidebar"
               >
-                <Menu className="w-6 h-6" />
+                <Menu className="w-5 h-5" />
               </button>
-              <Link to="/" className="ml-4 flex items-center">
-                <GraduationCap className="w-8 h-8 text-blue-600 dark:text-blue-400" />
-                <span className="ml-2 text-xl font-bold text-gray-800 dark:text-white">
+
+              <Link
+                to="/"
+                className="flex items-center space-x-2 group transition-transform hover:scale-[1.02]"
+              >
+                <div className="w-8 h-8 flex items-center justify-center bg-gradient-to-br from-blue-600 to-blue-500 dark:from-blue-500 dark:to-blue-400 rounded-lg group-hover:from-blue-700 group-hover:to-blue-600 dark:group-hover:from-blue-600 dark:group-hover:to-blue-500 transition-all duration-300 shadow-sm">
+                  <GraduationCap className="w-5 h-5 text-white" />
+                </div>
+                <span className="text-xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 dark:from-blue-400 dark:to-purple-400 bg-clip-text text-transparent">
                   BUGCVS
                 </span>
               </Link>
             </div>
 
-            {/* Right Section */}
-            <div className="flex items-center gap-4">
-              <button className="p-2 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200">
+            {/* Right Section - Navigation Icons */}
+            <div className="flex items-center space-x-3 sm:space-x-4">
+              {/* Notification Button */}
+              <button
+                className="p-2 relative rounded-full text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 transition-all duration-200"
+                aria-label="Notifications"
+              >
                 <Bell className="w-5 h-5" />
-                <span className="sr-only">View notifications</span>
+                <span className="absolute top-0 right-0 w-2 h-2 bg-red-500 rounded-full animate-pulse"></span>
               </button>
+
+              {/* Chat Button */}
               <button
                 onClick={() => setShowChat(!showChat)}
-                className="chat-trigger relative p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-colors"
+                className="p-2 relative rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-all duration-200"
+                aria-label="Messages"
               >
-                <MessageSquare className="w-6 h-6 text-gray-600 dark:text-gray-300" />
+                <MessageSquare className="w-5 h-5 text-gray-600 dark:text-gray-300" />
                 {unreadCount > 0 && (
-                  <span className="absolute top-0 right-0 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                  <span className="absolute top-0 right-0 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center transform translate-x-1 -translate-y-1 animate-bounce">
                     {unreadCount}
                   </span>
                 )}
               </button>
 
-              <div className="ml-4 relative">
-                <button className="flex items-center text-sm text-gray-800 dark:text-white focus:outline-none">
-                  <User className="w-6 h-6 text-gray-500 dark:text-gray-400" />
-                  <img
-                    src={
-                      preview?.startsWith("blob:") ||
-                      preview?.startsWith("http")
-                        ? preview
-                        : preview
-                        ? `${URL}${preview}`
-                        : "/default-profile.png" // Fallback to a default profile image
-                    }
-                    alt="Profile"
-                    className="w-8 h-8 rounded-full ml-2"
-                  />
-                  <span className="ml-2">
-                    {currentUser?.firstName + " " + currentUser?.lastName}
+              {/* Profile Dropdown */}
+              <div className="relative ml-2 group">
+                <button
+                  className="flex items-center space-x-2 focus:outline-none cursor-pointer"
+                  aria-label="User menu"
+                >
+                  <div className="relative">
+                    <img
+                      src={
+                        preview?.startsWith("blob:") ||
+                        preview?.startsWith("http")
+                          ? preview
+                          : preview
+                          ? `${URL}${preview}`
+                          : "/default-profile.png"
+                      }
+                      alt="Profile"
+                      className="w-8 h-8 rounded-full border-2 border-white dark:border-gray-800 group-hover:border-blue-500 transition-all duration-300"
+                    />
+                    <span className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-white dark:border-gray-800 animate-pulse"></span>
+                  </div>
+                  <span className="hidden sm:inline-block font-medium text-gray-700 dark:text-gray-200 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors duration-200">
+                    {currentUser?.firstName} {currentUser?.lastName}
                   </span>
                 </button>
+
+                {/* Dropdown Menu - Shows on hover */}
+                <div
+                  className="absolute right-0 mt-2 w-56 origin-top-right bg-white dark:bg-gray-800 rounded-lg shadow-xl z-50 ring-1 ring-black/10 dark:ring-white/10 focus:outline-none divide-y divide-gray-100 dark:divide-gray-700 
+                          opacity-0 invisible group-hover:opacity-100 group-hover:visible 
+                          transform translate-y-1 group-hover:translate-y-0 
+                          transition-all duration-200 ease-out"
+                  onMouseLeave={(e) => e.currentTarget.parentElement.blur()}
+                >
+                  <div className="px-4 py-3">
+                    <p className="text-sm text-gray-900 dark:text-white font-medium truncate">
+                      {currentUser?.firstName} {currentUser?.lastName}
+                    </p>
+                    <p className="text-xs text-gray-500 dark:text-gray-400 truncate mt-1">
+                      {currentUser?.email}
+                    </p>
+                  </div>
+
+                  <div className="py-1">
+                    <Link
+                      to="/user/profile"
+                      className="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700/50 transition-colors duration-150"
+                    >
+                      <FiSettings
+                        className="mr-3 text-gray-400 dark:text-gray-500"
+                        size={16}
+                      />
+                      Update Profile
+                    </Link>
+                    <Link
+                      to="/user/settings"
+                      className="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700/50 transition-colors duration-150"
+                    >
+                      <FiSettings
+                        className="mr-3 text-gray-400 dark:text-gray-500"
+                        size={16}
+                      />
+                      Account Settings
+                    </Link>
+                  </div>
+
+                  <div className="py-1">
+                    <button
+                      onClick={handleLogout}
+                      className="w-full flex cursor-pointer items-center px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/10 transition-colors duration-150"
+                    >
+                      <FiLogOut className="mr-3" size={16} />
+                      Sign Out
+                    </button>
+                  </div>
+                </div>
               </div>
-              <button
-                onClick={handleLogout}
-                className="px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg transition-colors shadow-sm"
-              >
-                Logout
-              </button>
             </div>
           </div>
         </div>
@@ -270,9 +332,11 @@ const UserLayout = ({ children }) => {
 
       {/* Sidebar */}
       <aside
-        className={`fixed inset-y-0 left-0 z-30 w-64 bg-white dark:bg-gray-800 shadow-lg transform transition-transform duration-300 ${
+        ref={sidebarRef}
+        className={`fixed inset-y-0 left-0 z-40 w-64 bg-white dark:bg-gray-800 shadow-lg transform transition-all duration-300 ease-in-out ${
           isSidebarOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"
         }`}
+        aria-label="Sidebar"
       >
         <div className="flex items-center justify-between h-16 px-4 border-b dark:border-gray-700">
           <span className="text-lg font-semibold text-gray-800 dark:text-white">
@@ -280,38 +344,51 @@ const UserLayout = ({ children }) => {
           </span>
           <button
             onClick={() => setIsSidebarOpen(false)}
-            className="md:hidden p-2 text-gray-500 dark:text-gray-400"
+            className="md:hidden p-2 text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md"
+            aria-label="Close sidebar"
           >
-            <X className="w-6 h-6" />
+            <X className="w-5 h-5" />
           </button>
         </div>
 
-        <nav className="mt-4">
+        <nav className="mt-4 space-y-1 px-2">
           {navItems.map((item) => (
             <Link
               key={item.name}
               to={item.path}
-              className="flex items-center px-4 py-3 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+              className="flex items-center px-3 py-3 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md transition-colors duration-200"
+              onClick={() => setIsSidebarOpen(false)}
             >
               <item.icon className="w-5 h-5 mr-3 text-gray-500 dark:text-gray-400" />
-              {item.name}
+              <span className="text-sm font-medium">{item.name}</span>
             </Link>
           ))}
         </nav>
       </aside>
 
       {/* Main Content */}
-      <main className="pt-16 md:ml-64 min-h-screen">
-        <div className="px-4 sm:px-6 lg:px-8 py-8">{children}</div>
+      <main
+        className="pt-16 md:ml-64 min-h-screen transition-all duration-200"
+        style={{ paddingBottom: "6rem" }} // Space for footer
+      >
+        <div className="px-4 sm:px-6 lg:px-8 py-6 max-w-7xl mx-auto">
+          {children}
+        </div>
       </main>
 
-      {showChat && (
+      {/* Chat Component */}
+
+    {showChat && (
         <div
           ref={chatRef}
           className="fixed bottom-4 right-4 z-50 w-full max-w-2xl h-[70vh] bg-white dark:bg-gray-800 rounded-xl shadow-2xl flex flex-col border dark:border-gray-700"
         >
           <div className="flex items-center justify-between p-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-t-xl">
+              {/* <div className="bg-blue-100 dark:bg-blue-900 p-2 rounded-full mr-3"> */}
+               <MessageSquare className=" text-blue-600 dark:text-gray-100" />
             <h3 className="font-semibold text-lg">BUGCVS help chat</h3>
+          {/* </div> */}
+           
             <div className="flex gap-2">
               <button
                 onClick={() => setChatMinimized(!chatMinimized)}
@@ -345,7 +422,7 @@ const UserLayout = ({ children }) => {
       )}
 
       {/* Footer */}
-      <footer className="bg-gray-800 sticky dark:bg-gray-950 text-white py-8 px-6 z-200">
+      <footer className="bg-gray-800 dark:bg-gray-950 text-white py-8 px-4 md:px-6">
         <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
           <div>
             <h3 className="text-xl font-bold mb-4">Bonga University</h3>
@@ -416,7 +493,7 @@ const UserLayout = ({ children }) => {
             </div>
           </div>
         </div>
-        <div className="max-w-7xl mx-auto mt-8 pt-4 border-t border-gray-700 text-center">
+        <div className="max-w-7xl mx-auto mt-8 pt-4 border-t border-gray-700 text-center text-sm">
           <p>
             &copy; {new Date().getFullYear()} Bonga University. All rights
             reserved.
