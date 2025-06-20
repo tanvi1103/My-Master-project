@@ -181,20 +181,19 @@ const UserChatPage = ({ currentUser }) => {
   return (
     <div className="flex flex-col h-full">
       {/* Chat Header */}
-      <div className="p-4 border-b bg-white dark:bg-gray-800">
+      {/* <div className="p-4 border-b bg-white dark:bg-gray-800">
         <div className="flex items-center">
           <div className="bg-blue-100 dark:bg-blue-900 p-2 rounded-full mr-3">
             <MessageSquare className="w-5 h-5 text-blue-600 dark:text-blue-300" />
           </div>
           <div>
-            <h3 className="font-medium">Support Chat</h3>
             <p className="text-sm text-gray-500">
               {admin ? `${admin.firstName} ${admin.lastName}` : 'Connecting...'}
               {isTyping && ' • typing...'}
             </p>
           </div>
         </div>
-      </div>
+      </div> */}
 
       {/* Messages Area */}
       <div className="flex-1 overflow-y-auto p-4 bg-gray-50 dark:bg-gray-700">
