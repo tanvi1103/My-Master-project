@@ -266,11 +266,16 @@ const RegistrarLayout = ({ children }) => {
                     </button>
                   </div>
                 </div>
+                
               </div>
             </div>
           </div>
         </div>
       </header>
+
+
+
+
 
       <div className="flex flex-1 overflow-hidden">
         {/* Sidebar - Desktop */}
