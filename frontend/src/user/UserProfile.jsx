@@ -28,7 +28,6 @@ const UserProfilePage = () => {
         console.error("Error fetching current user:", err);
         const timer = setTimeout(() => {
           navigate("/login");
-          navigate("/login");
         }, 2000);
         return () => clearTimeout(timer);
       }
@@ -52,11 +51,13 @@ const UserProfilePage = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
+
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     setFormData({ ...formData, photo: file });
     setPreview(URL.createObjectURL(file));
   };
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();

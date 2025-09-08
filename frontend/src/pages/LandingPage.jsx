@@ -290,7 +290,8 @@ const LandingPage = ({ children }) => {
         <div className="absolute inset-0 bg-black/50 dark:bg-black/70 z-10"></div>
         <img
           // src="/graduation-ceremony.jpg"
-          src="https://images.unsplash.com/photo-1523050854058-8df90110c9f1?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80"
+          // src="https://images.unsplash.com/photo-1523050854058-8df90110c9f1?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80"
+          src="https://tse4.mm.bing.net/th/id/OIP.aLswZmEX0loOGgNOkAyCNAHaEJ?cb=thfc1&pid=ImgDet&w=208&h=116&c=7&dpr=1.5&o=7&rm=3"
           alt="Graduation Ceremony"
           className="absolute inset-0 w-full h-full object-cover"
         />

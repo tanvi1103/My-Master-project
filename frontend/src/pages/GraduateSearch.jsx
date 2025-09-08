@@ -210,7 +210,7 @@ const GraduateSearch = () => {
             htmlFor="nationalId"
             className="block text-lg font-semibold text-gray-800 dark:text-gray-200"
           >
-            Search by National ID
+            Search by National ID (FAN)
           </label>
           <span className="text-sm text-gray-500 dark:text-gray-400">
             Required (16 digits)
