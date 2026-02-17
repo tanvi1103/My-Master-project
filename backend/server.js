@@ -12,9 +12,11 @@ const certificateRoutes = require("./routes/certificateRoutes");
 const chatRoutes = require("./routes/chatRoutes"); // New chat routes
 const helmet = require("helmet");
 const rateLimit = require("express-rate-limit");
-const http = require("http"); // Required for Socket.IO
-const { Server } = require("socket.io"); // Socket.IO server
+
+const http = require("http"); 
+const { Server } = require("socket.io");
 const jwt = require("jsonwebtoken");
+
 const Chat = require("./models/Chat");
 const Admin = require("./models/Admin");
 const User = require("./models/User");
@@ -22,7 +24,9 @@ const User = require("./models/User");
 // Initialize express app
 const app = express();
 const path = require("path");
-const server = http.createServer(app); // Create HTTP server for Socket.IO
+
+ // Create HTTP server for Socket.IO
+const server = http.createServer(app);
 app.use(
   session({
     secret: "some_secret_key",
@@ -34,7 +38,7 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 app.use("/uploads", express.static(path.join(__dirname, "public/uploads")));
-// Middleware
+// cors Middleware
 app.use(
   cors({
     origin: [
@@ -51,7 +55,9 @@ app.use(cookieParser());
 app.use(helmet());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(helmet()); // Set security headers
+
+// Set security headers
+app.use(helmet()); 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -62,7 +68,6 @@ const limiter = rateLimit({
 });
 app.use(limiter);
 // Serve static files from public directory
-
 app.use("/uploads", express.static(path.join(__dirname, "public", "uploads")));
 // Socket.IO setup
 const io = new Server(server, {
@@ -220,7 +225,6 @@ app.use((err, req, res, next) => {
 // Start server
 const PORT = process.env.PORT || 5000;
 server.listen(PORT, () => {
-  // Changed from app.listen to server.listen
   connectDB();
   console.log(`Server running on port http://localhost:${PORT}`);
 });
