@@ -1,5 +1,3 @@
-
-
 const nodemailer = require('nodemailer');
 const dotenv = require('dotenv');
 
@@ -9,6 +7,8 @@ dotenv.config();
 // Create reusable transporter object using Gmail SMTP
 const transporter = nodemailer.createTransport({
   service: 'gmail',
+  debug:true,
+  logger:true,
   auth: {
     user: 'madishamadiso00@gmail.com',
     pass: 'zlsj qylc wsvf mnyo',
