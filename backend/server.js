@@ -29,7 +29,7 @@ const path = require("path");
 const server = http.createServer(app);
 app.use(
   session({
-    secret: "some_secret_key",
+    secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
   })
@@ -57,9 +57,9 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Set security headers
-app.use(helmet()); 
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+// app.use(helmet()); 
+// app.use(express.json());
+// app.use(express.urlencoded({ extended: true }));
 
 // Rate limiting
 const limiter = rateLimit({
@@ -107,7 +107,7 @@ io.use(async (socket, next) => {
   }
 });
 
-// Socket.IO connection handler - UPDATED
+// Socket.IO connection handler 
 io.on("connection", (socket) => {
   console.log(`User connected: ${socket.user._id} (${socket.userType})`);
 
@@ -119,7 +119,7 @@ io.on("connection", (socket) => {
     socket.join("admin-room");
   }
 
-  // Handle incoming messages - UPDATED
+  // Handle incoming messages 
   socket.on("send-message", async ({ recipientId, recipientType, content }) => {
     try {
       let recipient;
