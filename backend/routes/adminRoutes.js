@@ -69,7 +69,7 @@ router.post(
   roleMiddleware(["admin", "registrar"]),
   authenticateUser,
   uploadFile
-); // Ensure this matches your backend route
+); 
 
 router.get(
   "/certificates",

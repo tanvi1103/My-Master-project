@@ -195,12 +195,12 @@ app.use((err, req, res, next) => {
   res.status(500).json({ message: "Something went wrong" });
 });
 
-// Add this middleware before your routes
+// middleware before routes
 app.use((req, res, next) => {
-  req.io = io; // Make io available in all routes
+  req.io = io; 
   next();
 });
-// Routes
+//backend functonality cheching Routes
 app.get("/", (req, res) => {
   res.send("Backend is running...");
 });
@@ -209,7 +209,7 @@ app.use("/api/admin", adminroutes);
 app.use("/api/upload", uploadroutes);
 app.use("/api/certificates", certificateRoutes);
 app.use("/api/auth", authRoutes);
-app.use("/api/chat", chatRoutes); // New chat routes
+app.use("/api/chat", chatRoutes); 
 
 // Error handling middleware
 app.use((err, req, res, next) => {

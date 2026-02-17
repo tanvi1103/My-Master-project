@@ -5,7 +5,7 @@ const User = require('../models/User');
 const Admin = require('../models/Admin');
 const router = express.Router();
 const bcrypt = require('bcrypt');
-const passport = require('../utils/passport.js'); // Ensure this path is correct
+const passport = require('../utils/passport.js'); 
 const { updateProfile, upload } = require('../controllers/registrarController.js');
 
 // POST /api/auth/register
@@ -58,7 +58,7 @@ router.get('/me', authenticateUser, async (req, res) => {
   }
 });
 
-// In your password update endpoint
+// password change route
 router.put('/settings/password', authenticateUser, async (req, res) => {
   const { currentPassword, newPassword } = req.body;
 
@@ -80,7 +80,7 @@ router.put('/settings/password', authenticateUser, async (req, res) => {
   }
 
   try {
-    const user = req.user; // ✅ Fix here
+    const user = req.user; 
 
     // 3. Verify current password
     const isCurrentPasswordValid = await bcrypt.compare(currentPassword, user.password);
@@ -100,7 +100,7 @@ router.put('/settings/password', authenticateUser, async (req, res) => {
       });
     }
 
-    // 5. Update password (hash it before saving)
+    // 5. hashing Update password 
     user.password = await bcrypt.hash(newPassword, 12);
     user.passwordChangedAt = Date.now();
 

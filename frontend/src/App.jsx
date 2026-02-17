@@ -155,8 +155,7 @@ const App = () => {
             </UserLayout>
           }
         />
-
-               <Route
+        <Route
           path="/user/profile"
           element={
             <UserLayout currentUser={currentUser}>
@@ -170,7 +169,7 @@ const App = () => {
             </UserLayout>
           }
         />
-               <Route
+        <Route
           path="/user/settings"
           element={
             <UserLayout currentUser={currentUser}>
