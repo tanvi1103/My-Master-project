@@ -316,7 +316,7 @@ exports.forgotPassword = async (req, res) => {
     if (!user) {
       return res.status(404).json({
         success: false,
-        error: "No account with that email exists",
+        message: "No account with that email exists",
       });
     }
 
