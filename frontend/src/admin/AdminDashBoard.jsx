@@ -282,7 +282,7 @@ const AdminDashBoard = () => {
   };
 
   const yearlyData = {
-    labels: ["2020", "2021", "2022", "2023", "2024"],
+    labels: ["2020", "2021", "2022", "2023", "2024", "2025"],
     datasets: [
       {
         label: "Certificates per Year",
@@ -301,6 +301,9 @@ const AdminDashBoard = () => {
           ).length,
           certificates.filter(
             (cert) => new Date(cert.endDate).getFullYear() === 2024
+          ).length,
+          certificates.filter(
+            (cert) => new Date(cert.endDate).getFullYear() === 2025
           ).length,
         ],
         borderColor: "rgba(99, 102, 241, 1)",

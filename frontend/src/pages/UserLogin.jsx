@@ -3,7 +3,6 @@ import axios from "axios";
 import { useNavigate, Link } from "react-router-dom";
 import ReCAPTCHA from "react-google-recaptcha";
 
-
 const UserLogin = ({ setCurrentUser }) => {
   const [captchaToken, setCaptchaToken] = useState("");
   const navigate = useNavigate();
@@ -42,7 +41,7 @@ const UserLogin = ({ setCurrentUser }) => {
       console.log(
         "Auto-filled test credentials in",
         import.meta.env.MODE,
-        "mode"
+        "mode",
       );
     }
   };
@@ -91,7 +90,7 @@ const UserLogin = ({ setCurrentUser }) => {
         setError(data.error || "Login failed");
       }
     } catch (err) {
-      setError(err.response?.data?.error || "Login error");
+      setError(err.response?.data?.error || "Login error, check your server");
     } finally {
       setLoading(false);
     }
@@ -152,7 +151,7 @@ const UserLogin = ({ setCurrentUser }) => {
           <div className="mb-4 relative group">
             <button
               onClick={autoFillTestCredentials}
-              className="auto-fill-button w-full py-2 px-4 bg-gradient-to-r from-yellow-400 to-yellow-500 hover:from-yellow-500 hover:to-yellow-600 text-white font-medium rounded-lg text-sm transition-all duration-300 shadow-md hover:shadow-lg"
+              className="auto-fill-button w-full py-2 px-4 bg-gradient-to-r from-yellow-400 to-yellow-500 hover:from-yellow-500 hover:to-yellow-600 text-white font-medium rounded-lg text-sm transition-all duration-300 shadow-md hover:shadow-lg cursor-pointer"
             >
               <span className="flex items-center justify-center">
                 <svg
@@ -282,45 +281,47 @@ const UserLogin = ({ setCurrentUser }) => {
               </div>
               <ReCAPTCHA
                 sitekey={import.meta.env.VITE_RECAPTCHA_SITE_KEY}
-                
-                onChange={(token) => {setCaptchaToken(token);
-                   setCaptchaError("");
+                onChange={(token) => {
+                  setCaptchaToken(token);
+                  setCaptchaError("");
                 }}
               />
               <button
                 onClick={handleLogin}
                 disabled={loading}
-                className="w-full py-2 px-4 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg disabled:opacity-50 transition"
+                className="w-full py-2 px-4 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg disabled:opacity-50 transition cursor-pointer"
               >
                 {loading ? "Logging in..." : "Login"}
               </button>
             </div>
 
- <div className="mt-6 text-center">
-            <button
-              onClick={() => {
-                if (!captchaToken) {
-                  setCaptchaError("Please complete the captcha before continuing with Google.");
-                  return;
-                }
-                window.location.href = `${authurl}/google`;
-              }}
-              disabled={!captchaToken}
-              className={`w-full flex items-center justify-center gap-3 py-2 px-4 bg-white border border-gray-300 hover:bg-gray-100 text-gray-700 font-medium rounded-lg transition ${
-                !captchaToken ? "opacity-50 cursor-not-allowed" : ""
-              }`}
-            >
-              <img
-                src="https://developers.google.com/identity/images/g-logo.png"
-                alt="Google"
-                className="w-5 h-5"
-              />
-              Continue with Google
-            </button>
-            {captchaError && (
-              <div className="text-red-500 text-sm mt-2">{captchaError}</div>
-            )}
-          </div>
+            <div className="mt-6 text-center">
+              <button
+                onClick={() => {
+                  if (!captchaToken) {
+                    setCaptchaError(
+                      "Please complete the captcha before continuing with Google.",
+                    );
+                    return;
+                  }
+                  window.location.href = `${authurl}/google`;
+                }}
+                disabled={!captchaToken}
+                className={`w-full flex items-center justify-center gap-3 py-2 px-4 bg-white border border-gray-300 hover:bg-gray-100 text-gray-700 font-medium rounded-lg transition ${
+                  !captchaToken ? "opacity-50 cursor-not-allowed" : ""
+                }`}
+              >
+                <img
+                  src="https://developers.google.com/identity/images/g-logo.png"
+                  alt="Google"
+                  className="w-5 h-5"
+                />
+                Continue with Google
+              </button>
+              {captchaError && (
+                <div className="text-red-500 text-sm mt-2">{captchaError}</div>
+              )}
+            </div>
 
             <div className="mt-4 text-center text-sm text-gray-600 dark:text-gray-400">
               Don't have an account?{" "}
@@ -351,7 +352,7 @@ const UserLogin = ({ setCurrentUser }) => {
                   value={verificationCode}
                   onChange={(e) =>
                     setVerificationCode(
-                      e.target.value.replace(/\D/g, "").slice(0, 6)
+                      e.target.value.replace(/\D/g, "").slice(0, 6),
                     )
                   }
                   className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
