@@ -1,5 +1,8 @@
 const User = require("../models/User");
-const { sendVerificationEmail, sendPasswordResetEmail } = require("../utils/email");
+const {
+  sendVerificationEmail,
+  sendPasswordResetEmail,
+} = require("../utils/email");
 const { generateToken } = require("../utils/jwt");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
@@ -47,12 +50,14 @@ exports.register = async (req, res) => {
 
     // Generate verification code
     const verificationCode = Math.floor(
-      100000 + Math.random() * 900000
+      100000 + Math.random() * 900000,
     ).toString();
 
     // Validate role (only admin can create other admins/registrars)
     if (role && role !== "user" && req.user?.role !== "admin") {
-      return res.status(403).json({ error: "Not authorized to create this role" });
+      return res
+        .status(403)
+        .json({ error: "Not authorized to create this role" });
     }
 
     // Create new user
@@ -76,7 +81,8 @@ exports.register = async (req, res) => {
 
     res.status(201).json({
       success: true,
-      message: "Registration successful. Please check your email for verification.",
+      message:
+        "Registration successful. Please check your email for verification.",
     });
   } catch (error) {
     console.error("Registration error:", error);
@@ -96,19 +102,34 @@ const validatePasswordStrength = (password) => {
   const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(password);
 
   if (password.length < minLength) {
-    return { isValid: false, message: "Password must be at least 8 characters long." };
+    return {
+      isValid: false,
+      message: "Password must be at least 8 characters long.",
+    };
   }
   if (!hasUppercase) {
-    return { isValid: false, message: "Password must include at least one uppercase letter." };
+    return {
+      isValid: false,
+      message: "Password must include at least one uppercase letter.",
+    };
   }
   if (!hasLowercase) {
-    return { isValid: false, message: "Password must include at least one lowercase letter." };
+    return {
+      isValid: false,
+      message: "Password must include at least one lowercase letter.",
+    };
   }
   if (!hasNumber) {
-    return { isValid: false, message: "Password must include at least one number." };
+    return {
+      isValid: false,
+      message: "Password must include at least one number.",
+    };
   }
   if (!hasSpecialChar) {
-    return { isValid: false, message: "Password must include at least one special character." };
+    return {
+      isValid: false,
+      message: "Password must include at least one special character.",
+    };
   }
 
   return { isValid: true, message: "Password is strong." };
@@ -158,29 +179,29 @@ exports.verifyEmail = async (req, res) => {
 const validateCaptcha = async (token) => {
   const secretKey = "6Lfi11ArAAAAAAghMx_O7AE82IEEMY6Ij7d9mVVd";
   const response = await axios.post(
-    `https://www.google.com/recaptcha/api/siteverify?secret=${secretKey}&response=${token}`
+    `https://www.google.com/recaptcha/api/siteverify?secret=${secretKey}&response=${token}`,
   );
   return response.data.success;
 };
 // Login with email or national ID
 exports.login = async (req, res) => {
   try {
-    const { email, nationalIdNumber, password, captchaToken  } = req.body;
+    const { email, nationalIdNumber, password, captchaToken } = req.body;
     const identifier = email || nationalIdNumber;
 
     if (!identifier) {
       return res.status(400).json({
         success: false,
         error: "Email/Nationa ID is required",
-      });
+      });  m
     }
-        if(!captchaToken){
+    if (!captchaToken) {
       return res.status(400).json({
         success: false,
         error: "please, idenitify your self you're not robot   it's required",
-      })
+      });
     }
-    
+
     if (!password) {
       return res.status(400).json({
         success: false,
@@ -193,7 +214,7 @@ exports.login = async (req, res) => {
         error: "Password must be at least 8 characters long",
       });
     }
-     const isHuman = await validateCaptcha(captchaToken);
+    const isHuman = await validateCaptcha(captchaToken);
     if (!isHuman) {
       return res.status(403).json({ message: "CAPTCHA validation failed" });
     }
@@ -270,7 +291,9 @@ exports.googleOAuthCallback = async (req, res) => {
     const user = req.user;
 
     if (!user) {
-      return res.status(401).json({ success: false, error: "User not authenticated" });
+      return res
+        .status(401)
+        .json({ success: false, error: "User not authenticated" });
     }
 
     // Generate JWT token
@@ -290,15 +313,12 @@ exports.googleOAuthCallback = async (req, res) => {
     //     role: user.role,
     //   },
     // });
-    res.redirect(
-      `${process.env.CLIENT_URL}/login?token=${token}`
-    );
+    res.redirect(`${process.env.CLIENT_URL}/login?token=${token}`);
   } catch (error) {
     console.error("Google OAuth callback error:", error);
     res.status(500).json({ success: false, error: "Google login failed" });
   }
 };
-
 
 // Forgot password - send reset code.
 exports.forgotPassword = async (req, res) => {
@@ -366,7 +386,8 @@ exports.verifyResetCode = async (req, res) => {
     if (user.passwordResetCode !== code) {
       return res.status(401).json({
         success: false,
-        error: "Invalid reset code, please enter the code correct sent to your email",
+        error:
+          "Invalid reset code, please enter the code correct sent to your email",
       });
     }
 
@@ -429,7 +450,6 @@ exports.resetPassword = async (req, res) => {
       return res.status(404).json({
         success: false,
         error: `User with ${email} not found`,
-
       });
     }
 
@@ -437,7 +457,8 @@ exports.resetPassword = async (req, res) => {
     if (user.passwordResetCode !== code) {
       return res.status(401).json({
         success: false,
-        error: "Invalid reset code, please enter the code correct sent to your email",
+        error:
+          "Invalid reset code, please enter the code correct sent to your email",
       });
     }
 
