@@ -300,9 +300,11 @@ export const getNationalIdByFIN = async (req, res)=>{
   try {
     const nationalID = await NationalID.findOne({nationalIdNumber});
     if (!nationalID) {
+        console.log("dfggjk")
+
       return res.status(404).json({
         success: false,
-        error: "National ID not found"
+        error: `National ID not found with ${nationalID}`
       });
     }
     res.status(200).json({success: true, nationalID})
