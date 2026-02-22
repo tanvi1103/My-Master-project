@@ -110,20 +110,38 @@ const getGeoLocation = async (ip) => {
     console.error("Geolocation lookup failed", err);
     return null;
   }
-}
+};
 exports.getCertificateByName = async (req, res) => {
   try {
     const {
-      firstName, middleName, lastName,
-      cgpa, department, endDate, gender,
-      programType, program,
+      firstName,
+      middleName,
+      lastName,
+      cgpa,
+      department,
+      endDate,
+      gender,
+      programType,
+      program,
     } = req.query;
 
     console.log("Query Parameters:", req.query);
 
     // Validate required fields
-    if (!firstName || !middleName || !lastName || !cgpa || !department || !endDate || !gender) {
-      return res.status(400).json({ message: "All fields are required, please fill and try again" });
+    if (
+      !firstName ||
+      !middleName ||
+      !lastName ||
+      !cgpa ||
+      !department ||
+      !endDate ||
+      !gender
+    ) {
+      return res
+        .status(400)
+        .json({
+          message: "All fields are required, please fill and try again",
+        });
     }
 
     // Validate graduation year
@@ -135,11 +153,15 @@ exports.getCertificateByName = async (req, res) => {
     // Validate CGPA
     const parsedCgpa = parseFloat(cgpa);
     if (isNaN(parsedCgpa) || parsedCgpa < 2.0 || parsedCgpa > 4.0) {
-      return res.status(400).json({ message: "CGPA must be between 2.0 and 4.00" });
+      return res
+        .status(400)
+        .json({ message: "CGPA must be between 2.0 and 4.00" });
     }
 
     // Get IP and geo location
-    const userIp = req.headers["x-forwarded-for"]?.split(",")[0] || req.connection.remoteAddress;
+    const userIp =
+      req.headers["x-forwarded-for"]?.split(",")[0] ||
+      req.connection.remoteAddress;
     let geo = {};
     try {
       geo = await getGeoLocation(userIp);
@@ -163,7 +185,8 @@ exports.getCertificateByName = async (req, res) => {
     console.log("Certificate Found:", certificate);
 
     // Get admin with fallback
-    const admin = await Admin.findOne({ email: process.env.ADMIN_EMAIL }) || {};
+    const admin =
+      (await Admin.findOne({ email: process.env.ADMIN_EMAIL })) || {};
 
     // Create notification
     await Notification.create({
@@ -181,8 +204,8 @@ exports.getCertificateByName = async (req, res) => {
     });
 
     if (!certificate) {
-      return res.status(404).json({ 
-        message: `No certificate found for: ${firstName} ${middleName} ${lastName} in ${department} department` 
+      return res.status(404).json({
+        message: `No certificate found for: ${firstName} ${middleName} ${lastName} in ${department} department`,
       });
     }
 
@@ -192,8 +215,6 @@ exports.getCertificateByName = async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 };
-
-
 
 exports.generateCertificatePDF = async (req, res) => {
   try {
@@ -216,7 +237,7 @@ exports.generateCertificatePDF = async (req, res) => {
 
     res.setHeader(
       "Content-Disposition",
-      `attachment; filename="${certificate.firstName}_certificate.pdf"`
+      `attachment; filename="${certificate.firstName}_certificate.pdf"`,
     );
     res.setHeader("Content-Type", "application/pdf");
     doc.pipe(res);
@@ -292,13 +313,13 @@ exports.generateCertificatePDF = async (req, res) => {
             year: "numeric",
             month: "long",
             day: "numeric",
-          }
+          },
         )} to ${new Date(certificate.endDate).toLocaleDateString("en-US", {
           year: "numeric",
           month: "long",
           day: "numeric",
         })}`,
-        { align: "center" }
+        { align: "center" },
       )
       .moveDown(0.8);
 
@@ -309,7 +330,7 @@ exports.generateCertificatePDF = async (req, res) => {
       .font("Helvetica")
       .text(
         "The University Senate has conferred this degree with all the rights, privileges, and honors appertaining thereto.",
-        { align: "center" }
+        { align: "center" },
       );
 
     // Signature section
@@ -364,7 +385,7 @@ exports.generateCertificatePDF = async (req, res) => {
         }),
         doc.page.width - 300,
         sigY + 40,
-        { align: "center", width: 200 }
+        { align: "center", width: 200 },
       );
 
     // Bottom seal
@@ -373,7 +394,7 @@ exports.generateCertificatePDF = async (req, res) => {
         "./public/university-seal.png",
         doc.page.width / 2 - 35,
         doc.page.height - 125,
-        { width: 150 }
+        { width: 150 },
       );
     }
 
