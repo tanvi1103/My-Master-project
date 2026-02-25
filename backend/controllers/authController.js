@@ -193,7 +193,7 @@ exports.login = async (req, res) => {
       return res.status(400).json({
         success: false,
         error: "Email/Nationa ID is required",
-      });  m
+      });  
     }
     if (!captchaToken) {
       return res.status(400).json({
