@@ -90,7 +90,7 @@ const ViewUpdateGraduates = ({ currentUser }) => {
   useEffect(() => {
     let result = [...graduates];
     
-    // Apply search
+    // Apply search by terms
     if (searchTerm) {
       const term = searchTerm.toLowerCase();
       result = result.filter(graduate => 
