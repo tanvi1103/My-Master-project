@@ -18,16 +18,24 @@ import {
 import LoadingSpinner from '../pages/LoadingSpinner';
 const certURL = import.meta.env.VITE_CERTIFICATE_ROUTE;
 const authURL = import.meta.env.VITE_ADMIN_ROUTE;
+const url = import.meta.env.VITE_BACKEND_URL 
+
+/**
+ * 毕业生记录查看和更新组件
+ * 提供了毕业生的列表展示、搜索、筛选、排序、查看详情、编辑和删除等功能
+ */
 const ViewUpdateGraduates = ({ currentUser }) => {
-  const [graduates, setGraduates] = useState([]);
-  const [filteredGraduates, setFilteredGraduates] = useState([]);
-  const [loading, setLoading] = useState(true);
+
+  // 状态管理
+  const [graduates, setGraduates] = useState([]); // 所有毕业生数据
+  const [filteredGraduates, setFilteredGraduates] = useState([]); // 经过筛选和排序后的毕业生数据
+  const [loading, setLoading] = useState(true); // 加载状态 // 错误信息 // 搜索关键词
   const [error, setError] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
-  const [filters, setFilters] = useState({
+  const [filters, setFilters] = useState({ // 筛选条件
     college: '',
     department: '',
-    year: '',
+    year: '', // 年份
     status: ''
   });
   const [sortConfig, setSortConfig] = useState({
@@ -207,13 +215,16 @@ const ViewUpdateGraduates = ({ currentUser }) => {
 
   // Download certificate
   const handleDownloadCertificate = () => {
-    Swal.fire({
-      title: 'Download Certificate',
-      text: 'Certificate download functionality will be implemented here',
-      icon: 'info',
-      background: '#1f2937',
-      color: '#fff',
-    });
+        const pdfUrl = `${url}/api/certificates/${id}/pdf`;
+    window.open(pdfUrl, '_blank');
+
+    // Swal.fire({
+    //   title: 'Download Certificate',
+    //   text: 'Certificate download functionality will be implemented here',
+    //   icon: 'info',
+    //   background: '#1f2937',
+    //   color: '#fff',
+    // });
   };
 
   const handleUpdate = (certificateID) => {
