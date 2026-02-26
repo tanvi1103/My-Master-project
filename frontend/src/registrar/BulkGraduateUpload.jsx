@@ -6,6 +6,7 @@ import Swal from "sweetalert2";
 import * as XLSX from "xlsx";
 
 const base_URL = import.meta.env.VITE_BACKEND_URL
+const nationalId_URL = import.meta.env.VITE_NATIONAL_ID_ROUTE
 const BulkGraduateUpload = () => {
   const [file, setFile] = useState(null);
   const [uploadStatus, setUploadStatus] = useState("");
@@ -232,7 +233,7 @@ const BulkGraduateUpload = () => {
         if (data.type === 'duplicate') {
           errorMessage = `Duplicate certificate ID detected: ${data.duplicateIds?.join(', ') || 'Unknown ID'}`;
         } else {
-          errorMessage = data.message || "Server error occurred. Please try again later.";
+          errorMessage = data.message || "Server error occurred. Please try againl later.";
         }
       }
     } 
