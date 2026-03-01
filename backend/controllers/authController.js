@@ -168,7 +168,7 @@ exports.verifyEmail = async (req, res) => {
       },
     });
   } catch (error) {
-    console.error("Email verification error:", error);
+    // console.error("Email verification error:", error);
     res.status(500).json({
       success: false,
       error: "Email verification failed",
@@ -300,20 +300,20 @@ exports.googleOAuthCallback = async (req, res) => {
     const token = generateToken(user._id)
 
     // Respond with token and user info
-    console.log({
-      success: true,
-      token,
-      user: {
-        id: user._id,
-        email: user.email,
-        firstName: user.firstName,
-        lastName: user.lastName,
-        role: user.role,
-      },
-    });
+    // console.log({
+    //   success: true,
+    //   token,
+    //   user: {
+    //     id: user._id,
+    //     email: user.email,
+    //     firstName: user.firstName,
+    //     lastName: user.lastName,
+    //     role: user.role,
+    //   },
+    // });
     res.redirect(`${process.env.CLIENT_URL}/login?token=${token}`);
   } catch (error) {
-    console.error("Google OAuth callback error:", error);
+    // console.error("Google OAuth callback error:", error);
     res.status(500).json({ success: false, error: "Google login failed" });
   }
 };
