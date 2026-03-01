@@ -79,16 +79,16 @@ const userSchema = new mongoose.Schema({
     default: null,
   },
   role: {
-     type: String, 
-     enum: ["admin", "registrar", "user"], 
-     default: "user" 
-    },
-      photo: {
     type: String,
-    default: function() {
+    enum: ["admin", "registrar", "user"],
+    default: "user",
+  },
+  photo: {
+    type: String,
+    default: function () {
       const id = Math.floor(Math.random() * 100);
-      return `https://randomuser.me/api/portraits/${this.gender === 'male' ? 'men' : 'women'}/${id}.jpg`;
-    }
+      return `https://randomuser.me/api/portraits/${this.gender === "male" ? "men" : "women"}/${id}.jpg`;
+    },
   },
   createdAt: {
     type: Date,
@@ -126,9 +126,6 @@ userSchema.methods.resetPassword = async function (newPassword) {
   this.passwordResetExpires = null; // Clear expiration timestamp
   await this.save(); // Save the updated user object
 };
-
-
-
 
 const User = mongoose.model("User", userSchema);
 module.exports = User;
