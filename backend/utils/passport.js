@@ -2,11 +2,9 @@
 const passport = require("passport");
 const GoogleStrategy = require("passport-google-oauth20").Strategy;
 const User = require("../models/User");
-const dotenv = require('dotenv');
+const dotenv = require("dotenv");
 dotenv.config();
-const jwt = require("jsonwebtoken");
 
-console.log("GOOGLE_CLIENT_ID:", process.env.GOOGLE_CLIENT_ID);
 passport.use(
   new GoogleStrategy(
     {
@@ -38,8 +36,8 @@ passport.use(
       } catch (error) {
         return done(error, null);
       }
-    }
-  )
+    },
+  ),
 );
 
 // Serialize user for session (optional if using sessions)
