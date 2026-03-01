@@ -10,14 +10,14 @@ const authenticateUser = async (req, res, next) => {
         authHeader.startsWith("Bearer ") &&
         authHeader.split(" ")[1]);
 
-    console.log("Extracted token:", token);
+    // console.log("Extracted token:", token);
 
     if (!token || typeof token !== "string" || token.split(".").length !== 3) {
       return res.status(401).json({ message: "Malformed or missing token" });
     }
 
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    console.log("Decoded token:", decoded);
+    // console.log("Decoded token:", decoded);
     let user = await User.findById(decoded.id || decoded.userId);
     let modelType = "User";
 
@@ -36,7 +36,7 @@ const authenticateUser = async (req, res, next) => {
 
     next();
   } catch (error) {
-    console.error("Authentication error:", error);
+    // console.error("Authentication error:", error);
     return res.status(401).json({ message: "Invalid token" });
   }
 };
