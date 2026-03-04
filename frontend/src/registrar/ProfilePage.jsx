@@ -70,7 +70,7 @@ const ProfilePage = () => {
         formDataToSend.append("photo", formData.photo);
       }
 
-      console.log("Sending:", formDataToSend); // Add this
+      console.log("Sending:", formDataToSend); 
 
       const { data } = await axios.put(
         `${authurl}/profile`,
