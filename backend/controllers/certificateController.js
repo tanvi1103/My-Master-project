@@ -237,7 +237,7 @@ exports.generateCertificatePDF = async (req, res) => {
 
     res.setHeader(
       "Content-Disposition",
-      `attachment; filename="${certificate.firstName}_certificate.pdf"`,
+      `attachment; filename="${certificate.firstName}_${certificate.lastName}_certificate.pdf"`,
     );
     res.setHeader("Content-Type", "application/pdf");
     doc.pipe(res);
