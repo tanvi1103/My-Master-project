@@ -1,4 +1,4 @@
-const xlsx = require('xlsx');
+const xlsx = require("xlsx");
 
 const parseExcelFile = (filePath) => {
   const workbook = xlsx.readFile(filePath);

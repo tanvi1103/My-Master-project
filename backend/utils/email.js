@@ -1,31 +1,30 @@
-const nodemailer = require('nodemailer');
-const dotenv = require('dotenv');
+const nodemailer = require("nodemailer");
+const dotenv = require("dotenv");
 
 // Load environment variables
 dotenv.config();
 
 // Create reusable transporter object using Gmail SMTP
 const transporter = nodemailer.createTransport({
-  service: 'gmail',
-  debug:true,
-  logger:true,
+  service: "gmail",
+  debug: true,
+  logger: true,
   auth: {
-    user: 'madishamadiso00@gmail.com',
-    pass: 'zlsj qylc wsvf mnyo',
-  }
+    user: "madishamadiso00@gmail.com",
+    pass: "zlsj qylc wsvf mnyo",
+  },
 });
 
-
 exports.sendVerificationEmail = async (email, code) => {
-  const appName = process.env.APP_NAME || 'Bonga University GCVS';
-  const supportEmail = process.env.SUPPORT_EMAIL || 'madishamadiso00@gmail.com';
+  const appName = process.env.APP_NAME || "Bonga University GCVS";
+  const supportEmail = process.env.SUPPORT_EMAIL || "madishamadiso00@gmail.com";
   const expiryHours = process.env.CODE_EXPIRY_HOURS || 24;
 
   try {
     const mailOptions = {
-      from: `"${appName}" <${process.env.EMAIL_USER || 'madishamadiso00@gmail.com'}>`,
+      from: `"${appName}" <${process.env.EMAIL_USER || "madishamadiso00@gmail.com"}>`,
       to: email,
-      subject: '🔐 Email Verification',
+      subject: "🔐 Email Verification",
       html: `
         <!DOCTYPE html>
         <html lang="en">
@@ -56,34 +55,35 @@ exports.sendVerificationEmail = async (email, code) => {
         </body>
         </html>
       `,
-      text: `Verify your email with ${appName}. Your verification code is: ${code}. This code expires in ${expiryHours} hours.`
+      text: `Verify your email with ${appName}. Your verification code is: ${code}. This code expires in ${expiryHours} hours.`,
     };
 
     // Send the email
     await transporter.sendMail(mailOptions);
-    
+
     console.log(`📧 Verification email sent to ${email}`);
   } catch (error) {
-    console.error('❌ Error sending verification email:', error);
-    throw new Error('Failed to send verification email. Please try again later.');
+    console.error("❌ Error sending verification email:", error);
+    throw new Error(
+      "Failed to send verification email. Please try again later.",
+    );
   }
 };
 
-
 // reset password - send reset code.
 exports.sendPasswordResetEmail = async (email, code) => {
-  const appName = process.env.APP_NAME || 'Bonga University GCVS';
-  const supportEmail = process.env.SUPPORT_EMAIL || 'madishamadiso00@gmail.com';
+  const appName = process.env.APP_NAME || "Bonga University GCVS";
+  const supportEmail = process.env.SUPPORT_EMAIL || "madishamadiso00@gmail.com";
   const expiryHours = process.env.CODE_EXPIRY_HOURS || 24;
-  const resetLink = process.env.RESET_PAGE_URL 
-    ? `${process.env.RESET_PAGE_URL}?token=${code}` 
+  const resetLink = process.env.RESET_PAGE_URL
+    ? `${process.env.RESET_PAGE_URL}?token=${code}`
     : null;
 
   try {
     const mailOptions = {
-      from: `"${appName} Support" <${process.env.EMAIL_USER || 'madishamadiso00@gmail.com'}>`,
+      from: `"${appName} Support" <${process.env.EMAIL_USER || "madishamadiso00@gmail.com"}>`,
       to: email,
-      subject: '🔒 Password Reset Request',
+      subject: "🔒 Password Reset Request",
       html: `
         <!DOCTYPE html>
         <html lang="en">
@@ -150,7 +150,7 @@ exports.sendPasswordResetEmail = async (email, code) => {
             <strong>To reset your password:</strong>
             <ol>
               <li>Enter the verification code below on the password reset page</li>
-              ${resetLink ? `<li>Or <a href="${resetLink}" class="button">Click here to reset password</a></li>` : ''}
+              ${resetLink ? `<li>Or <a href="${resetLink}" class="button">Click here to reset password</a></li>` : ""}
               <li>Create a new secure password</li>
             </ol>
           </div>
@@ -168,20 +168,23 @@ exports.sendPasswordResetEmail = async (email, code) => {
         </body>
         </html>
       `,
-      text: `Password Reset Request for ${appName}\n\n` +
-            `We received a request to reset your password. Use this verification code:\n\n` +
-            `${code}\n\n` +
-            `${resetLink ? `Or visit this link to reset: ${resetLink}\n\n` : ''}` +
-            `This code expires in ${expiryHours} hours.\n\n` +
-            `If you didn't request this, please secure your account.\n\n` +
-            `The ${appName} Team\n` +
-            `Support: ${supportEmail}`
+      text:
+        `Password Reset Request for ${appName}\n\n` +
+        `We received a request to reset your password. Use this verification code:\n\n` +
+        `${code}\n\n` +
+        `${resetLink ? `Or visit this link to reset: ${resetLink}\n\n` : ""}` +
+        `This code expires in ${expiryHours} hours.\n\n` +
+        `If you didn't request this, please secure your account.\n\n` +
+        `The ${appName} Team\n` +
+        `Support: ${supportEmail}`,
     };
 
     await transporter.sendMail(mailOptions);
     console.log(`📧 Password reset email sent to ${email}`);
   } catch (error) {
-    console.error('❌ Error sending password reset email:', error);
-    throw new Error('Failed to send password reset email. Please try again later.');
+    console.error("❌ Error sending password reset email:", error);
+    throw new Error(
+      "Failed to send password reset email. Please try again later.",
+    );
   }
 };
