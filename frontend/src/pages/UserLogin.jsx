@@ -170,7 +170,7 @@ const UserLogin = ({ setCurrentUser }) => {
               </span>
             </button>
             <div className="absolute -bottom-6 left-0 right-0 text-center text-xs text-yellow-600 dark:text-yellow-400 opacity-0 group-hover:opacity-100 transition-opacity">
-              Development mode only
+              for checking purpose only
             </div>
           </div>
         )}
