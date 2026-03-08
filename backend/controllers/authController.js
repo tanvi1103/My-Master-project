@@ -258,11 +258,9 @@ exports.login = async (req, res) => {
     }
 
     // Generate JWT token
-    const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {
-      expiresIn: "7d",
-    });
+    const token = generateToken(user._id);
 
-    res.json({
+    res.status(200).json({
       success: true,
       token,
       user: {
@@ -284,6 +282,19 @@ exports.login = async (req, res) => {
   }
 };
 
+exports.logout = async (req, res) => {
+  try {
+    res.clearCookie("token");
+    res.clearLocalStorage("token");
+    res.json({ success: true, message: "Logged out successfully" });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: "Server error during logout",
+    });
+  }
+}
+
 // Google OAuth login
 exports.googleOAuthCallback = async (req, res) => {
   try {
@@ -300,17 +311,17 @@ exports.googleOAuthCallback = async (req, res) => {
     const token = generateToken(user._id)
 
     // Respond with token and user info
-    res.json({
-      success: true,
-      token,
-      user: {
-        id: user._id,
-        email: user.email,
-        firstName: user.firstName,
-        lastName: user.lastName,
-        role: user.role,
-      },
-    });
+    // res.json({
+    //   success: true,
+    //   token,
+    //   user: {
+    //     id: user._id,
+    //     email: user.email,
+    //     firstName: user.firstName,
+    //     lastName: user.lastName,
+    //     role: user.role,
+    //   },
+    // });
     res.redirect(`${process.env.CLIENT_URL}/login?token=${token}`);
   } catch (error) {
     // console.error("Google OAuth callback error:", error);
