@@ -300,17 +300,17 @@ exports.googleOAuthCallback = async (req, res) => {
     const token = generateToken(user._id)
 
     // Respond with token and user info
-    res.json({
-      success: true,
-      token,
-      user: {
-        id: user._id,
-        email: user.email,
-        firstName: user.firstName,
-        lastName: user.lastName,
-        role: user.role,
-      },
-    });
+    // res.json({
+    //   success: true,
+    //   token,
+    //   user: {
+    //     id: user._id,
+    //     email: user.email,
+    //     firstName: user.firstName,
+    //     lastName: user.lastName,
+    //     role: user.role,
+    //   },
+    // });
     res.redirect(`${process.env.CLIENT_URL}/login?token=${token}`);
   } catch (error) {
     // console.error("Google OAuth callback error:", error);
