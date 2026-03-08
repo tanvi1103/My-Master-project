@@ -168,8 +168,6 @@ const GraduateSearch = () => {
           params: searchParams,
         },
       );
-      console.log("Search Result:", data);
-
       setCertificate(data);
     } catch (err) {
       setError(err.response?.data?.message || "Something went wrong");
@@ -180,8 +178,6 @@ const GraduateSearch = () => {
 
   const handleOpen = async () => {
     if (certificate) {
-      console.log("Certificate ID:", certificate.certificateID);
-
       await navigate(`/externalUser/certificate/${certificate.certificateID}`);
     }
   };
