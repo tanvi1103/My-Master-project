@@ -8,6 +8,7 @@ import {
   useNavigate,
 } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
+import { Analytics } from "@vercel/analytics/react";
 import LandingPage from "./pages/LandingPage";
 import GraduateSearch from "./pages/GraduateSearch";
 import AdminLogin from "./pages/AdminLogin";
@@ -380,6 +381,7 @@ const App = () => {
           }
         />
       </Routes>
+      <Analytics />
     </ThemeProvider>
   );
 };
