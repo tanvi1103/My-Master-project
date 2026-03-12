@@ -81,7 +81,7 @@ const io = new Server(server, {
       "https://bonga-university-graduate-document.onrender.com/",
       "https://bonga-university-graduate-document.onrender.com"
     ],
-    methods: ["GET", "POST"],
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
     credentials: true,
   },
 });
