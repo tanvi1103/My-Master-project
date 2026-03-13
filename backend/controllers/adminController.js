@@ -15,7 +15,8 @@ const jwt = require("jsonwebtoken");
 const { validationResult } = require("express-validator");
 const { v4: uuidv4 } = require("uuid");
 const sharp = require("sharp");
-// In your Multer config
+const { generateToken } = require("../utils/jwt");
+// In  Multer config
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     try {
@@ -127,11 +128,7 @@ const loginAdmin = async (req, res) => {
         .json({ message: "Invalid credentials, password is incorrect" });
     }
 
-    const token = jwt.sign(
-      { id: admin._id, role: "admin" },
-      process.env.JWT_SECRET,
-      { expiresIn: "24h" },
-    );
+    const token = generateToken(admin._id);
 
     res.cookie("adminToken", token, {
       httpOnly: true,
