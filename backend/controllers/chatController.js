@@ -133,6 +133,35 @@ exports.getConversation = async (req, res) => {
   }
 };
 
+exports.updateSpecificMessage = async (req, res) => {
+  try {
+    const { messageId } = req.params;
+    const { content } = req.body;
+
+    const message = await Chat.findByIdAndUpdate(
+      messageId,
+      { content },
+      { new: true },
+    );
+
+    res.json(message);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+}
+
+exports.deleteSpecificMessage = async (req, res) => {
+  try {
+    const { messageId } = req.body;
+
+    const message = await Chat.findByIdAndDelete(messageId);
+
+    res.json(message);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+}
+
 // Get all conversations for admin
 exports.getAllConversations = async (req, res) => {
   try {

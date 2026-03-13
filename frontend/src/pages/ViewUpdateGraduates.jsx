@@ -1,6 +1,6 @@
 import axios from "axios";
 import Swal from "sweetalert2";
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   FiEdit2,
@@ -16,7 +16,7 @@ import {
   FiPrinter,
 } from "react-icons/fi";
 import LoadingSpinner from "../pages/LoadingSpinner";
-const certURL = import.meta.env.VITE_CERTIFICATE_ROUTE;
+// const certURL = import.meta.env.VITE_CERTIFICATE_ROUTE;
 const authURL = import.meta.env.VITE_ADMIN_ROUTE;
 const url = import.meta.env.VITE_BACKEND_URL;
 
@@ -215,6 +215,7 @@ const ViewUpdateGraduates = ({ currentUser }) => {
         
   // Download certificate
   const handleDownloadCertificate = () => {
+    const { id } = selectedGraduate;
     const pdfUrl = `${url}/api/certificates/${id}/pdf`;
     window.open(pdfUrl, "_blank");
 
