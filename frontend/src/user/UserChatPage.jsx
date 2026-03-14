@@ -151,6 +151,68 @@ const UserChatPage = ({ currentUser }) => {
     });
   };
 
+  // backend code for updateSpecificMessage
+  // exports.updateSpecificMessage = async (req, res) => {
+  //   try {
+  //     const { messageId } = req.params;
+  //     const { content } = req.body;
+  //     if (!messageId) {
+  //       return res.status(400).json({ error: "Message ID is required" });
+  //     }
+  //     if (!content) {
+  //       return res.status(400).json({ error: "Content is required" });
+  //     }
+  
+  //     const message = await Chat.findById(
+  //       messageId
+  //     );
+  //     if (!message) {
+  //       return res.status(404).json({ error: "Message not found" });
+  //     }
+  //     message.content = content;
+  //     await message.save();
+  //     const populated = await Chat.findById(message._id)
+  //       .populate("sender", "firstName lastName email")
+  //       .populate("recipient", "firstName lastName email");
+  //     res.status(200).json(populated);
+  //   } catch (error) {
+  //     res.status(500).json({ error: error.message });
+  //   }
+  // }
+
+
+  // frontend code for updateSpecificMessage
+  const handleMessageUpdate = async (messageId, content) => {
+    try {
+      const response = await axios.put(`${chatapi}/message/update/${messageId}`, { content }, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
+        },
+      });
+      const updatedMessage = response.data; 
+      return updatedMessage;
+    } catch (error) {
+      console.error('Error updating message:', error);
+      throw error;
+    }
+
+  }
+
+  const handleEditMessage = async (messageId) => {
+    const message = messages.find(m => m._id === messageId);
+    if (!message) return;
+
+    const newContent = prompt('Edit message:', message.content);
+    if (!newContent) return;
+
+    try {
+      const updatedMessage = await handleMessageUpdate(messageId, newContent);
+      setMessages(prev => prev.map(m => m._id === messageId ? updatedMessage : m));
+    } catch (error) {
+      console.error('Failed to update message:', error);
+    }
+  }
+
   if (loading) {
     return (
       <div className="flex items-center justify-center h-full">
@@ -213,7 +275,7 @@ const UserChatPage = ({ currentUser }) => {
                   : 'bg-white dark:bg-gray-600 dark:text-gray-100'
                 }`}
               >
-                <p>{message.content}</p>
+                <p onClick={() => handleEditMessage(message._id)}>{message.content}</p>
                 <p className="text-xs mt-1 opacity-80">
                   {new Date(message.createdAt).toLocaleTimeString([], {
                     hour: '2-digit',
