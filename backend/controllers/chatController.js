@@ -137,14 +137,25 @@ exports.updateSpecificMessage = async (req, res) => {
   try {
     const { messageId } = req.params;
     const { content } = req.body;
+    if (!messageId) {
+      return res.status(400).json({ error: "Message ID is required" });
+    }
+    if (!content) {
+      return res.status(400).json({ error: "Content is required" });
+    }
 
-    const message = await Chat.findByIdAndUpdate(
-      messageId,
-      { content },
-      { new: true },
+    const message = await Chat.findById(
+      messageId
     );
-
-    res.json(message);
+    if (!message) {
+      return res.status(404).json({ error: "Message not found" });
+    }
+    message.content = content;
+    await message.save();
+    const populated = await Chat.findById(message._id)
+      .populate("sender", "firstName lastName email")
+      .populate("recipient", "firstName lastName email");
+    res.status(200).json(populated);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -152,11 +163,17 @@ exports.updateSpecificMessage = async (req, res) => {
 
 exports.deleteSpecificMessage = async (req, res) => {
   try {
-    const { messageId } = req.body;
+    const { messageId } = req.params;
+    if (!messageId) {
+      return res.status(400).json({ error: "Message ID is required" });
+    }
+    const message = await Chat.findById(messageId);
+    if (!message) {
+      return res.status(404).json({ error: "Message not found" });
+    }
+    await message.remove();
+    res.status(200).json({ success: true, message: "Message deleted successfully" });
 
-    const message = await Chat.findByIdAndDelete(messageId);
-
-    res.json(message);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
