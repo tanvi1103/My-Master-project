@@ -1,11 +1,11 @@
-import React, { useState, useEffect, useRef } from 'react';
-import axios from 'axios';
-import io from 'socket.io-client';
-import { Send, Smile, MessageSquare } from 'lucide-react';
+import React, { useState, useEffect, useRef } from "react";
+import axios from "axios";
+import io from "socket.io-client";
+import { Send, Smile, MessageSquare } from "lucide-react";
 
 const UserChatPage = ({ currentUser }) => {
   const [messages, setMessages] = useState([]);
-  const [newMessage, setNewMessage] = useState('');
+  const [newMessage, setNewMessage] = useState("");
   const [admin, setAdmin] = useState(null);
   const [isTyping, setIsTyping] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -13,6 +13,12 @@ const UserChatPage = ({ currentUser }) => {
   const socketRef = useRef(null);
   const messagesEndRef = useRef(null);
 
+  const [menu, setMenu] = useState({
+    visible: false,
+    x: 0,
+    y: 0,
+    messageId: null,
+  });
 
   const chatapi = import.meta.env.VITE_CHAT_ROUTE;
   // Fetch assigned admin
@@ -21,19 +27,19 @@ const UserChatPage = ({ currentUser }) => {
       setLoading(true);
       const res = await axios.get(`${chatapi}/user/get-admin`, {
         headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
       });
-      
+
       if (res.data.success) {
         setAdmin(res.data.admin);
         await fetchConversation(res.data.admin._id);
       } else {
-        setError('No admin available');
+        setError("No admin available");
       }
     } catch (err) {
-      console.error('Failed to fetch admin:', err);
-      setError('Failed to connect to support');
+      console.error("Failed to fetch admin:", err);
+      setError("Failed to connect to support");
     } finally {
       setLoading(false);
     }
@@ -44,12 +50,12 @@ const UserChatPage = ({ currentUser }) => {
     try {
       const res = await axios.get(`${chatapi}/conversation/${adminId}`, {
         headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
       });
       setMessages(res.data);
     } catch (err) {
-      console.error('Error loading conversation:', err);
+      console.error("Error loading conversation:", err);
     }
   };
 
@@ -57,25 +63,27 @@ const UserChatPage = ({ currentUser }) => {
   useEffect(() => {
     const initializeChat = async () => {
       // 1. Connect to socket
-      socketRef.current = io(import.meta.env.VITE_BACKEND_URL , {
+      socketRef.current = io(import.meta.env.VITE_BACKEND_URL, {
         auth: {
-          token: localStorage.getItem('token'),
+          token: localStorage.getItem("token"),
         },
       });
       socketRef.current.emit("send-message", {
         recipientId: admin?._id,
         content: newMessage,
-      }
-      )
+      });
 
       // 2. Set up socket listeners
-      socketRef.current.on('receive-message', (message) => {
-        if (message.sender._id === admin?._id || message.recipient._id === currentUser._id) {
-          setMessages(prev => [...prev, message]);
+      socketRef.current.on("receive-message", (message) => {
+        if (
+          message.sender._id === admin?._id ||
+          message.recipient._id === currentUser._id
+        ) {
+          setMessages((prev) => [...prev, message]);
         }
       });
 
-      socketRef.current.on('typing', ({ isTyping, senderId }) => {
+      socketRef.current.on("typing", ({ isTyping, senderId }) => {
         if (senderId === admin?._id) {
           setIsTyping(isTyping);
         }
@@ -94,8 +102,27 @@ const UserChatPage = ({ currentUser }) => {
 
   // Auto-scroll to bottom when messages change
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
+
+  useEffect(() => {
+    const closeMenu = () => {
+      setMenu((prev) => ({ ...prev, visible: false }));
+    };
+
+    window.addEventListener("click", closeMenu);
+
+    return () => window.removeEventListener("click", closeMenu);
+  }, []);
+
+  const handleContextMenu = (e, id) => {
+    setMenu({
+      visible: true,
+      x: e.pageX,
+      y: e.pageY,
+      messageId: id,
+    });
+  };
 
   const handleSendMessage = async () => {
     if (!newMessage.trim() || !admin) return;
@@ -112,12 +139,12 @@ const UserChatPage = ({ currentUser }) => {
     };
 
     // Optimistic update
-    setMessages(prev => [...prev, tempMessage]);
-    setNewMessage('');
+    setMessages((prev) => [...prev, tempMessage]);
+    setNewMessage("");
 
     try {
       // 1. Emit socket event
-      socketRef.current.emit('send-message', {
+      socketRef.current.emit("send-message", {
         recipientId: admin._id,
         content: newMessage,
       });
@@ -125,27 +152,27 @@ const UserChatPage = ({ currentUser }) => {
       // 2. Send to API
       const payload = {
         recipientId: admin._id,
-        recipientType: 'Admin',
+        recipientType: "Admin",
         content: newMessage,
       };
 
       const res = await axios.post(`${chatapi}/send`, payload, {
         headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
       });
 
       // Replace temp message with server response
-      setMessages(prev => prev.map(m => m._id === tempId ? res.data : m));
+      setMessages((prev) => prev.map((m) => (m._id === tempId ? res.data : m)));
     } catch (err) {
-      console.error('Failed to send message:', err);
-      setMessages(prev => prev.filter(m => m._id !== tempId));
+      console.error("Failed to send message:", err);
+      setMessages((prev) => prev.filter((m) => m._id !== tempId));
     }
   };
 
   const handleTyping = (isTyping) => {
     if (!admin) return;
-    socketRef.current.emit('typing', {
+    socketRef.current.emit("typing", {
       recipientId: admin._id,
       isTyping,
     });
@@ -162,7 +189,7 @@ const UserChatPage = ({ currentUser }) => {
   //     if (!content) {
   //       return res.status(400).json({ error: "Content is required" });
   //     }
-  
+
   //     const message = await Chat.findById(
   //       messageId
   //     );
@@ -180,38 +207,54 @@ const UserChatPage = ({ currentUser }) => {
   //   }
   // }
 
-
   // frontend code for updateSpecificMessage
   const handleMessageUpdate = async (messageId, content) => {
     try {
-      const response = await axios.put(`${chatapi}/message/update/${messageId}`, { content }, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
+      const response = await axios.put(
+        `${chatapi}/message/update/${messageId}`,
+        { content },
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
         },
-      });
-      const updatedMessage = response.data; 
+      );
+      const updatedMessage = response.data;
       return updatedMessage;
     } catch (error) {
-      console.error('Error updating message:', error);
+      console.error("Error updating message:", error);
       throw error;
     }
-
-  }
+  };
 
   const handleEditMessage = async (messageId) => {
-    const message = messages.find(m => m._id === messageId);
+    const message = messages.find((m) => m._id === messageId);
     if (!message) return;
 
-    const newContent = prompt('Edit message:', message.content);
+    const newContent = prompt("Edit message:", message.content);
     if (!newContent) return;
 
     try {
       const updatedMessage = await handleMessageUpdate(messageId, newContent);
-      setMessages(prev => prev.map(m => m._id === messageId ? updatedMessage : m));
+      setMessages((prev) =>
+        prev.map((m) => (m._id === messageId ? updatedMessage : m)),
+      );
     } catch (error) {
-      console.error('Failed to update message:', error);
+      console.error("Failed to update message:", error);
     }
-  }
+  };
+  const handleDeleteMessage = async (messageId) => {
+    try {
+      await axios.delete(`${chatapi}/message/delete/${messageId}`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+      setMessages((prev) => prev.filter((m) => m._id !== messageId));
+    } catch (error) {
+      console.error("Failed to delete message:", error);
+    }
+  };
 
   if (loading) {
     return (
@@ -229,7 +272,7 @@ const UserChatPage = ({ currentUser }) => {
       <div className="flex items-center justify-center h-full">
         <div className="text-center p-6 bg-red-50 rounded-lg">
           <p className="text-red-600 font-medium">{error}</p>
-          <button 
+          <button
             onClick={fetchAdmin}
             className="mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
           >
@@ -261,30 +304,71 @@ const UserChatPage = ({ currentUser }) => {
       <div className="flex-1 overflow-y-auto p-4 bg-gray-50 dark:bg-gray-700">
         {messages.length === 0 ? (
           <div className="flex items-center justify-center h-full">
-            <p className="text-gray-500">Start your conversation with support</p>
+            <p className="text-gray-500">
+              Start your conversation with support
+            </p>
           </div>
         ) : (
-          messages.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt)).map((message) => (
-            <div
-              key={message._id}
-              className={`mb-4 flex ${message.sender._id === currentUser._id ? 'justify-end' : 'justify-start'}`}
-            >
+          messages
+            .sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt))
+            .map((message) => (
               <div
-                className={`max-w-[75%] p-3 rounded-lg ${message.sender._id === currentUser._id
-                  ? 'bg-blue-600 text-white'
-                  : 'bg-white dark:bg-gray-600 dark:text-gray-100'
-                }`}
+                key={message._id}
+                className={`mb-4 flex ${message.sender._id === currentUser._id ? "justify-end" : "justify-start"}`}
               >
-                <p onClick={() => handleEditMessage(message._id)}>{message.content}</p>
-                <p className="text-xs mt-1 opacity-80">
-                  {new Date(message.createdAt).toLocaleTimeString([], {
-                    hour: '2-digit',
-                    minute: '2-digit',
-                  })}
-                </p>
+                <div
+                  className={`max-w-[75%] p-3 rounded-lg ${
+                    message.sender._id === currentUser._id
+                      ? "bg-blue-600 text-white"
+                      : "bg-white dark:bg-gray-600 dark:text-gray-100"
+                  }`}
+                >
+                  {/* <p onClick={() => handleEditMessage(message._id)}>{message.content}</p> */}
+                  <p
+            onContextMenu={(e) => {
+  if (message.sender._id !== currentUser._id) return;
+  e.preventDefault();
+  handleContextMenu(e, message._id);
+}}
+                    className="cursor-pointer"
+                  >
+                    {message.content}
+                  </p>
+                  <p className="text-xs mt-1 opacity-80">
+                    {new Date(message.createdAt).toLocaleTimeString([], {
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    })}
+                  </p>
+      {menu.visible && (
+  <div
+    style={{ top: menu.y, left: menu.x }}
+    className="fixed bg-white shadow-lg rounded-md w-32 py-2 z-50"
+  >
+                      <button
+                        onClick={() => {
+                          handleEditMessage(menu.messageId);
+                          setMenu({ ...menu, visible: false });
+                        }}
+                        className="block w-full text-left px-3 py-1 hover:bg-gray-100"
+                      >
+                        Edit
+                      </button>
+
+                      <button
+                        onClick={() => {
+                          handleDeleteMessage(menu.messageId);
+                          setMenu({ ...menu, visible: false });
+                        }}
+                        className="block w-full text-left px-3 py-1 text-red-500 hover:bg-gray-100"
+                      >
+                        Delete
+                      </button>
+                    </div>
+                  )}
+                </div>
               </div>
-            </div>
-          ))
+            ))
         )}
         <div ref={messagesEndRef} />
       </div>
@@ -302,7 +386,7 @@ const UserChatPage = ({ currentUser }) => {
               setNewMessage(e.target.value);
               handleTyping(e.target.value.length > 0);
             }}
-            onKeyDown={(e) => e.key === 'Enter' && handleSendMessage()}
+            onKeyDown={(e) => e.key === "Enter" && handleSendMessage()}
             placeholder="Type your message..."
             className="flex-1 px-4 py-2 bg-gray-100 dark:bg-gray-700 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
