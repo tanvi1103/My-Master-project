@@ -178,36 +178,6 @@ const UserChatPage = ({ currentUser }) => {
     });
   };
 
-  // backend code for updateSpecificMessage
-  // exports.updateSpecificMessage = async (req, res) => {
-  //   try {
-  //     const { messageId } = req.params;
-  //     const { content } = req.body;
-  //     if (!messageId) {
-  //       return res.status(400).json({ error: "Message ID is required" });
-  //     }
-  //     if (!content) {
-  //       return res.status(400).json({ error: "Content is required" });
-  //     }
-
-  //     const message = await Chat.findById(
-  //       messageId
-  //     );
-  //     if (!message) {
-  //       return res.status(404).json({ error: "Message not found" });
-  //     }
-  //     message.content = content;
-  //     await message.save();
-  //     const populated = await Chat.findById(message._id)
-  //       .populate("sender", "firstName lastName email")
-  //       .populate("recipient", "firstName lastName email");
-  //     res.status(200).json(populated);
-  //   } catch (error) {
-  //     res.status(500).json({ error: error.message });
-  //   }
-  // }
-
-  // frontend code for updateSpecificMessage
   const handleMessageUpdate = async (messageId, content) => {
     try {
       const response = await axios.put(
@@ -317,19 +287,18 @@ const UserChatPage = ({ currentUser }) => {
                 className={`mb-4 flex ${message.sender._id === currentUser._id ? "justify-end" : "justify-start"}`}
               >
                 <div
-                  className={`max-w-[75%] p-3 rounded-lg ${
-                    message.sender._id === currentUser._id
-                      ? "bg-blue-600 text-white"
-                      : "bg-white dark:bg-gray-600 dark:text-gray-100"
-                  }`}
+                  className={`max-w-[75%] p-3 rounded-lg ${message.sender._id === currentUser._id
+                    ? "bg-blue-600 text-white"
+                    : "bg-white dark:bg-gray-600 dark:text-gray-100"
+                    }`}
                 >
                   {/* <p onClick={() => handleEditMessage(message._id)}>{message.content}</p> */}
                   <p
-            onContextMenu={(e) => {
-  if (message.sender._id !== currentUser._id) return;
-  e.preventDefault();
-  handleContextMenu(e, message._id);
-}}
+                    onContextMenu={(e) => {
+                      if (message.sender._id !== currentUser._id) return;
+                      e.preventDefault();
+                      handleContextMenu(e, message._id);
+                    }}
                     className="cursor-pointer"
                   >
                     {message.content}
@@ -340,11 +309,11 @@ const UserChatPage = ({ currentUser }) => {
                       minute: "2-digit",
                     })}
                   </p>
-      {menu.visible && (
-  <div
-    style={{ top: menu.y, left: menu.x }}
-    className="fixed bg-white shadow-lg rounded-md w-32 py-2 z-50"
-  >
+                  {menu.visible && (
+                    <div
+                      style={{ top: menu.y, left: menu.x }}
+                      className="fixed dark:bg-gray-900 bg-white shadow-lg rounded-md w-32 py-2 z-50"
+                    > 
                       <button
                         onClick={() => {
                           handleEditMessage(menu.messageId);
