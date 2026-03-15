@@ -195,7 +195,7 @@ exports.login = async (req, res) => {
         error: "Email/Nationa ID is required",
       });  
     }
-    if (!captchaToken) {
+    if (process.env.NODE_ENV === 'development' && !captchaToken) {
       return res.status(400).json({
         success: false,
         error: "please, idenitify your self you're not robot   it's required",
@@ -215,7 +215,7 @@ exports.login = async (req, res) => {
       });
     }
     const isHuman = await validateCaptcha(captchaToken);
-    if (!isHuman) {
+    if (process.env.NODE_ENV === 'development' && !isHuman) {
       return res.status(403).json({ message: "CAPTCHA validation failed" });
     }
 

@@ -9,11 +9,12 @@ const {
 router.use(authenticateUser);
 
 router.get("/user/get-admin", chatController.getAssignedAdmin);
-router.put("user/:userId/:")
 router.get("/conversation/:userId", chatController.getConversation);
 router.get("/unread-count", chatController.getUnreadCount);
 router.post("/messages/read", chatController.markAsRead);
 router.post("/send", chatController.sendMessage);
+router.put("/message/update/:messageId", chatController.updateSpecificMessage);
+router.delete("/message/delete/:messageId", chatController.deleteSpecificMessage);
 
 router.get(
   "/admin/conversations",
