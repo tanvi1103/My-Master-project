@@ -66,7 +66,7 @@ const About = () => {
           <a href="#">Contact Us</a>
         </div>
         <div className="footer-bottom">
-          <p>&copy; 2025 CertiSys. All rights reserved. | Designed by <a href="#">Bonga University Student</a></p>
+          <p>&copy; 2025 CertiSys. All rights reserved. | Designed by <a href="#">MIT ADT University Student</a></p>
         </div>
       </footer>
     </div>

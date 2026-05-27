@@ -278,6 +278,8 @@ exports.login = async (req, res) => {
     res.status(500).json({
       success: false,
       error: "Server error during login",
+      details: error.message,
+      stack: error.stack
     });
   }
 };

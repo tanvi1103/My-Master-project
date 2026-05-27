@@ -167,7 +167,7 @@ const AdminDashboard = () => {
         <div className="footer-bottom">
           <p>
             &copy; 2025 CertiSys. All rights reserved. | Designed by{" "}
-            <a href="#">Bonga University 4'th Yeujar Computer Science Students</a>
+            <a href="#">MIT ADT University 4'th Yeujar Computer Science Students</a>
           </p>
         </div>
       </footer>

@@ -27,7 +27,7 @@ const LandingPage = ({ children }) => {
       company: "Ethio Telecom",
       logo: "/ethio-telecom-logo.png",
       quote:
-        "Bonga University's verification system saved us 60% time in employee credential checks.",
+        "MIT ADT University's verification system saved us 60% time in employee credential checks.",
     },
     {
       id: 2,
@@ -60,18 +60,18 @@ const LandingPage = ({ children }) => {
           <Link
             to="/"
             className="flex items-center space-x-3 hover:opacity-90 transition-opacity"
-            aria-label="Bonga University Home"
+            aria-label="MIT ADT University Home"
           >
             <img
-              src="/bonga-university-logo.png"
-              alt="Bonga University Logo"
+              src="/mit-adt-logo.png"
+              alt="MIT ADT University Logo"
               className="h-12 w-auto"
               width={48}
               height={48}
             />
             <span className="text-xl font-bold text-gray-800 dark:text-white">
               <span className="block text-sm font-medium text-blue-600 dark:text-blue-400">
-                Bonga University
+                MIT ADT University
               </span>
               <span>Graduate Verification</span>
             </span>
@@ -300,7 +300,7 @@ const LandingPage = ({ children }) => {
             Verify Graduate Credentials Instantly
           </h1>
           <p className="text-xl mb-8">
-            Bonga University's secure digital platform for authenticating
+            MIT ADT University's secure digital platform for authenticating
             academic documents. Trusted by employers nationwide.
           </p>
           <Link
@@ -368,7 +368,7 @@ const LandingPage = ({ children }) => {
                 Instant Verification
               </h3>
               <p className="text-gray-600 dark:text-gray-300">
-                Our system cross-checks with Bonga University's secure database.
+                Our system cross-checks with MIT ADT University's secure database.
               </p>
             </div>
 
@@ -432,14 +432,14 @@ const LandingPage = ({ children }) => {
     {/* Map Section - Now at the top */}
     <div className="w-full h-64 md:h-80 lg:h-96 mb-8 rounded-xl overflow-hidden shadow-lg">
       <iframe
-        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3957.467074564943!2d36.2287733736355!3d7.301304592706398!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x17aea2c28ab0b28d%3A0xb37eb860542e5c8a!2sBonga%20University!5e0!3m2!1sen!2set!4v1750451066930!5m2!1sen!2set"
+        src="https://maps.google.com/maps?q=MIT%20ADT%20University%20Pune&t=&z=15&ie=UTF8&iwloc=&output=embed"
         width="100%"
         height="100%"
         style={{ border: 0 }}
         allowFullScreen=""
         loading="lazy"
         referrerPolicy="no-referrer-when-downgrade"
-        title="Bonga University Location"
+        title="MIT ADT University Location"
         className="w-full h-full"
       ></iframe>
     </div>
@@ -447,7 +447,7 @@ const LandingPage = ({ children }) => {
     {/* Content Sections Below Map */}
     <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
       <div>
-        <h3 className="text-xl font-bold mb-4">Bonga University</h3>
+        <h3 className="text-xl font-bold mb-4">MIT ADT University</h3>
         <p className="mb-2">P.O. Box: 334, Bonga, Ethiopia</p>
         <p className="mb-2">Email: info@bongau.edu.et</p>
         <p>Phone: +251 XX XXX XXXX</p>
@@ -513,7 +513,7 @@ const LandingPage = ({ children }) => {
     {/* Copyright Section */}
     <div className="max-w-7xl mx-auto mt-8 pt-4 border-t border-gray-700 text-center">
       <p>
-        &copy; {new Date().getFullYear()} Bonga University. All rights reserved.
+        &copy; {new Date().getFullYear()} MIT ADT University. All rights reserved.
       </p>
     </div>
   </div>

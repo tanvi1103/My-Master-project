@@ -11,7 +11,7 @@ const notificationSchema = new mongoose.Schema({
   lastName: { type: String, required: true },
   gender: { type: String, required: true },
   message: { type: String, required: true },
-  type: { type: String, enum: ["success", "error"], default: "success" },
+  type: { type: String, enum: ["success", "error", "request"], default: "success" },
   isRead: { type: Boolean, default: false },
   createdAt: { type: Date, default: Date.now },
 });

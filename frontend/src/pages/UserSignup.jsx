@@ -341,7 +341,7 @@ const UserSignup = () => {
     <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 px-4 py-12 overflow-x-hidden">
       <div className="w-full max-w-full md:max-w-7xl bg-white dark:bg-gray-800 rounded-xl shadow-lg p-4 md:p-8">
         <h2 className="text-2xl md:text-4xl font-bold text-center text-gray-900 dark:text-white mb-6">
-          Welcome To BUGCVS
+          Welcome To MIT ADT GVS
         </h2>
         <p className="text-center text-gray-600 dark:text-gray-400 mb-6">
           Please follow the steps below to create your account.

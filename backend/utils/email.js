@@ -16,7 +16,7 @@ const transporter = nodemailer.createTransport({
 });
 
 exports.sendVerificationEmail = async (email, code) => {
-  const appName = process.env.APP_NAME || "Bonga University GCVS";
+  const appName = process.env.APP_NAME || "MIT ADT University GCVS";
   const supportEmail = process.env.SUPPORT_EMAIL || "madishamadiso00@gmail.com";
   const expiryHours = process.env.CODE_EXPIRY_HOURS || 24;
 
@@ -72,7 +72,7 @@ exports.sendVerificationEmail = async (email, code) => {
 
 // reset password - send reset code.
 exports.sendPasswordResetEmail = async (email, code) => {
-  const appName = process.env.APP_NAME || "Bonga University GCVS";
+  const appName = process.env.APP_NAME || "MIT ADT University GCVS";
   const supportEmail = process.env.SUPPORT_EMAIL || "madishamadiso00@gmail.com";
   const expiryHours = process.env.CODE_EXPIRY_HOURS || 24;
   const resetLink = process.env.RESET_PAGE_URL

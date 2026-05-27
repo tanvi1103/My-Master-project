@@ -298,7 +298,9 @@ export const getNationalIdByFIN = async (req, res)=>{
     });
   }
   try {
+    console.log("Querying for:", nationalIdNumber);
     const nationalID = await NationalID.findOne({nationalIdNumber});
+    console.log("Found:", nationalID);
     if (!nationalID) {
         // console.log("dfggjk")
 

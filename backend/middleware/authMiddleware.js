@@ -4,11 +4,8 @@ const Admin = require("../models/Admin");
 const authenticateUser = async (req, res, next) => {
   try {
     const authHeader = req.headers.authorization;
-    const token =
-      req.cookies.token ||
-      (authHeader &&
-        authHeader.startsWith("Bearer ") &&
-        authHeader.split(" ")[1]);
+    const headerToken = authHeader && authHeader.startsWith("Bearer ") ? authHeader.split(" ")[1] : null;
+    const token = headerToken || req.cookies.adminToken || req.cookies.token;
 
     // console.log("Extracted token:", token);
 

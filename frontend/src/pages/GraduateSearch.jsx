@@ -149,11 +149,14 @@ const GraduateSearch = () => {
   };
 
   const [isSearching, setIsSearching] = useState(false);
+  const [isApplying, setIsApplying] = useState(false);
+  const [applicationSuccess, setApplicationSuccess] = useState(false);
 
   const handleSearch = async (e) => {
     e.preventDefault();
     setError("");
     setCertificate(null);
+    setApplicationSuccess(false);
     setIsSearching(true);
 
     try {
@@ -176,6 +179,26 @@ const GraduateSearch = () => {
     }
   };
 
+  const handleApply = async () => {
+    setIsApplying(true);
+    setError("");
+    try {
+      const applicationData = {
+        ...personalDetails,
+        ...academicDetails,
+      };
+      const { data } = await axios.post(
+        `${import.meta.env.VITE_CERTIFICATE_ROUTE}/apply`,
+        applicationData
+      );
+      setApplicationSuccess(true);
+    } catch (err) {
+      setError(err.response?.data?.message || "Failed to submit application");
+    } finally {
+      setIsApplying(false);
+    }
+  };
+
   const handleOpen = async () => {
     if (certificate) {
       await navigate(`/externalUser/certificate/${certificate.certificateID}`);
@@ -191,7 +214,7 @@ const GraduateSearch = () => {
             Graduate Verification Portal
           </h2>
           <p className="text-center text-blue-100 mt-1">
-            Verify academic credentials issued by Bonga University
+            Verify academic credentials issued by MIT ADT University
           </p>
         </div>
 
@@ -477,10 +500,32 @@ const GraduateSearch = () => {
             </form>
           )}
 
-          {/* Error Message */}
+          {/* Application Success Message */}
+          {applicationSuccess && (
+            <div className="mt-6 p-4 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg">
+              <div className="flex items-center text-green-600 dark:text-green-400">
+                <svg
+                  className="w-5 h-5 mr-2"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                  />
+                </svg>
+                <span className="font-medium">Application sent successfully to the Administrator! They will process your certificate request soon.</span>
+              </div>
+            </div>
+          )}
+
+          {/* Error Message & Apply Button */}
           {error && nationalId.length === 16 && (
-            <div className="mt-6 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
-              <div className="flex items-center text-red-600 dark:text-red-400">
+            <div className="mt-6 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg flex flex-col sm:flex-row items-start sm:items-center justify-between">
+              <div className="flex items-center text-red-600 dark:text-red-400 mb-4 sm:mb-0">
                 <svg
                   className="w-5 h-5 mr-2"
                   fill="none"
@@ -496,6 +541,16 @@ const GraduateSearch = () => {
                 </svg>
                 <span className="font-medium">{error}</span>
               </div>
+              
+              {!applicationSuccess && (
+                <button
+                  onClick={handleApply}
+                  disabled={isApplying}
+                  className="w-full sm:w-auto py-2 px-4 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors flex items-center justify-center whitespace-nowrap"
+                >
+                  {isApplying ? "Applying..." : "Apply for Certificate"}
+                </button>
+              )}
             </div>
           )}
 

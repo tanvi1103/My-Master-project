@@ -16,13 +16,13 @@ const faqs = [
     {
       question: "How do I verify a graduate's document?",
       answer:
-        "Enter the Document ID or graduate details in the verification portal. The system will instantly validate it against Bonga University's records.",
+        "Enter the Document ID or graduate details in the verification portal. The system will instantly validate it against MIT ADT University's records.",
       tags: ["verify", "document", "process"],
     },
     {
       question: "What document types can I verify?",
       answer:
-        "Degrees, diplomas, certificates, and transcripts issued by Bonga University.",
+        "Degrees, diplomas, certificates, and transcripts issued by MIT ADT University.",
       tags: ["document", "types", "supported"],
     },
     {
@@ -40,7 +40,7 @@ const faqs = [
     {
       question: "Can I verify documents from other universities?",
       answer:
-        "No, this system only verifies credentials issued by Bonga University.",
+        "No, this system only verifies credentials issued by MIT ADT University.",
       tags: ["other", "universities", "external"],
     },
     {
@@ -59,7 +59,7 @@ const faqs = [
     {
       question: "How does the system prevent fake certificates?",
       answer:
-        "All graduate credentials are digitally signed and cross-checked with Bonga University's internal registry. Any mismatch is flagged.",
+        "All graduate credentials are digitally signed and cross-checked with MIT ADT University's internal registry. Any mismatch is flagged.",
       tags: ["fake", "forgery", "protection"],
     },
     {

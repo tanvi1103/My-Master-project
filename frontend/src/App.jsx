@@ -137,7 +137,7 @@ const App = () => {
             <UserLayout>
               <div className="space-y-4">
                 <h3 className="text-lg font-semibold text-gray-800 dark:text-white">
-                  Welcome To The Bonga University Graduate Verification System!
+                  Welcome To The MIT ADT University Graduate Verification System!
                 </h3>
                 <p className="text-gray-600 dark:text-gray-300">
                   Here's an overview of your recent activities and important

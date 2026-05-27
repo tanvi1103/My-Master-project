@@ -28,7 +28,7 @@ const UserLogin = ({ setCurrentUser }) => {
       setFormData({
         email: "madisomelese2@gmail.com",
         nationalIdNumber: "1111111111111119",
-        password: "@Madisha5423$$",
+        password: "@Madisha5423$",
       });
 
       // Visual feedback
@@ -148,32 +148,32 @@ const UserLogin = ({ setCurrentUser }) => {
         {/* Enhanced Auto-fill Button */}
         {(import.meta.env.MODE === "development" ||
           import.meta.env.MODE === "production") && (
-          <div className="mb-4 relative group">
-            <button
-              onClick={autoFillTestCredentials}
-              className="auto-fill-button w-full py-2 px-4 bg-gradient-to-r from-yellow-400 to-yellow-500 hover:from-yellow-500 hover:to-yellow-600 text-white font-medium rounded-lg text-sm transition-all duration-300 shadow-md hover:shadow-lg cursor-pointer"
-            >
-              <span className="flex items-center justify-center">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-5 w-5 mr-2"
-                  viewBox="0 0 20 20"
-                  fill="currentColor"
-                >
-                  <path
-                    fillRule="evenodd"
-                    d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z"
-                    clipRule="evenodd"
-                  />
-                </svg>
-                Auto-fill Test Credentials
-              </span>
-            </button>
-            <div className="absolute -bottom-6 left-0 right-0 text-center text-xs text-yellow-600 dark:text-yellow-400 opacity-0 group-hover:opacity-100 transition-opacity">
-              for checking purpose only
+            <div className="mb-4 relative group">
+              <button
+                onClick={autoFillTestCredentials}
+                className="auto-fill-button w-full py-2 px-4 bg-gradient-to-r from-yellow-400 to-yellow-500 hover:from-yellow-500 hover:to-yellow-600 text-white font-medium rounded-lg text-sm transition-all duration-300 shadow-md hover:shadow-lg cursor-pointer"
+              >
+                <span className="flex items-center justify-center">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-5 w-5 mr-2"
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z"
+                      clipRule="evenodd"
+                    />
+                  </svg>
+                  Auto-fill Test Credentials
+                </span>
+              </button>
+              <div className="absolute -bottom-6 left-0 right-0 text-center text-xs text-yellow-600 dark:text-yellow-400 opacity-0 group-hover:opacity-100 transition-opacity">
+                for checking purpose only
+              </div>
             </div>
-          </div>
-        )}
+          )}
 
         {/* Error Message */}
         {error && (
@@ -188,21 +188,19 @@ const UserLogin = ({ setCurrentUser }) => {
             {/* Login Method Toggle */}
             <div className="flex mb-4 border-b border-gray-200 dark:border-gray-700">
               <button
-                className={`flex-1 py-2 font-medium ${
-                  loginMethod === "email"
+                className={`flex-1 py-2 font-medium ${loginMethod === "email"
                     ? "text-blue-600 border-b-2 border-blue-600"
                     : "text-gray-500 dark:text-gray-400"
-                }`}
+                  }`}
                 onClick={() => setLoginMethod("email")}
               >
                 Email
               </button>
               <button
-                className={`flex-1 py-2 font-medium ${
-                  loginMethod === "nationalId"
+                className={`flex-1 py-2 font-medium ${loginMethod === "nationalId"
                     ? "text-blue-600 border-b-2 border-blue-600"
                     : "text-gray-500 dark:text-gray-400"
-                }`}
+                  }`}
                 onClick={() => setLoginMethod("nationalId")}
               >
                 National ID
@@ -280,7 +278,7 @@ const UserLogin = ({ setCurrentUser }) => {
                 </Link>
               </div>
               <ReCAPTCHA
-                sitekey={import.meta.env.VITE_RECAPTCHA_SITE_KEY}
+                sitekey={import.meta.env.VITE_RECAPTCHA_SITE_KEY || "6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI"}
                 onChange={(token) => {
                   setCaptchaToken(token);
                   setCaptchaError("");
@@ -307,9 +305,8 @@ const UserLogin = ({ setCurrentUser }) => {
                   window.location.href = `${authurl}/google`;
                 }}
                 disabled={!captchaToken}
-                className={`w-full flex items-center justify-center gap-3 py-2 px-4 bg-white border border-gray-300 hover:bg-gray-100 text-gray-700 font-medium rounded-lg transition ${
-                  !captchaToken ? "opacity-50 cursor-not-allowed" : ""
-                }`}
+                className={`w-full flex items-center justify-center gap-3 py-2 px-4 bg-white border border-gray-300 hover:bg-gray-100 text-gray-700 font-medium rounded-lg transition ${!captchaToken ? "opacity-50 cursor-not-allowed" : ""
+                  }`}
               >
                 <img
                   src="https://developers.google.com/identity/images/g-logo.png"

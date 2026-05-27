@@ -1,4 +1,4 @@
-# 🎓Web-Based Graduate Document Credentials Verification System for Bonga University
+# 🎓Web-Based Graduate Document Credentials Verification System for MIT ADT University
 
 A full-stack **web-based graduate verification system with national ID verification** built with the MERN stack. 
 This system allows external users (employers, institutions) to verify the authenticity of graduate certificates, 
@@ -43,7 +43,7 @@ This project is a comprehensive, secure, and user-friendly platform for graduate
 - **Step-by-step Verification:**  
   - Input graduate FAN to fetch and display personal info (read-only).
   - Enter academic details (CGPA, program, program type, graduation year, department).
-  - System searches Bonga University graduate database.
+  - System searches MIT ADT University graduate database.
   - If found, user can view and download their certificate.
   - If not found, user is notified.
 - **Automatic Admin Notification:**  
@@ -381,7 +381,7 @@ After successful signup and login, an external user can:
 ![image](https://github.com/user-attachments/assets/50a93cfe-b3e4-4233-8db6-9ff3efe1dd2b)
 
    - **Step 3:** Search Graduate Record
-     - The system checks the Bonga University graduate database for a matching record.
+     - The system checks the MIT ADT University graduate database for a matching record.
      - **If graduate exists:**
        - The user sees a link to view the full document information.
        - The user can open the link and download their graduation certificate
@@ -533,7 +533,7 @@ See [LICENSE](LICENSE) for details.
 
 - 📧 **Email:** [madishamadiso00@gmail.com](mailto:madishamadiso00@gmail.com)
 - 🌐 **LinkedIn:** [linkedin.com/in/madiso-melese](#) <!-- Add your LinkedIn if available -->
-- 🏛️ **Institution:** Bonga University
+- 🏛️ **Institution:** MIT ADT University
 
 ---
 

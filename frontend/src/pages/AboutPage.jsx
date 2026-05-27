@@ -4,9 +4,9 @@ const AboutPage = () => {
     <div className="max-w-5xl mx-auto px-4 py-12 space-y-12">
       {/* University Introduction */}
       <section>
-        <h1 className="text-4xl font-bold text-center mb-4">About Bonga University</h1>
+        <h1 className="text-4xl font-bold text-center mb-4">About MIT ADT University</h1>
         <p className="text-lg text-gray-700 text-center">
-          Bonga University is one of Ethiopia’s emerging public institutions, committed to academic excellence, innovation, and regional development. Located in the Southwest region, it serves thousands of students in various fields of study, contributing to the nation's human capital and digital transformation.
+          MIT ADT University is one of Ethiopia’s emerging public institutions, committed to academic excellence, innovation, and regional development. Located in the Southwest region, it serves thousands of students in various fields of study, contributing to the nation's human capital and digital transformation.
         </p>
       </section>
 
@@ -30,7 +30,7 @@ const AboutPage = () => {
       <section>
         <h2 className="text-2xl font-semibold mb-2">About This Project</h2>
         <p className="text-gray-700">
-          This web application — the <strong>Graduate Document Verification System</strong> — was developed as a final year project by a Computer Science student at Bonga University. The goal is to digitize and simplify the process of verifying graduate academic records in a secure and efficient manner.
+          This web application — the <strong>Graduate Document Verification System</strong> — was developed as a final year project by a Computer Science student at MIT ADT University. The goal is to digitize and simplify the process of verifying graduate academic records in a secure and efficient manner.
         </p>
         <p className="text-gray-700 mt-2">
           The system is accessible at:{" "}
@@ -61,7 +61,7 @@ const AboutPage = () => {
       <section>
         <h2 className="text-2xl font-semibold mb-2">Join Us</h2>
         <p className="text-gray-700">
-          Whether you're a student, employer, or academic institution, this system empowers you with trustworthy and accessible graduate verification tools. Explore, verify, and contribute to a transparent academic future with Bonga University.
+          Whether you're a student, employer, or academic institution, this system empowers you with trustworthy and accessible graduate verification tools. Explore, verify, and contribute to a transparent academic future with MIT ADT University.
         </p>
       </section>
     </div>

@@ -113,7 +113,7 @@ const CertificateDetail = () => {
                       </div>
                     </div>
                     <p className="mt-1 text-sm font-medium text-gray-700 dark:text-gray-300">
-                      Bonga University Verification System
+                      MIT ADT University Verification System
                     </p>
                   </div>
                 </div>

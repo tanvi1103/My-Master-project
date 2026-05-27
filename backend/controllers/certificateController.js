@@ -265,7 +265,7 @@ exports.generateCertificatePDF = async (req, res) => {
       .fontSize(20)
       .fillColor("#1a3e72")
       .font("Helvetica-Bold")
-      .text("BONGA UNIVERSITY", { align: "center" })
+      .text("MIT ADT UNIVERSITY", { align: "center" })
       .moveDown(0.2)
       .fontSize(14)
       .font("Helvetica")
@@ -413,5 +413,62 @@ exports.generateCertificatePDF = async (req, res) => {
   } catch (error) {
     console.error("Error generating PDF:", error);
     res.status(500).send("Error generating PDF");
+  }
+};
+
+exports.applyForCertificate = async (req, res) => {
+  try {
+    const {
+      firstName,
+      middleName,
+      lastName,
+      gender,
+      department,
+      program,
+      programType,
+      endDate,
+    } = req.body;
+
+    if (!firstName || !lastName || !department) {
+      return res.status(400).json({ message: "Missing required fields" });
+    }
+
+    // Get IP and geo location
+    const userIp =
+      req.headers["x-forwarded-for"]?.split(",")[0] ||
+      req.connection.remoteAddress;
+    let geo = {};
+    try {
+      geo = await getGeoLocation(userIp);
+    } catch (geoError) {
+      console.error("Geo location failed:", geoError);
+    }
+
+    // Get admin with fallback
+    let admin = await Admin.findOne({ email: process.env.ADMIN_EMAIL });
+    if (!admin) {
+      admin = await Admin.findOne({ role: "admin" });
+    }
+    if (!admin) {
+      return res.status(500).json({ message: "No administrator found to receive the request." });
+    }
+
+    // Create notification
+    await Notification.create({
+      adminId: admin._id,
+      firstName,
+      middleName: middleName || "",
+      lastName,
+      gender: gender || "",
+      ip: geo?.ip || userIp,
+      location: `${geo?.city || "Unknown"}, ${geo?.region || ""}, ${geo?.country || ""}`,
+      message: `Certificate Request: ${firstName} ${lastName} has applied for a ${program} in ${department}.`,
+      type: "request",
+    });
+
+    return res.status(200).json({ message: "Application submitted successfully." });
+  } catch (error) {
+    console.error("Error submitting application:", error);
+    res.status(500).json({ message: "Server error" });
   }
 };

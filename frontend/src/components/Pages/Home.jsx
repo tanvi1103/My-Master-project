@@ -212,7 +212,7 @@ const Home = () => {
         <a href="#">Contact Us</a>
     </div>
     <div className="footer-bottom">
-        <p>&copy; 2024 Company Name. All rights reserved. | Designed by <a href="#">Bonga University 4'th Year Computer Science Students</a></p>
+        <p>&copy; 2024 Company Name. All rights reserved. | Designed by <a href="#">MIT ADT University 4'th Year Computer Science Students</a></p>
     </div>
 </footer>
 

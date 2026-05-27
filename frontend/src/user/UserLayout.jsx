@@ -214,11 +214,9 @@ const UserLayout = ({ children }) => {
                 to="/"
                 className="flex items-center space-x-2 group transition-transform hover:scale-[1.02]"
               >
-                <div className="w-8 h-8 flex items-center justify-center bg-gradient-to-br from-blue-600 to-blue-500 dark:from-blue-500 dark:to-blue-400 rounded-lg group-hover:from-blue-700 group-hover:to-blue-600 dark:group-hover:from-blue-600 dark:group-hover:to-blue-500 transition-all duration-300 shadow-sm">
-                  <GraduationCap className="w-5 h-5 text-white" />
-                </div>
+                <img src="/mit-adt-logo.png" alt="MIT ADT Logo" className="w-8 h-auto" />
                 <span className="text-xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 dark:from-blue-400 dark:to-purple-400 bg-clip-text text-transparent">
-                  BUGCVS
+                  MIT ADT GVS
                 </span>
               </Link>
             </div>
@@ -386,7 +384,7 @@ const UserLayout = ({ children }) => {
           <div className="flex items-center justify-between p-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-t-xl">
               {/* <div className="bg-blue-100 dark:bg-blue-900 p-2 rounded-full mr-3"> */}
                <MessageSquare className=" text-blue-600 dark:text-gray-100" />
-            <h3 className="font-semibold text-lg">BUGCVS help chat</h3>
+            <h3 className="font-semibold text-lg">MIT ADT help chat</h3>
           {/* </div> */}
            
             <div className="flex gap-2">
@@ -425,10 +423,10 @@ const UserLayout = ({ children }) => {
       <footer className="bg-gray-800 dark:bg-gray-950 text-white py-8 px-4 md:px-6">
         <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
           <div>
-            <h3 className="text-xl font-bold mb-4">Bonga University</h3>
-            <p className="mb-2">P.O. Box: 334, Bonga, Ethiopia</p>
-            <p className="mb-2">Email: info@bongau.edu.et</p>
-            <p>Phone: +251 XX XXX XXXX</p>
+            <h3 className="text-xl font-bold mb-4">MIT ADT University</h3>
+            <p className="mb-2">Pune, Maharashtra, India</p>
+            <p className="mb-2">Email: info@mitadt.edu.in</p>
+            <p>Phone: +91 90210 80109</p>
           </div>
           <div>
             <h3 className="text-xl font-bold mb-4">Quick Links</h3>
@@ -459,7 +457,7 @@ const UserLayout = ({ children }) => {
             <h3 className="text-xl font-bold mb-4">Find Us</h3>
             <div className="mb-4">
               <a
-                href="https://www.google.com/maps/place/Bonga+University"
+                href="https://www.google.com/maps/search/MIT+ADT+University+Pune"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center hover:text-blue-400"
@@ -470,21 +468,21 @@ const UserLayout = ({ children }) => {
             </div>
             <div className="flex space-x-4">
               <a
-                href="https://facebook.com/bongau"
+                href="https://facebook.com/mitadtuniversity"
                 target="_blank"
                 rel="noopener noreferrer"
               >
                 <FaFacebook size={24} className="hover:text-blue-400" />
               </a>
               <a
-                href="https://twitter.com/bongau"
+                href="https://twitter.com/mitadtuniversity"
                 target="_blank"
                 rel="noopener noreferrer"
               >
                 <FaTwitter size={24} className="hover:text-blue-400" />
               </a>
               <a
-                href="https://linkedin.com/school/bonga-university"
+                href="https://linkedin.com/school/mit-adt-university"
                 target="_blank"
                 rel="noopener noreferrer"
               >
@@ -495,7 +493,7 @@ const UserLayout = ({ children }) => {
         </div>
         <div className="max-w-7xl mx-auto mt-8 pt-4 border-t border-gray-700 text-center text-sm">
           <p>
-            &copy; {new Date().getFullYear()} Bonga University. All rights
+            &copy; {new Date().getFullYear()} MIT ADT University. All rights
             reserved.
           </p>
         </div>
